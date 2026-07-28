@@ -1,0 +1,428 @@
+.smart-steps {
+    --steps-text: #163b37;
+
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto 100px;
+    padding: 60px;
+    border-radius: 32px;
+    overflow: hidden;
+    position: relative;
+    color: var(--steps-text);
+}
+
+.smart-steps-heading {
+    position: relative;
+    z-index: 2;
+    margin: 0 auto 30px;
+    text-align: center;
+}
+
+.smart-steps-heading>span {
+    display: inline-block;
+    margin-bottom: 12px;
+    color: #078678;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.smart-steps-heading h2 {
+    margin: 0;
+    color: #123d38;
+    font-size: clamp(38px, 5vw, 62px);
+    line-height: 1.12;
+    letter-spacing: -2px;
+}
+
+.smart-steps-heading h2 strong {
+    color: #079f8d;
+}
+
+.smart-steps-heading p {
+    max-width: 590px;
+    margin: 16px auto 0;
+    color: #58716e;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.smart-steps-track {
+    position: relative;
+}
+
+.smart-wave {
+    position: absolute;
+    top: 46px;
+    right: 4%;
+    z-index: 1;
+    width: 92%;
+    height: 190px;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.smart-wave-base {
+    fill: none;
+    stroke: rgba(7, 93, 86, 0.12);
+    stroke-width: 3;
+}
+
+.smart-wave-active {
+    fill: none;
+    stroke: url("#waveGradient");
+    stroke-width: 5;
+    stroke-linecap: round;
+    filter: url("#waveGlow");
+    stroke-dasharray: 90 930;
+    stroke-dashoffset: -1020;
+
+    /* היה 18s */
+    animation: smart-wave-flow 9s linear infinite;
+}
+
+@keyframes smart-wave-flow {
+    from {
+        stroke-dashoffset: -1020;
+    }
+
+    to {
+        stroke-dashoffset: 1020;
+    }
+}
+
+.smart-steps-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start;
+    gap: 44px;
+}
+
+.smart-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    --step-color: #ffffff;
+    --step-color-rgb: 255, 255, 255;
+    --step-delay: 0s;
+}
+
+.smart-step-red {
+    --step-color: #ff5a5f;
+    --step-color-rgb: 255, 90, 95;
+    --step-delay: 0s;
+}
+
+.smart-step-orange {
+    --step-color: #f59e0b;
+    --step-color-rgb: 245, 158, 11;
+
+    /* היה 3s */
+    --step-delay: 1.5s;
+}
+
+.smart-step-green {
+    --step-color: #10b981;
+    --step-color-rgb: 16, 185, 129;
+
+    /* היה 6s */
+    --step-delay: 3s;
+}
+
+.smart-step-orbit {
+    position: relative;
+    width: 190px;
+    height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.smart-step-circle {
+    position: relative;
+    z-index: 3;
+    width: 118px;
+    height: 118px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 5px solid rgba(255, 255, 255, 0.96);
+    color: #ffffff;
+
+    background:
+        radial-gradient(circle at 35% 28%,
+            rgba(255, 255, 255, 0.42),
+            transparent 34%),
+        linear-gradient(145deg,
+            rgba(var(--step-color-rgb), 0.98),
+            rgba(var(--step-color-rgb), 0.66));
+
+    box-shadow:
+        inset 0 2px 5px rgba(255, 255, 255, 0.3),
+        inset 0 -15px 24px rgba(0, 0, 0, 0.12),
+        0 8px 28px rgba(var(--step-color-rgb), 0.2);
+
+    /* היה 9s */
+    animation: smart-step-light 4.5s ease-in-out infinite;
+    animation-delay: var(--step-delay);
+}
+
+.smart-step-icon {
+    width: 51px;
+    height: 51px;
+    filter: drop-shadow(0 3px 7px rgba(0, 0, 0, 0.18));
+}
+
+.orbit-ring {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.orbit-ring-one {
+    inset: 13px;
+    border: 2px solid rgba(var(--step-color-rgb), 0.8);
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+
+    /* היה 7s ו־9s */
+    animation:
+        orbit-spin 3.5s linear infinite,
+        smart-ring-light 4.5s ease-in-out infinite;
+
+    animation-delay: 0s, var(--step-delay);
+}
+
+.orbit-ring-two {
+    inset: 0;
+    border: 3px dashed rgba(var(--step-color-rgb), 0.4);
+    border-left-color: rgba(var(--step-color-rgb), 0.9);
+
+    /* היה 11s ו־9s */
+    animation:
+        orbit-spin-reverse 5.5s linear infinite,
+        smart-ring-light 4.5s ease-in-out infinite;
+
+    animation-delay: 0s, var(--step-delay);
+}
+
+@keyframes orbit-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes orbit-spin-reverse {
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+@keyframes smart-step-light {
+
+    0%,
+    28% {
+        transform: scale(1.07);
+
+        box-shadow:
+            inset 0 2px 5px rgba(255, 255, 255, 0.36),
+            inset 0 -15px 24px rgba(0, 0, 0, 0.1),
+            0 0 0 13px rgba(var(--step-color-rgb), 0.13),
+            0 0 38px rgba(var(--step-color-rgb), 0.48),
+            0 0 82px rgba(var(--step-color-rgb), 0.2);
+    }
+
+    34%,
+    100% {
+        transform: scale(1);
+
+        box-shadow:
+            inset 0 2px 5px rgba(255, 255, 255, 0.3),
+            inset 0 -15px 24px rgba(0, 0, 0, 0.12),
+            0 8px 28px rgba(var(--step-color-rgb), 0.2);
+    }
+}
+
+@keyframes smart-ring-light {
+
+    0%,
+    28% {
+        opacity: 1;
+        filter: drop-shadow(0 0 13px rgba(var(--step-color-rgb), 0.7));
+    }
+
+    34%,
+    100% {
+        opacity: 0.48;
+        filter: none;
+    }
+}
+
+.smart-step-card {
+    position: relative;
+    width: 100%;
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 19px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow:
+        0 14px 38px rgba(8, 74, 68, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+    opacity: 0.58;
+    transform: translateY(7px) scale(0.8);
+
+    /* היה 9s */
+    animation: smart-card-light 4.5s ease-in-out infinite;
+    animation-delay: var(--step-delay);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.smart-step-card::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    right: 34%;
+    left: 34%;
+    height: 3px;
+    border-radius: 10px;
+    background: var(--step-color);
+
+    box-shadow:
+        0 0 13px rgba(var(--step-color-rgb), 0.55);
+}
+
+.smart-step-number {
+    position: absolute;
+    top: -20px;
+    right: 50%;
+    transform: translateX(50%);
+    color: #315c57;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.smart-step-card h3 {
+    margin: 0 0 12px;
+    color: var(--step-color);
+    font-size: 26px;
+    font-weight: 800;
+}
+
+.smart-step-card p {
+    max-width: 230px;
+    margin: 0 auto;
+    color: #58716e;
+    line-height: 1.75;
+}
+
+@keyframes smart-card-light {
+
+    0%,
+    28% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        box-shadow:
+            0 5px 10px rgba(var(--step-color-rgb), 0.5),
+            0 0 24px rgba(var(--step-color-rgb), 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+
+    34%,
+    100% {
+        opacity: 0.58;
+        transform: translateY(7px) scale(0.8);
+        box-shadow:
+            0 14px 38px rgba(8, 74, 68, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+}
+
+@media (max-width: 900px) {
+    .smart-steps {
+        padding: 65px 30px;
+    }
+
+    .smart-steps-track {
+        min-height: auto;
+    }
+
+    .smart-wave {
+        display: none;
+    }
+
+    .smart-steps-grid {
+        grid-template-columns: 1fr;
+        gap: 55px;
+    }
+
+    .smart-step {
+        width: min(100%, 450px);
+        margin: 0 auto;
+    }
+
+    .smart-step-card {
+        min-height: 165px;
+    }
+}
+
+@media (max-width: 520px) {
+    .smart-steps {
+        width: min(calc(100% - 20px), 1180px);
+        padding: 52px 20px;
+        border-radius: 24px;
+    }
+
+    .smart-steps-heading {
+        margin-bottom: 48px;
+    }
+
+    .smart-steps-heading h2 {
+        font-size: 39px;
+        letter-spacing: -1.3px;
+    }
+
+    .smart-steps-heading p {
+        font-size: 14px;
+    }
+
+    .smart-step-orbit {
+        width: 165px;
+        height: 165px;
+    }
+
+    .smart-step-circle {
+        width: 104px;
+        height: 104px;
+    }
+
+    .smart-step-icon {
+        width: 45px;
+        height: 45px;
+    }
+
+    .smart-step-card {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .smart-wave-active,
+    .smart-step-circle,
+    .orbit-ring,
+    .smart-step-card {
+        animation: none !important;
+    }
+
+    .smart-step-card {
+        opacity: 1;
+        transform: none;
+    }
+}

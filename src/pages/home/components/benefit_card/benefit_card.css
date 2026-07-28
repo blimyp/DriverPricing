@@ -1,0 +1,171 @@
+.benefit-card-component {
+    position: relative;
+    min-height: 250px;
+    padding: 100px 20px 20px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 12px 35px rgba(12, 96, 82, 0.055);
+
+    opacity: 0;
+    transform: translateY(38px);
+    border-radius: 25px;
+
+    transition:
+        opacity 0.6s ease var(--benefit-delay),
+        transform 0.6s ease var(--benefit-delay);
+
+    display: flex;
+    flex-direction: column;
+}
+
+.benefit-card-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.benefit-card-border {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* קו עליון */
+.benefit-card-border::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(to left, #00d99a, #0aa99c);
+    border-radius: 20px;
+}
+
+.benefit-card-visible .benefit-card-border::before {
+    animation: draw-top-line 0.65s ease forwards;
+    animation-delay: calc(var(--benefit-delay));
+}
+
+@keyframes draw-top-line {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+/* משושה */
+.benefit-card-hexagon {
+    position: absolute;
+    top: -30px;
+    right: 50%;
+    width: 140px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(0, 217, 154, 0.16), rgba(10, 169, 156, 0.26));
+    clip-path: polygon(25% 0,
+            75% 0,
+            100% 50%,
+            75% 100%,
+            25% 100%,
+            0 50%);
+
+    opacity: 0;
+    transform: scale(0.45) rotate(-18deg) translateX(50%);
+}
+
+.benefit-card-visible .benefit-card-hexagon {
+    animation: show-benefit-card-hexagon 0.55s ease forwards;
+    animation-delay: calc(var(--benefit-delay) + 200ms);
+}
+
+@keyframes show-benefit-card-hexagon {
+    from {
+        opacity: 0;
+        transform: translateX(50%) scale(0.45) rotate(-18deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(50%) scale(1) rotate(0);
+    }
+}
+
+.benefit-card-number {
+    padding-top: 20px;
+    color: #078c79;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.benefit-card-icon-image {
+    height: 100px;
+    opacity: 0;
+    transform: translateY(20px) scale(.9);
+}
+
+.benefit-card-visible .benefit-card-icon-image {
+    animation: show-benefit-icon .5s ease forwards;
+    animation-delay: calc(var(--benefit-delay) + 350ms);
+}
+
+@keyframes show-benefit-icon {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.benefit-card-title {
+    margin: 0 0 12px;
+    color: #123b39;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.benefit-card-text {
+    margin: 0;
+
+    color: #6b7f7d;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .benefit-card-component,
+    .benefit-card-border,
+    .benefit-card-hexagon {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .benefit-card-component {
+        opacity: 1;
+        transform: none;
+    }
+
+    .benefit-card-border {
+        clip-path: polygon(0 0,
+                100% 0,
+                100% 100%,
+                0 100%);
+    }
+
+    .benefit-card-hexagon {
+        opacity: 1;
+        transform: none;
+    }
+}

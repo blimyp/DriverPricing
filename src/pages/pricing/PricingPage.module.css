@@ -1,0 +1,791 @@
+.pricingPage {
+    width: min(1180px, calc(100% - 40px));
+    min-height: 760px;
+    margin: 55px auto;
+    padding: 45px 0 80px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    color: var(--text-dark);
+    background: transparent;
+    animation: pricingPageEnter 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.pricingPage *,
+.pricingPage *::before,
+.pricingPage *::after {
+    box-sizing: border-box;
+}
+
+.pricingContainer {
+    width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.pricingHeader {
+    max-width: 790px;
+    margin: 0 auto 55px;
+    text-align: center;
+    animation: pricingHeaderEnter 0.85s 0.12s both;
+}
+
+.pricingTitle {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: clamp(42px, 5.6vw, 68px);
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -2.4px;
+}
+
+.pricingTitle strong {
+    display: block;
+    color: var(--primary);
+}
+
+.pricingSubtitle {
+    max-width: 620px;
+    margin: 20px auto 0;
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.85;
+}
+
+.pricingForm {
+    padding: 38px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    border-radius: 28px;
+    color: white;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 28px 70px rgba(5, 73, 66, 0.2);
+
+    animation: pricingFormEnter 0.9s 0.25s both;
+}
+
+.formField {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    opacity: 0;
+    animation: formFieldEnter 0.65s forwards;
+}
+
+.fieldOne {
+    animation-delay: 0.4s;
+}
+
+.fieldTwo {
+    animation-delay: 0.5s;
+}
+
+.fieldThree {
+    animation-delay: 0.6s;
+}
+
+.fieldFour {
+    animation-delay: 0.7s;
+}
+
+.formLabel {
+    padding-right: 5px;
+    color: rgba(239, 255, 251, 0.9);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.inputWrapper {
+    position: relative;
+}
+
+.inputIcon {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 50%;
+    right: 18px;
+    z-index: 3;
+    transform: translateY(-50%);
+    color: var(--primary);
+    pointer-events: none;
+    transition:
+        color 0.28s ease,
+        filter 0.28s ease,
+        transform 0.28s ease;
+}
+
+.formControl {
+    width: 100%;
+    height: 58px;
+    padding: 0 52px 0 18px;
+    outline: none;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    color: var(--text-dark);
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.045),
+        0 10px 25px rgba(0, 0, 0, 0.08);
+    font-family: inherit;
+    font-size: 15px;
+    transition:
+        border-color 0.28s ease,
+        box-shadow 0.28s ease,
+        background 0.28s ease,
+        transform 0.28s ease;
+}
+
+.formControl::placeholder {
+    color: var(--text);
+}
+
+.formControl:hover {
+    border-color: white;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.formControl:focus {
+    transform: translateY(-2px);
+    border-color: white;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow:
+        0 0 0 4px rgba(var(--green-rgb), 0.09),
+        0 0 26px rgba(var(--green-rgb), 0.13),
+        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.formSelect {
+    appearance: none;
+    cursor: pointer;
+}
+
+.formSelect option {
+    color: #ffffff;
+    background: var(--text-dark);
+}
+
+.submitButton {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 62px;
+    margin-top: 8px;
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 0;
+    border-radius: 18px;
+    color: white;
+    background-color: var(--primary-dark);
+
+    box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.32),
+        inset 0 -8px 18px rgba(0, 0, 0, 0.11),
+        0 18px 35px rgba(22, 199, 154, 0.24),
+        0 0 0 1px rgba(255, 255, 255, 0.13);
+
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 900;
+    cursor: pointer;
+    opacity: 0;
+    animation: submitButtonEnter 0.7s 0.8s forwards;
+    transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease,
+        filter 0.28s ease;
+}
+
+.submitButton::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -60%;
+    width: 45%;
+    transform: skewX(-24deg);
+    background:
+        linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.48),
+            transparent);
+
+    animation: buttonShine 4.5s ease-in-out infinite;
+}
+
+.submitButton:hover {
+    transform: translateY(-4px);
+    filter: brightness(1.06);
+    background-color: var(--primary-dark);
+    box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.38),
+        inset 0 -8px 18px rgba(0, 0, 0, 0.1),
+        0 24px 46px rgba(22, 199, 154, 0.32),
+        0 0 38px rgba(var(--green-rgb), 0.18);
+}
+
+.submitButton:active {
+    transform: translateY(-1px) scale(0.99);
+}
+
+.buttonIcon {
+    width: 21px;
+    height: 21px;
+    position: relative;
+    z-index: 2;
+}
+
+.submitButton span {
+    position: relative;
+    z-index: 2;
+}
+
+.errorMessage {
+    width: min(760px, 100%);
+    margin: 24px auto 0;
+    padding: 16px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    border:
+        1px solid rgba(203, 72, 72, 0.22);
+
+    border-radius: 16px;
+
+    color: #963e3e;
+
+    background:
+        linear-gradient(145deg,
+            rgba(255, 243, 243, 0.98),
+            rgba(255, 250, 250, 0.94));
+
+    box-shadow:
+        0 15px 35px rgba(160, 57, 57, 0.08);
+
+    font-size: 14px;
+    font-weight: 700;
+
+    animation:
+        messageEnter 0.45s ease both,
+        errorShake 0.5s ease;
+}
+
+.messageIcon {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+}
+
+.priceResult {
+    width: min(760px, 100%);
+    margin: 30px auto 0;
+    padding: 32px;
+
+    position: relative;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+
+    border:
+        1px solid rgba(var(--green-rgb), 0.24);
+
+    border-radius: 24px;
+
+    color: white;
+    text-align: right;
+
+    background:
+        radial-gradient(circle at 50% 20%,
+            rgba(var(--green-rgb), 0.16),
+            transparent 48%),
+        linear-gradient(145deg,
+            #082522,
+            #0a3632 58%,
+            #061c1b);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 22px 48px rgba(5, 73, 66, 0.19),
+        0 0 42px rgba(var(--green-rgb), 0.07);
+
+    animation:
+        resultEnter 0.7s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+}
+
+.resultDecoration {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.resultRing {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    border-radius: 50%;
+}
+
+.resultRingOne {
+    width: 260px;
+    height: 260px;
+
+    border:
+        1px dashed rgba(var(--green-rgb), 0.14);
+
+    animation:
+        resultRingSpin 16s linear infinite;
+}
+
+.resultRingTwo {
+    width: 180px;
+    height: 180px;
+
+    border:
+        1px solid rgba(var(--green-rgb), 0.11);
+
+    animation:
+        resultRingSpinReverse 11s linear infinite;
+}
+
+.resultIconWrapper {
+    flex: 0 0 auto;
+
+    width: 74px;
+    height: 74px;
+
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(145deg,
+            #78f2c9,
+            #16c79a);
+
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.3),
+        0 0 28px rgba(var(--green-rgb), 0.38);
+
+    animation:
+        resultIconPulse 3s ease-in-out infinite;
+}
+
+.resultIcon {
+    width: 34px;
+    height: 34px;
+}
+
+.resultContent {
+    position: relative;
+    z-index: 2;
+}
+
+.resultLabel {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.resultTitle {
+    margin: 0 0 9px;
+    color: rgba(239, 255, 251, 0.75);
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.resultPrice {
+    display: block;
+    color: #ffffff;
+    font-size: clamp(45px, 7vw, 70px);
+    font-weight: 900;
+    line-height: 1;
+
+    text-shadow:
+        0 0 20px rgba(var(--green-rgb), 0.42),
+        0 0 50px rgba(var(--green-rgb), 0.2);
+
+    animation:
+        resultPricePulse 3s ease-in-out infinite;
+}
+
+.resultDescription {
+    margin: 11px 0 0;
+    color: rgba(239, 255, 251, 0.62);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.saveTripArea {
+    width: min(760px, 100%);
+    margin: 24px auto 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.saveTripArea button {
+    min-width: 190px;
+    min-height: 52px;
+    padding: 0 24px;
+
+    border: 0;
+    border-radius: 16px;
+
+    color: #06312b;
+
+    background:
+        linear-gradient(135deg,
+            #78f2c9,
+            #47dfa0 48%,
+            #16c79a);
+
+    box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.32),
+        inset 0 -7px 15px rgba(0, 0, 0, 0.09),
+        0 16px 32px rgba(22, 199, 154, 0.22);
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 900;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease,
+        filter 0.28s ease;
+}
+
+.saveTripArea button:hover:not(:disabled) {
+    transform:
+        translateY(-3px);
+
+    filter:
+        brightness(1.05);
+
+    box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.38),
+        inset 0 -7px 15px rgba(0, 0, 0, 0.08),
+        0 21px 40px rgba(22, 199, 154, 0.3);
+}
+
+.saveTripArea button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.saveTripArea p {
+    margin: 0;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+}
+
+@keyframes pricingPageEnter {
+    from {
+        opacity: 0;
+        transform:
+            translateY(35px) scale(0.985);
+        filter: blur(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes pricingHeaderEnter {
+    from {
+        opacity: 0;
+        transform:
+            translateY(-22px);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0);
+    }
+}
+
+@keyframes pricingFormEnter {
+    from {
+        opacity: 0;
+        transform:
+            translateY(32px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0) scale(1);
+    }
+}
+
+@keyframes formFieldEnter {
+    from {
+        opacity: 0;
+        transform:
+            translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0);
+    }
+}
+
+@keyframes submitButtonEnter {
+    from {
+        opacity: 0;
+        transform:
+            translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0);
+    }
+}
+
+@keyframes buttonShine {
+
+    0%,
+    55% {
+        left: -60%;
+    }
+
+    78%,
+    100% {
+        left: 130%;
+    }
+}
+
+@keyframes messageEnter {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes errorShake {
+
+    0%,
+    100% {
+        translate: 0;
+    }
+
+    25% {
+        translate: 6px;
+    }
+
+    50% {
+        translate: -6px;
+    }
+
+    75% {
+        translate: 3px;
+    }
+}
+
+@keyframes resultEnter {
+    from {
+        opacity: 0;
+        transform: translateY(28px) scale(0.92);
+        filter: blur(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes resultRingSpin {
+    from {
+        transform: translate(50%, -50%) rotate(0);
+    }
+
+    to {
+        transform: translate(50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes resultRingSpinReverse {
+    from {
+        transform: translate(50%, -50%) rotate(0);
+    }
+
+    to {
+        transform: translate(50%, -50%) rotate(-360deg);
+    }
+}
+
+@keyframes resultIconPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.07);
+    }
+}
+
+@keyframes resultPricePulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        text-shadow:
+            0 0 20px rgba(var(--green-rgb), 0.42),
+            0 0 50px rgba(var(--green-rgb), 0.2);
+    }
+
+    50% {
+        transform: scale(1.03);
+        text-shadow:
+            0 0 28px rgba(var(--green-rgb), 0.68),
+            0 0 70px rgba(var(--green-rgb), 0.28);
+    }
+}
+
+@media (max-width: 980px) {
+    .pricingPage {
+        padding: 40px 0 70px;
+    }
+}
+
+@media (max-width: 700px) {
+    .pricingPage {
+        width: min(100% - 24px, 1180px);
+        margin: 25px auto;
+        padding: 35px 0 60px;
+    }
+
+    .pricingForm {
+        grid-template-columns: 1fr;
+        padding: 28px 22px;
+    }
+
+    .submitButton {
+        grid-column: auto;
+    }
+
+    .priceResult {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .pricingPage {
+        width: min(100% - 16px, 1180px);
+        padding: 28px 0 50px;
+    }
+
+    .pricingHeader {
+        margin-bottom: 38px;
+    }
+
+    .pricingTitle {
+        font-size: 38px;
+        letter-spacing: -1.3px;
+    }
+
+    .pricingSubtitle {
+        font-size: 14px;
+    }
+
+    .pricingForm {
+        padding: 25px 17px;
+        gap: 19px;
+        border-radius: 21px;
+    }
+
+    .formControl {
+        height: 55px;
+    }
+
+    .submitButton {
+        height: 58px;
+    }
+
+    .priceResult {
+        padding: 28px 18px;
+        border-radius: 21px;
+    }
+
+    .resultPrice {
+        font-size: 49px;
+    }
+
+    .saveTripArea button {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .pricingPage,
+    .pricingHeader,
+    .pricingForm,
+    .formField,
+    .submitButton,
+    .submitButton::before,
+    .backgroundCircle,
+    .pricingForm::after,
+    .errorMessage,
+    .priceResult,
+    .resultRing,
+    .resultIconWrapper,
+    .resultPrice {
+        animation: none !important;
+    }
+
+    .formField,
+    .submitButton {
+        opacity: 1;
+    }
+}
