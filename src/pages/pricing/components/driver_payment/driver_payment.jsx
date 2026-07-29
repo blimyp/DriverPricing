@@ -12,39 +12,41 @@ function DriverPayment({
     form,
     onChange,
 }) {
-    const isPercentage =
-        form.driverPaymentType === 'percentage'
+    const isPercentage = form.driverPaymentType === 'percentage'
 
-    function handlePaymentTypeChange(checked) {
+    function handlePaymentTypeChange() {
         onChange({
             target: {
                 name: 'driverPaymentType',
-                value: checked
-                    ? 'percentage'
-                    : 'hourly',
+                value: isPercentage
+                    ? 'hourly'
+                    : 'percentage',
             },
         })
     }
 
     return (
         <div className="driverPayment">
-            <div className="formDivider" />
+            <div className="driverPaymentSwitchArea" onClick={handlePaymentTypeChange}>
+                <div
+                    className={`driverPaymentSwitchLabel ${isPercentage
+                        ? 'driverPaymentSwitchLabelActive'
+                        : ''
+                        }`}
+                >
+                    <Percent
+                        className="driverPaymentSwitchIcon"
+                        strokeWidth={1.9}
+                        aria-hidden="true"
+                    />
 
-            <div className="formSectionHeader">
-                <div>
-                    <h2>תשלום לנהג</h2>
-
-                    <p>
-                        בחרי כיצד לחשב את התשלום לנהג.
-                    </p>
+                    <span>אחוזים</span>
                 </div>
-            </div>
 
-            <div className="driverPaymentSwitchArea">
                 <div
                     className={`driverPaymentSwitchLabel ${!isPercentage
-                            ? 'driverPaymentSwitchLabelActive'
-                            : ''
+                        ? 'driverPaymentSwitchLabelActive'
+                        : ''
                         }`}
                 >
                     <Clock3
@@ -56,31 +58,12 @@ function DriverPayment({
                     <span>מחיר שעתי</span>
                 </div>
 
-                <Switch.Root
-                    className="driverPaymentSwitch"
-                    checked={isPercentage}
-                    onCheckedChange={
-                        handlePaymentTypeChange
-                    }
-                    aria-label="בחירת סוג התשלום לנהג"
-                >
-                    <Switch.Thumb className="driverPaymentSwitchThumb" />
-                </Switch.Root>
-
                 <div
-                    className={`driverPaymentSwitchLabel ${isPercentage
-                            ? 'driverPaymentSwitchLabelActive'
-                            : ''
+                    className={`driverPaymentSwitchThumb ${isPercentage
+                        ? 'driverPaymentSwitchThumbRight'
+                        : ''
                         }`}
-                >
-                    <Percent
-                        className="driverPaymentSwitchIcon"
-                        strokeWidth={1.9}
-                        aria-hidden="true"
-                    />
-
-                    <span>אחוזים</span>
-                </div>
+                />
             </div>
 
             {form.driverPaymentType === 'hourly' && (
