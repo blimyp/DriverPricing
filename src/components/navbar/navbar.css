@@ -68,6 +68,30 @@
     background: #00b887;
 }
 
+.navbar_button {
+    width: 170px;
+    height: 40px;
+    border: none;
+    border-radius: 50vh;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    transition:
+        box-shadow .5s ease,
+        background-color .5s ease;
+    box-shadow:
+        inset 0 3px 3px rgba(0, 180, 135, .28),
+        0 5px 5px rgba(0, 180, 135, .2);
+}
+
+.navbar_button:hover {
+    background-color: #00d89a;
+    box-shadow:
+        0 16px 35px rgba(0, 180, 135, .35);
+}
+
 @media (max-width: 850px) {
     .navbar-container {
         min-height: auto;

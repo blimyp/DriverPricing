@@ -65,8 +65,8 @@ function Navbar() {
                 </nav>
 
                 {user
-                    ? <button onClick={handleLogout}>התנתקות</button>
-                    : <button onClick={() => navigate('/login')}>
+                    ? <button className='navbar_button' onClick={handleLogout}>התנתקות</button>
+                    : <button className='navbar_button' onClick={() => navigate('/login')}>
                         התחברות
                     </button>}
             </div>

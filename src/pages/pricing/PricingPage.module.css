@@ -49,51 +49,38 @@
 ========================= */
 
 .stepsBar {
+    box-shadow: 0 5px 8px rgba(var(--green-rgb), 0.5);
+    border-radius: 50vh;
+    padding: 10px;
     width: 100%;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
+    gap: 20px;
     position: relative;
     z-index: 4;
-    margin-bottom: 20px;
+    background-color: white;
 }
 
 .stepTab {
-    min-width: 0;
-    padding: 13px 14px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 11px;
+    width: 100%;
+    padding: 10px;
     border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 18px;
+    border-radius: 50vh;
     color: var(--primary);
-    background: rgba(255, 255, 255, 0.06);
+    background: white;
     font-family: inherit;
-    text-align: right;
+    font-weight: bold;
     cursor: pointer;
-    margin: auto;
     transition:
-        transform 0.25s ease,
-        border-color 0.25s ease,
         background 0.25s ease,
-        color 0.25s ease,
         box-shadow 0.25s ease;
 }
 
 .stepTab:hover {
-    transform: translateY(-2px);
-    border-color: rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.12),
-        0 10px 22px rgba(0, 56, 51, 0.11);
+    box-shadow: 0 3px 8px rgba(0, 56, 51, 0.2);
 }
 
 .stepTabActive {
-    transform: translateY(-2px);
     background: rgba(var(--green-rgb), 0.2);
 }
 
@@ -131,30 +118,6 @@
 
 .stepMobileTitle {
     display: none;
-}
-
-/* =========================
-   Progress
-========================= */
-
-.progressTrack {
-    width: 100%;
-    height: 5px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 1);
-}
-
-.progressValue {
-    height: 100%;
-    position: absolute;
-    top: 0;
-    right: 0;
-    border-radius: inherit;
-    background: linear-gradient(90deg, var(--primary-dark), var(--primary), #78f2c9);
-    box-shadow: 0 0 16px rgba(var(--green-rgb), 0.35);
-    transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* =========================

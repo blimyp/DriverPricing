@@ -358,56 +358,43 @@ function PricingPage() {
                     onSubmit={handleSubmit}
                     noValidate
                 >
-                    <div className={styles.stepBarDiv}>
-                        <nav
-                            className={styles.stepsBar}
-                            aria-label="שלבי תמחור הנסיעה"
-                        >
-                            {steps.map((step, index) => {
-                                const isActive = activeStep === index
-                                const isCompleted = activeStep > index
+                    <nav
+                        className={styles.stepsBar}
+                        aria-label="שלבי תמחור הנסיעה"
+                    >
+                        {steps.map((step, index) => {
+                            const isActive = activeStep === index
+                            const isCompleted = activeStep > index
 
-                                const stepClassName = [
-                                    styles.stepTab,
-                                    isActive ? styles.stepTabActive : '',
-                                    isCompleted ? styles.stepTabCompleted : '',
-                                ]
-                                    .filter(Boolean)
-                                    .join(' ')
+                            const stepClassName = [
+                                styles.stepTab,
+                                isActive ? styles.stepTabActive : '',
+                                isCompleted ? styles.stepTabCompleted : '',
+                            ]
+                                .filter(Boolean)
+                                .join(' ')
 
-                                return (
-                                    <button
-                                        className={stepClassName}
-                                        type="button"
-                                        key={step.id}
-                                        onClick={() =>
-                                            goToStep(index)
-                                        }
-                                        aria-current={isActive ? 'step' : undefined}
-                                    >
-                                        <span className={styles.stepText}>
-                                            {step.title}
-                                        </span>
+                            return (
+                                <button
+                                    className={stepClassName}
+                                    type="button"
+                                    key={step.id}
+                                    onClick={() =>
+                                        goToStep(index)
+                                    }
+                                    aria-current={isActive ? 'step' : undefined}
+                                >
+                                    <span className={styles.stepText}>
+                                        {step.title}
+                                    </span>
 
-                                        <span className={styles.stepMobileTitle}>
-                                            {step.shortTitle}
-                                        </span>
-                                    </button>
-                                )
-                            })}
-                        </nav>
-
-                        <div className={styles.progressTrack}>
-                            <span className={styles.progressValue}
-                                style={{
-                                    width: `${((activeStep + 1) /
-                                        steps.length) *
-                                        100
-                                        }%`,
-                                }}
-                            />
-                        </div>
-                    </div>
+                                    <span className={styles.stepMobileTitle}>
+                                        {step.shortTitle}
+                                    </span>
+                                </button>
+                            )
+                        })}
+                    </nav>
 
                     {errorMessage && (
                         <div
