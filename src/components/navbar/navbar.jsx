@@ -55,6 +55,15 @@ function Navbar() {
                     </NavLink>
 
                     <NavLink
+                        to="/account"
+                        className={({ isActive }) =>
+                            isActive ? 'navbar-link active' : 'navbar-link'
+                        }
+                    >
+                        הארנק שלי
+                    </NavLink>
+
+                    <NavLink
                         to="/about"
                         className={({ isActive }) =>
                             isActive ? 'navbar-link active' : 'navbar-link'

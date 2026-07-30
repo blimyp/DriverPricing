@@ -1,0 +1,221 @@
+.account-card {
+    max-width: min(calc(100% - 100px), 1200px);
+    margin: 100px auto 0 auto;
+    background: #fff;
+    border-radius: 18px;
+    padding: 28px;
+    box-sizing: border-box;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.account-title {
+    margin-bottom: 24px;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.group-select-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.group-select-label {
+    color: #5f716c;
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.group-select {
+    min-width: 170px;
+    height: 46px;
+    padding: 0 16px;
+    color: #285348;
+    background: #ffffff;
+    border: 1px solid #d8e7e3;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 650;
+    cursor: pointer;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.group-select:hover {
+    border-color: var(--primary, #087461);
+}
+
+.group-select:focus {
+    border-color: var(--primary, #087461);
+    box-shadow: 0 0 0 4px rgba(8, 116, 97, 0.1);
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.account-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.account-table thead {
+    background: #f8fafc;
+    border-bottom: 10px solid white;
+}
+
+.account-table th,
+.account-table td {
+    padding: 10px 18px;
+    text-align: right;
+    border-bottom: 1px solid #eceff3;
+}
+
+.account-table th {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.account-table td {
+    font-size: 15px;
+    color: var(--text-dark);
+}
+
+.account-table tbody tr {
+    transition: background 0.2s;
+}
+
+.account-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.transaction-type {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.transaction-type.income {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+}
+
+.transaction-type.expense {
+    background: rgba(239, 68, 68, 0.12);
+    color: #dc2626;
+}
+
+.amount.income {
+    color: #059669;
+}
+
+.amount.expense {
+    color: #dc2626;
+}
+
+/* פס פתיחת קבוצה */
+
+.group-title-row td {
+    padding: 0;
+    background: #eaf5f1;
+    border-bottom: 1px solid #d9eae5;
+}
+
+.group-title-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 40px;
+    padding: 10px 20px;
+    border-right: 4px solid var(--primary, #087461);
+}
+
+.group-title {
+    color: #205749;
+    font-size: 16px;
+    font-weight: 750;
+}
+
+.group-count {
+    padding: 5px 10px;
+    color: #55736b;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+/* שורת סיכום */
+
+.group-summary-row td {
+    padding: 0;
+    border-bottom: 20px solid #ffffff;
+}
+
+.transaction-group:last-child .group-summary-row td {
+    border-bottom: 0;
+}
+
+.group-summary {
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 10px 20px;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    padding: 0 16px;
+    border-left: 1px solid #dfe8e5;
+}
+
+.summary-item:last-child {
+    border-left: 0;
+}
+
+.summary-label {
+    color: #778681;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.summary-value {
+    direction: ltr;
+    display: inline-block;
+    color: #263a34;
+}
+
+.summary-income {
+    color: #087461;
+}
+
+.summary-expense {
+    color: #b54747;
+}
+
+@media (max-width: 700px) {
+    .account-page {
+        padding: 20px;
+    }
+
+    .account-table th,
+    .account-table td {
+        padding: 12px;
+        font-size: 14px;
+    }
+}

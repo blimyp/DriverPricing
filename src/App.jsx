@@ -10,6 +10,7 @@ import './styles/colors.css'
 import BackgroundLayout from './components/backgroud_layout/background_layout'
 import PricingPage from './pages/pricing/PricingPage'
 import HomePage from './pages/home/HomePage'
+import AccountPage from './pages/account/account'
 
 function App() {
   const { user, loading } = useAuth()
@@ -52,6 +53,15 @@ function App() {
         element={
           user
             ? <TripsPage />
+            : <Navigate to="/login" replace />
+        }
+      />
+
+      <Route
+        path="/account"
+        element={
+          user
+            ? <AccountPage />
             : <Navigate to="/login" replace />
         }
       />
