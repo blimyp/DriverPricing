@@ -1,0 +1,101 @@
+.popupOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(8, 28, 24, 0.55);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    animation: popupOverlayFadeIn 0.2s ease both;
+}
+
+.popupContainer {
+    position: relative;
+    animation: popupContainerEnter 0.25s ease both;
+}
+
+.popupCloseButton {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 30px;
+    height: 30px;
+
+    padding: 0;
+
+    color: var(--primary);
+    background: #eef7f4;
+    border: 1px solid #dcece7;
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.popupCloseButton:hover {
+    color: #075f50;
+    background: #dff2ec;
+    transform: rotate(90deg) scale(1.05);
+}
+
+.popupCloseButton:focus-visible {
+    outline: 3px solid rgba(0, 184, 135, 0.25);
+    outline-offset: 3px;
+}
+
+@keyframes popupOverlayFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes popupContainerEnter {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 600px) {
+    .popupOverlay {
+        padding: 16px;
+    }
+
+    .popupContainer {
+        max-height: calc(100vh - 32px);
+        border-radius: 20px;
+    }
+
+    .popupContent {
+        padding: 64px 20px 24px;
+    }
+
+    .popupCloseButton {
+        top: 14px;
+        left: 14px;
+    }
+}

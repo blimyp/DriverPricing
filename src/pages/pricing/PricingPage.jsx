@@ -1,10 +1,7 @@
 import { useState } from 'react'
 import {
-    Route,
-    CarFront,
     Calculator,
     CircleAlert,
-    BadgeCheck,
     Clock3,
     MapPinned,
     WalletCards,
@@ -14,13 +11,13 @@ import {
 
 import styles from './PricingPage.module.css'
 
-import { saveTrip } from '../../services/tripsService'
-import { useAuth } from '../../contexts/AuthContext'
-
 import BackgroundSection from '../../components/background_section/background_section'
 import DrivingRoute from './components/driving_route/driving_route'
 import DriverPayment from './components/driver_payment/driver_payment'
-import StepPanelHeader from './components/pricing_step_panel_header'
+import StepPanel from './components/pricing_step_panel'
+import DrivingDetails from './components/driving_details/driving_details'
+import PriceResult from './components/price_result/price_result'
+import Popup from '../../components/popup/popup'
 
 const vehiclePrices = {
     regular: {
@@ -71,43 +68,12 @@ const initialForm = {
     driverPercentage: '',
 }
 
-function StepPanel({
-    step,
-    stepIndex,
-    children,
-}) {
-    return (
-        <div
-            className={styles.stepPanel}
-            key={`${step.id}-step`}
-        >
-            <StepPanelHeader
-                icon={step.icon}
-                stepNumber={stepIndex + 1}
-                totalSteps={steps.length}
-                title={step.title}
-                styles={styles}
-            />
-
-            <div className={styles.stepPanelContent}>
-                {children}
-            </div>
-        </div>
-    )
-}
-
 function PricingPage() {
-    const { user } = useAuth()
-
     const [form, setForm] = useState(initialForm)
     const [activeStep, setActiveStep] = useState(0)
-
     const [price, setPrice] = useState(null)
     const [errorMessage, setErrorMessage] = useState('')
-
-    const [saveLoading, setSaveLoading] = useState(false)
-    const [saveMessage, setSaveMessage] = useState('')
-    const [saveError, setSaveError] = useState('')
+    const [showPriceModal, setShowPriceModal] = useState(false);
 
     const isFirstStep = activeStep === 0
     const isLastStep = activeStep === steps.length - 1
@@ -115,8 +81,6 @@ function PricingPage() {
     function clearCalculationState() {
         setErrorMessage('')
         setPrice(null)
-        setSaveMessage('')
-        setSaveError('')
     }
 
     function updateFormField(name, value) {
@@ -130,7 +94,6 @@ function PricingPage() {
 
     function handleChange(event) {
         const { name, value } = event.target
-
         updateFormField(name, value)
     }
 
@@ -312,56 +275,8 @@ function PricingPage() {
         const calculatedPrice = calculatePrice()
 
         setPrice(calculatedPrice)
+        setShowPriceModal(true)
         setErrorMessage('')
-        setSaveMessage('')
-        setSaveError('')
-    }
-
-    async function handleSaveTrip() {
-        if (!user) {
-            setSaveError(
-                'יש להתחבר כדי לשמור את הנסיעה'
-            )
-            return
-        }
-
-        if (price === null) {
-            setSaveError(
-                'יש לחשב את מחיר הנסיעה לפני השמירה'
-            )
-            return
-        }
-
-        try {
-            setSaveLoading(true)
-            setSaveMessage('')
-            setSaveError('')
-
-            await saveTrip({
-                userId: user.id,
-                origin: form.origin,
-                destination: form.destination,
-                stops: form.stops,
-                distance: form.distanceKm,
-                duration: form.duration,
-                calculatedPrice: price,
-                tripType: form.vehicleType,
-                driverPaymentType: form.driverPaymentType,
-                driverHourlyRate: form.driverHourlyRate,
-                driverPercentage: form.driverPercentage,
-            })
-
-            setSaveMessage('הנסיעה נשמרה בהצלחה')
-        } catch (error) {
-            console.error('Save trip error:', error)
-
-            setSaveError(
-                error?.message ||
-                'אירעה שגיאה בשמירת הנסיעה'
-            )
-        } finally {
-            setSaveLoading(false)
-        }
     }
 
     function renderRouteStep() {
@@ -370,16 +285,16 @@ function PricingPage() {
         return (
             <StepPanel
                 step={step}
-                stepIndex={0}
+                styles={styles}
+                stepNumber={1}
+                totalSteps={steps.length}
             >
                 <DrivingRoute
                     origin={form.origin}
                     destination={form.destination}
                     stops={form.stops}
                     onOriginChange={updateOrigin}
-                    onDestinationChange={
-                        updateDestination
-                    }
+                    onDestinationChange={updateDestination}
                     onStopsChange={updateStops}
                 />
             </StepPanel>
@@ -392,119 +307,11 @@ function PricingPage() {
         return (
             <StepPanel
                 step={step}
-                stepIndex={1}
+                styles={styles}
+                stepNumber={2}
+                totalSteps={steps.length}
             >
-                <div className={styles.formCardFields}>
-                    <div className={styles.formField}>
-                        <label
-                            className={styles.formLabel}
-                            htmlFor="distanceKm"
-                        >
-                            מרחק בקילומטרים
-                        </label>
-
-                        <div
-                            className={styles.inputWrapper}
-                        >
-                            <Route
-                                className={styles.inputIcon}
-                                strokeWidth={1.9}
-                                aria-hidden="true"
-                            />
-
-                            <input
-                                className={styles.formControl}
-                                id="distanceKm"
-                                name="distanceKm"
-                                type="number"
-                                min="0.1"
-                                step="0.1"
-                                inputMode="decimal"
-                                placeholder="לדוגמה: 45"
-                                value={form.distanceKm}
-                                onChange={handleChange}
-                            />
-
-                            <span className={styles.inputSuffix}  >
-                                ק״מ
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className={styles.formField}>
-                        <label
-                            className={styles.formLabel}
-                            htmlFor="duration"
-                        >
-                            משך זמן הנסיעה
-                        </label>
-
-                        <div
-                            className={styles.inputWrapper}
-                        >
-                            <Clock3
-                                className={styles.inputIcon}
-                                strokeWidth={1.9}
-                                aria-hidden="true"
-                            />
-
-                            <input
-                                className={styles.formControl}
-                                id="duration"
-                                name="duration"
-                                type="number"
-                                min="0.1"
-                                step="0.1"
-                                inputMode="decimal"
-                                placeholder="לדוגמה: 5"
-                                value={form.duration}
-                                onChange={handleChange}
-                            />
-
-                            <span className={styles.inputSuffix}>
-                                שעות
-                            </span>
-                        </div>
-
-                        <div className={styles.formField}>
-                            <label
-                                className={styles.formLabel}
-                                htmlFor="vehicleType"
-                            >
-                                סוג רכב
-                            </label>
-
-                            <div className={styles.inputWrapper}  >
-                                <CarFront
-                                    className={
-                                        styles.inputIcon
-                                    }
-                                    strokeWidth={1.9}
-                                    aria-hidden="true"
-                                />
-
-                                <select
-                                    className={`
-                                    ${styles.formControl}
-                                    ${styles.formSelect}
-                                `}
-                                    id="vehicleType"
-                                    name="vehicleType"
-                                    value={form.vehicleType}
-                                    onChange={handleChange}
-                                >
-                                    <option value="regular">
-                                        רכב רגיל
-                                    </option>
-
-                                    <option value="large">
-                                        רכב גדול
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <DrivingDetails styles={styles} form={form} handleChange={handleChange} />
             </StepPanel>
         )
     }
@@ -515,12 +322,11 @@ function PricingPage() {
         return (
             <StepPanel
                 step={step}
-                stepIndex={2}
+                styles={styles}
+                stepNumber={3}
+                totalSteps={steps.length}
             >
-                <DriverPayment
-                    form={form}
-                    onChange={handleChange}
-                />
+                <DriverPayment form={form} onChange={handleChange} />
             </StepPanel>
         )
     }
@@ -571,33 +377,19 @@ function PricingPage() {
 
                                 return (
                                     <button
-                                        className={
-                                            stepClassName
-                                        }
+                                        className={stepClassName}
                                         type="button"
                                         key={step.id}
                                         onClick={() =>
                                             goToStep(index)
                                         }
-                                        aria-current={
-                                            isActive
-                                                ? 'step'
-                                                : undefined
-                                        }
+                                        aria-current={isActive ? 'step' : undefined}
                                     >
-                                        <span
-                                            className={
-                                                styles.stepText
-                                            }
-                                        >
+                                        <span className={styles.stepText}>
                                             {step.title}
                                         </span>
 
-                                        <span
-                                            className={
-                                                styles.stepMobileTitle
-                                            }
-                                        >
+                                        <span className={styles.stepMobileTitle}>
                                             {step.shortTitle}
                                         </span>
                                     </button>
@@ -605,15 +397,8 @@ function PricingPage() {
                             })}
                         </nav>
 
-                        <div
-                            className={
-                                styles.progressTrack
-                            }
-                        >
-                            <span
-                                className={
-                                    styles.progressValue
-                                }
+                        <div className={styles.progressTrack}>
+                            <span className={styles.progressValue}
                                 style={{
                                     width: `${((activeStep + 1) /
                                         steps.length) *
@@ -641,19 +426,13 @@ function PricingPage() {
                         </div>
                     )}
 
-                    <BackgroundSection
-                        className={styles.stepContent}
-                    >
+                    <BackgroundSection className={styles.stepContent}>
                         {renderStepContent()}
                     </BackgroundSection>
 
-                    <div
-                        className={styles.stepActions}
-                    >
+                    <div className={styles.stepActions}>
                         <button
-                            className={
-                                styles.previousButton
-                            }
+                            className={styles.previousButton}
                             type="button"
                             onClick={goToPreviousStep}
                             disabled={isFirstStep}
@@ -666,9 +445,7 @@ function PricingPage() {
                             <span>הקודם</span>
                         </button>
 
-                        <span
-                            className={styles.stepCounter}
-                        >
+                        <span className={styles.stepCounter}>
                             שלב {activeStep + 1} מתוך{' '}
                             {steps.length}
                         </span>
@@ -700,120 +477,15 @@ function PricingPage() {
                     </div>
                 </form>
 
-                {price !== null && (
-                    <section
-                        className={styles.priceResult}
-                    >
-                        <div
-                            className={
-                                styles.resultDecoration
-                            }
-                        >
-                            <span
-                                className={`
-                                    ${styles.resultRing}
-                                    ${styles.resultRingOne}
-                                `}
-                            />
+                <Popup
+                    isOpen={showPriceModal}
+                    onClose={() => setShowPriceModal(false)}
+                >
+                    {price !== null && (
+                        <PriceResult styles={styles} price={price} form={form} />
+                    )}
+                </Popup>
 
-                            <span
-                                className={`
-                                    ${styles.resultRing}
-                                    ${styles.resultRingTwo}
-                                `}
-                            />
-                        </div>
-
-                        <div
-                            className={
-                                styles.resultIconWrapper
-                            }
-                        >
-                            <BadgeCheck
-                                className={
-                                    styles.resultIcon
-                                }
-                                strokeWidth={1.8}
-                                aria-hidden="true"
-                            />
-                        </div>
-
-                        <div
-                            className={
-                                styles.resultContent
-                            }
-                        >
-                            <span
-                                className={
-                                    styles.resultLabel
-                                }
-                            >
-                                המחיר המחושב
-                            </span>
-
-                            <h2
-                                className={
-                                    styles.resultTitle
-                                }
-                            >
-                                מחיר הנסיעה
-                            </h2>
-
-                            <strong
-                                className={
-                                    styles.resultPrice
-                                }
-                            >
-                                ₪{price.toFixed(2)}
-                            </strong>
-
-                            <p
-                                className={
-                                    styles.resultDescription
-                                }
-                            >
-                                המחיר חושב לפי המרחק
-                                וסוג הרכב שבחרת.
-                            </p>
-                        </div>
-                    </section>
-                )}
-
-                {price !== null && (
-                    <div
-                        className={styles.saveTripArea}
-                    >
-                        <button
-                            type="button"
-                            onClick={handleSaveTrip}
-                            disabled={saveLoading}
-                        >
-                            {saveLoading
-                                ? 'שומר נסיעה...'
-                                : 'שמירת נסיעה'}
-                        </button>
-
-                        {saveMessage && (
-                            <p
-                                className={
-                                    styles.saveSuccess
-                                }
-                            >
-                                {saveMessage}
-                            </p>
-                        )}
-
-                        {saveError && (
-                            <p
-                                className={
-                                    styles.saveError
-                                }
-                            >
-                                {saveError}
-                            </p>
-                        )}
-                    </div>
-                )}
             </div>
         </main>
     )
