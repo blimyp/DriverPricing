@@ -182,7 +182,7 @@ function AccountPage() {
 
                     <div className="group-select-wrapper">
                         <label htmlFor="groupBy" className="group-select-label">
-                            חלוקת הטבלה
+                            מיון לפי:
                         </label>
 
                         <select
@@ -191,9 +191,9 @@ function AccountPage() {
                             value={groupBy}
                             onChange={(event) => setGroupBy(event.target.value)}
                         >
-                            <option value="day">לפי יום</option>
-                            <option value="month">לפי חודש</option>
-                            <option value="year">לפי שנה</option>
+                            <option value="day">יום</option>
+                            <option value="month">חודש</option>
+                            <option value="year">שנה</option>
                         </select>
                     </div>
                 </div>
@@ -217,14 +217,53 @@ function AccountPage() {
                                 <tr className="group-title-row">
                                     <td colSpan="4">
                                         <div className="group-title-content">
-                                            <span className="group-title">
-                                                {group.title}
-                                            </span>
+                                            <div className="group-summary">
+                                                <span className="group-title">
+                                                    {group.title}
+                                                </span>
 
-                                            <span className="group-count">
-                                                {group.transactions.length}{" "}
-                                                פעולות
-                                            </span>
+                                                <span className="group-count">
+                                                    {group.transactions.length}{" "}
+                                                    פעולות
+                                                </span>
+                                            </div>
+
+                                            <div className="group-summary">
+                                                <div className="summary-item">
+                                                    <span className="summary-label">
+                                                        סך הכנסות
+                                                    </span>
+
+                                                    <strong className="summary-value summary-income">
+                                                        {formatMoney(group.income)}
+                                                    </strong>
+                                                </div>
+
+                                                <div className="summary-item">
+                                                    <span className="summary-label">
+                                                        סך הוצאות
+                                                    </span>
+
+                                                    <strong className="summary-value summary-expense">
+                                                        {formatMoney(group.expense)}
+                                                    </strong>
+                                                </div>
+
+                                                <div className="summary-item">
+                                                    <span className="summary-label">
+                                                        סה״כ רווח
+                                                    </span>
+
+                                                    <strong
+                                                        className={`summary-value ${group.profit >= 0
+                                                            ? "summary-income"
+                                                            : "summary-expense"
+                                                            }`}
+                                                    >
+                                                        {formatMoney(group.profit)}
+                                                    </strong>
+                                                </div>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
@@ -261,47 +300,6 @@ function AccountPage() {
                                         </td>
                                     </tr>
                                 ))}
-
-                                <tr className="group-summary-row">
-                                    <td colSpan="4">
-                                        <div className="group-summary">
-                                            <div className="summary-item">
-                                                <span className="summary-label">
-                                                    סך הכנסות
-                                                </span>
-
-                                                <strong className="summary-value summary-income">
-                                                    {formatMoney(group.income)}
-                                                </strong>
-                                            </div>
-
-                                            <div className="summary-item">
-                                                <span className="summary-label">
-                                                    סך הוצאות
-                                                </span>
-
-                                                <strong className="summary-value summary-expense">
-                                                    {formatMoney(group.expense)}
-                                                </strong>
-                                            </div>
-
-                                            <div className="summary-item">
-                                                <span className="summary-label">
-                                                    סה״כ רווח
-                                                </span>
-
-                                                <strong
-                                                    className={`summary-value ${group.profit >= 0
-                                                        ? "summary-income"
-                                                        : "summary-expense"
-                                                        }`}
-                                                >
-                                                    {formatMoney(group.profit)}
-                                                </strong>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
                             </tbody>
                         ))}
                     </table>

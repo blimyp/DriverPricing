@@ -3,14 +3,14 @@ import { useAuth } from './contexts/AuthContext'
 import LoginPage from './pages/LoginPage'
 import Navbar from './components/navbar/navbar'
 
-import './app.css'
+import './App.css'
 import TripsPage from './pages/TripsPages'
 import AboutPage from './pages/AboutPage'
 import './styles/colors.css'
 import BackgroundLayout from './components/backgroud_layout/background_layout'
 import PricingPage from './pages/pricing/PricingPage'
 import HomePage from './pages/home/HomePage'
-import AccountPage from './pages/account/account'
+import AccountPage from './pages/account/Account'
 
 function App() {
   const { user, loading } = useAuth()
