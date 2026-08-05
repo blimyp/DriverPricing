@@ -45,48 +45,24 @@
     line-height: 1.8;
 }
 
-.smart-steps-track {
-    position: relative;
-}
-
 .smart-wave {
-    position: absolute;
-    top: 46px;
-    right: 4%;
     z-index: 1;
-    width: 92%;
-    height: 190px;
+    width: 100%;
     overflow: visible;
     pointer-events: none;
 }
 
 .smart-wave-base {
     fill: none;
-    stroke: rgba(7, 93, 86, 0.12);
+    stroke: url("#waveGradient");
+    filter: url("#waveGlow");
+
     stroke-width: 3;
 }
 
-.smart-wave-active {
-    fill: none;
-    stroke: url("#waveGradient");
-    stroke-width: 5;
-    stroke-linecap: round;
-    filter: url("#waveGlow");
-    stroke-dasharray: 90 930;
-    stroke-dashoffset: -1020;
-
-    /* היה 18s */
-    animation: smart-wave-flow 9s linear infinite;
-}
-
-@keyframes smart-wave-flow {
-    from {
-        stroke-dashoffset: -1020;
-    }
-
-    to {
-        stroke-dashoffset: 1020;
-    }
+.smart-bus {
+    filter: url("#busShadow");
+    pointer-events: none;
 }
 
 .smart-steps-grid {
@@ -225,7 +201,7 @@
 
     0%,
     28% {
-        transform: scale(1.07);
+        transform: scale(1.2);
 
         box-shadow:
             inset 0 2px 5px rgba(255, 255, 255, 0.36),

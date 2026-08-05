@@ -50,45 +50,48 @@ function SmartSteps() {
             <div className="smart-steps-track">
                 <svg
                     className="smart-wave"
-                    viewBox="0 0 1000 180"
+                    viewBox="0 0 1000 100"
                     preserveAspectRatio="none"
                     aria-hidden="true"
                 >
-                    <defs>
-                        <linearGradient
-                            id="waveGradient"
-                            x1="0"
-                            x2="1"
-                            y1="0"
-                            y2="0"
-                        >
-                            <stop offset="0%" stopColor="#10b981" />
-                            <stop offset="50%" stopColor="#f59e0b" />
-                            <stop offset="100%" stopColor="#ef4444" />
-                        </linearGradient>
+                    <linearGradient id="waveGradient" x1="0" x2="1" y1="0" y2="0">
+                        <stop offset="0%" stopColor="#10b981" />
+                        <stop offset="50%" stopColor="#f59e0b" />
+                        <stop offset="100%" stopColor="#ef4444" />
+                    </linearGradient>
 
-                        <filter id="waveGlow">
-                            <feGaussianBlur
-                                stdDeviation="7"
-                                result="blur"
-                            />
+                    <filter id="waveGlow">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
 
-                            <feMerge>
-                                <feMergeNode in="blur" />
-                                <feMergeNode in="SourceGraphic" />
-                            </feMerge>
-                        </filter>
-                    </defs>
+                        <feMerge>
+                            <feMergeNode in="blur" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
 
                     <path
                         className="smart-wave-base"
-                        d="M40 92 C190 10 315 170 500 92 C680 15 805 170 960 92"
+                        d="M40 42 C190 -40 315 120 500 42 C680 -35 805 120 960 42"
                     />
 
-                    <path
-                        className="smart-wave-active"
-                        d="M40 92 C190 10 315 170 500 92 C680 15 805 170 960 92"
-                    />
+                    <g className="smart-bus">
+                        <image
+                            href="/bus.png"
+                            width="80"
+                            height="48"
+                            x="-40"
+                            y="-39"
+                            preserveAspectRatio="xMidYMid meet"
+                        />
+
+                        <animateMotion
+                            dur="4.5s"
+                            repeatCount="indefinite"
+                            rotate="auto-reverse"
+                            calcMode="linear"
+                            path="M925 58 C790 112 670 -28 500 42 C315 120 190 -40 40 42"
+                        />
+                    </g>
                 </svg>
 
                 <div className="smart-steps-grid">
