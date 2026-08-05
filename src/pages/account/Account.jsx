@@ -1,65 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { supabase } from "../../lib/supabaseClient";
 import "./Account.css";
-
-const transactions = [
-    {
-        id: 1,
-        date: "2026-07-30",
-        type: "income",
-        action: "תשלום עבור נסיעה",
-        amount: 185,
-    },
-    {
-        id: 2,
-        date: "2026-07-30",
-        type: "expense",
-        action: "עמלת מערכת",
-        amount: 25,
-    },
-    {
-        id: 3,
-        date: "2026-07-29",
-        type: "income",
-        action: "תשלום עבור נסיעה",
-        amount: 320,
-    },
-    {
-        id: 4,
-        date: "2026-07-15",
-        type: "expense",
-        action: "הוצאות רכב",
-        amount: 80,
-    },
-    {
-        id: 5,
-        date: "2026-06-20",
-        type: "income",
-        action: "תשלום עבור נסיעה",
-        amount: 450,
-    },
-    {
-        id: 6,
-        date: "2025-12-10",
-        type: "income",
-        action: "תשלום עבור נסיעה",
-        amount: 280,
-    },
-];
-
-const groupOptions = [
-    {
-        value: "day",
-        label: "לפי יום",
-    },
-    {
-        value: "month",
-        label: "לפי חודש",
-    },
-    {
-        value: "year",
-        label: "לפי שנה",
-    },
-];
+import AccountActions from "./components/account_actions";
 
 function getDateParts(dateString) {
     const [year, month, day] = dateString.split("-").map(Number);
@@ -119,12 +62,102 @@ function formatMoney(amount) {
     return new Intl.NumberFormat("he-IL", {
         style: "currency",
         currency: "ILS",
-        maximumFractionDigits: 2,
+        maximumFractionDigits: 1,
     }).format(amount);
 }
 
 function AccountPage() {
+    const { user } = useAuth();
+
+    const [transactions, setTransactions] = useState([]);
     const [groupBy, setGroupBy] = useState("day");
+
+    async function handleAddTransaction(transaction) {
+        const { error } = await supabase
+            .from("transactions")
+            .insert({
+                user_id: user.id,
+                trip_id: null,
+                type: transaction.type,
+                source_type: "manual",
+                action: transaction.action,
+                amount: transaction.amount,
+                transaction_date: transaction.date,
+            });
+
+        if (error) {
+            throw error;
+        }
+
+        await loadAccountData();
+    }
+
+    async function loadAccountData() {
+        try {
+            const [
+                transactionsResult,
+                tripsResult,
+            ] = await Promise.all([
+                supabase
+                    .from("transactions")
+                    .select(`
+                        id,
+                        user_id,
+                        trip_id,
+                        type,
+                        source_type,
+                        action,
+                        amount,
+                        transaction_date
+                    `)
+                    .eq("user_id", user.id),
+
+                supabase
+                    .from("trips")
+                    .select("*")
+                    .eq("user_id", user.id),
+            ]);
+
+            if (transactionsResult.error) {
+                throw transactionsResult.error;
+            }
+
+            if (tripsResult.error) {
+                throw tripsResult.error;
+            }
+
+            const manualTransactions =
+                (transactionsResult.data ?? []).map((transaction) => ({
+                    id: `transaction-${transaction.id}`,
+                    originalId: transaction.id,
+                    date: transaction.transaction_date,
+                    type: transaction.type,
+                    sourceType: transaction.source_type,
+                    action: transaction.action,
+                    amount: Number(transaction.amount),
+                    tripId: transaction.trip_id,
+                }));
+
+            const tripTransactions =
+                (tripsResult.data ?? []).map((trip) => ({
+                    id: `trip-${trip.id}`,
+                    originalId: trip.id,
+                    date: trip.created_at?.split("T")[0],
+                    type: "income",
+                    sourceType: "trip",
+                    action: `נסיעה מ-${trip.origin} ל-${trip.destination}`,
+                    amount: Number(trip.calculated_price ?? 0),
+                    tripId: trip.id,
+                }));
+
+            setTransactions([
+                ...manualTransactions,
+                ...tripTransactions,
+            ]);
+        } catch (loadError) {
+            console.error("Failed to load account data:", loadError);
+        }
+    }
 
     const groupedTransactions = useMemo(() => {
         const sortedTransactions = [...transactions].sort(
@@ -172,14 +205,27 @@ function AccountPage() {
                 profit: totals.income - totals.expense,
             };
         });
-    }, [groupBy]);
+    }, [groupBy, transactions]);
+
+    useEffect(() => {
+        if (!user?.id) {
+            setTransactions([]);
+            return;
+        }
+
+        loadAccountData();
+    }, [user?.id]);
 
     return (
         <main className="account-page" dir="rtl">
             <section className="account-card">
                 <div className="account-header">
-                    <h1 className="account-title">פירוט תנועות</h1>
-
+                    <div className="account-header-top">
+                        <h1 className="account-title">פירוט תנועות</h1>
+                        <AccountActions
+                            onSubmit={handleAddTransaction}
+                        />
+                    </div>
                     <div className="group-select-wrapper">
                         <label htmlFor="groupBy" className="group-select-label">
                             מיון לפי:
@@ -290,12 +336,8 @@ function AccountPage() {
                                         <td>{transaction.action}</td>
 
                                         <td>
-                                            <span
-                                                className={`amount ${transaction.type}`}
-                                            >
-                                                {formatMoney(
-                                                    transaction.amount
-                                                )}
+                                            <span className={`amount ${transaction.type}`}>
+                                                {formatMoney(transaction.amount)}
                                             </span>
                                         </td>
                                     </tr>

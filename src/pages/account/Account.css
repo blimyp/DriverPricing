@@ -11,6 +11,12 @@
     gap: 20px;
 }
 
+.account-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .account-title {
     margin-bottom: 24px;
     font-size: 28px;
@@ -112,11 +118,13 @@
     color: #dc2626;
 }
 
-.amount.income {
+.amount.income,
+.summary-income {
     color: #059669;
 }
 
-.amount.expense {
+.amount.expense,
+.summary-expense {
     color: #dc2626;
 }
 
@@ -176,21 +184,12 @@
 .summary-label {
     color: #778681;
     font-size: 12px;
-    font-weight: 600;
 }
 
 .summary-value {
     direction: ltr;
     display: inline-block;
-    color: #263a34;
-}
-
-.summary-income {
-    color: #087461;
-}
-
-.summary-expense {
-    color: #b54747;
+    font-weight: normal;
 }
 
 @media (max-width: 700px) {
