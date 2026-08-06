@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { supabase } from "../../lib/supabaseClient";
 import "./Account.css";
@@ -68,9 +69,18 @@ function formatMoney(amount) {
 
 function AccountPage() {
     const { user } = useAuth();
+    const navigate = useNavigate();
 
     const [transactions, setTransactions] = useState([]);
     const [groupBy, setGroupBy] = useState("day");
+
+    function openTrip(transaction) {
+        if (transaction.sourceType !== "trip" || !transaction.tripId) {
+            return;
+        }
+
+        navigate(`/trips?tripId=${transaction.tripId}`);
+    }
 
     async function handleAddTransaction(transaction) {
         const { error } = await supabase
@@ -314,34 +324,71 @@ function AccountPage() {
                                     </td>
                                 </tr>
 
-                                {group.transactions.map((transaction) => (
-                                    <tr
-                                        className="transaction-row"
-                                        key={transaction.id}
-                                    >
-                                        <td>
-                                            {formatDate(transaction.date)}
-                                        </td>
+                                {group.transactions.map((transaction) => {
+                                    const isTrip = transaction.sourceType === "trip" && transaction.tripId;
 
-                                        <td>
-                                            <span
-                                                className={`transaction-type ${transaction.type}`}
-                                            >
-                                                {transaction.type === "income"
-                                                    ? "הכנסה"
-                                                    : "הוצאה"}
-                                            </span>
-                                        </td>
+                                    return (
+                                        <tr
+                                            className={`transaction-row ${isTrip ? "transaction-row-clickable" : ""
+                                                }`}
+                                            key={transaction.id}
+                                            onClick={() => {
+                                                if (isTrip) {
+                                                    openTrip(transaction);
+                                                }
+                                            }}
+                                            onKeyDown={(event) => {
+                                                if (
+                                                    isTrip &&
+                                                    (event.key === "Enter" || event.key === " ")
+                                                ) {
+                                                    event.preventDefault();
+                                                    openTrip(transaction);
+                                                }
+                                            }}
+                                            tabIndex={isTrip ? 0 : undefined}
+                                            role={isTrip ? "link" : undefined}
+                                        >
+                                            <td>{formatDate(transaction.date)}</td>
 
-                                        <td>{transaction.action}</td>
+                                            <td>
+                                                <span
+                                                    className={`transaction-type ${transaction.type}`}
+                                                >
+                                                    {transaction.type === "income"
+                                                        ? "הכנסה"
+                                                        : "הוצאה"}
+                                                </span>
+                                            </td>
 
-                                        <td>
-                                            <span className={`amount ${transaction.type}`}>
-                                                {formatMoney(transaction.amount)}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
+                                            <td>
+                                                <div className="transaction-action-content">
+                                                    <span>{transaction.action}</span>
+
+                                                    {isTrip && (
+                                                        <button
+                                                            type="button"
+                                                            className="trip-navigation-button"
+                                                            aria-label="מעבר לנסיעה"
+                                                            onClick={(event) => {
+                                                                event.stopPropagation();
+                                                                openTrip(transaction);
+                                                            }}
+                                                        >
+                                                            🡔
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <span className={`amount ${transaction.type}`}>
+                                                    {formatMoney(transaction.amount)}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         ))}
                     </table>

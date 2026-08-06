@@ -4,13 +4,13 @@ import LoginPage from './pages/LoginPage'
 import Navbar from './components/navbar/navbar'
 
 import './App.css'
-import TripsPage from './pages/TripsPages'
 import AboutPage from './pages/AboutPage'
 import './styles/colors.css'
 import BackgroundLayout from './components/backgroud_layout/background_layout'
 import PricingPage from './pages/pricing/PricingPage'
 import HomePage from './pages/home/HomePage'
 import AccountPage from './pages/account/Account'
+import TripsPage from './pages/trips/TripsPages'
 
 function App() {
   const { user, loading } = useAuth()

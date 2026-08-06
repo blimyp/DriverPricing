@@ -85,7 +85,7 @@
 }
 
 .stepTabCompleted {
-    border-color: var(--secondery);
+    border-color: var(--secondary);
     background: rgba(var(--green-rgb), 0.2);
 }
 
