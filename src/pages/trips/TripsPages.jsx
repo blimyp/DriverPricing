@@ -43,6 +43,7 @@ function TripsPage() {
                         user_id,
                         origin,
                         destination,
+                        stops,
                         distance,
                         duration,
                         calculated_price,

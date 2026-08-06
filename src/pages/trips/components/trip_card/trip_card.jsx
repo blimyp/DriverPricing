@@ -98,20 +98,32 @@ function TripCard({ trip, index }) {
 
                         <div>
                             <span>מוצא</span>
+                            <strong>{trip.origin || 'לא צוין'}</strong>
+                        </div>
+                    </div>
 
-                            <strong>
-                                {trip.origin || 'לא צוין'}
-                            </strong>
+
+                    <div className='trip-card--stops'>
+                        <div className="trip-card--stop first-stop">
+                            <div className="trip-card__route-dot" />
+                        </div>
+
+                        {(trip.stops ?? []).map((stop, index) => (
+                            <div key={index} className="trip-card--stop">
+                                <div className="trip-card__route-dot" />
+                                <strong>{stop}</strong>
+                            </div>
+                        ))}
+
+                        <div className="trip-card--stop last-stop">
+                            <div className="trip-card__route-dot" />
                         </div>
                     </div>
 
                     <div className="trip-card__route-point">
                         <div className='trip-card__route-point-last'>
                             <span>יעד</span>
-
-                            <strong>
-                                {trip.destination || 'לא צוין'}
-                            </strong>
+                            <strong>{trip.destination || 'לא צוין'}</strong>
                         </div>
 
                         <div className="trip-card__route-icon">

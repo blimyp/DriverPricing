@@ -72,7 +72,7 @@
     position: relative;
     z-index: 2;
     display: flex;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: space-between;
     gap: 20px;
     padding-bottom: 24px;
@@ -130,32 +130,51 @@
     white-space: nowrap;
 }
 
-.trip-card__route-line {
+.trip-card--stops {
+    flex: 1;
     display: flex;
-    flex-shrink: 0;
-    align-items: center;
-    gap: 5px;
-    color: var(--trips-green);
+    align-items: flex-start;
+    justify-content: center;
 }
 
-.trip-card__route-line span {
-    width: 10px;
-    height: 1px;
-    background: rgba(var(--trips-green-rgb), 0.35);
-}
-
-.trip-card__route-line svg {
-    width: 16px;
-    height: 16px;
-}
-
-.trip-card__details {
+.trip-card--stop {
     position: relative;
-    z-index: 2;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-    padding: 24px 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.first-stop {
+    flex: 0.5;
+    align-items: flex-start;
+}
+
+.last-stop {
+    flex: 0.5;
+    align-items: flex-end;
+}
+
+.trip-card--stop::before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    width: 100%;
+    height: 1px;
+    border-top: 2px dashed rgba(255, 255, 255, 0.35);
+}
+
+.trip-card__route-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow:
+        0 0 0 4px rgba(255, 255, 255, 0.25),
+        0 0 14px rgba(255, 255, 255, 0.45);
 }
 
 .trip-details {
@@ -283,10 +302,6 @@
         align-items: flex-start;
     }
 
-    .trip-card__details {
-        grid-template-columns: 1fr;
-    }
-
     .trip-card__footer {
         align-items: flex-start;
         flex-wrap: wrap;
@@ -302,11 +317,6 @@
     .trip-card__route {
         align-items: flex-start;
         flex-direction: column;
-    }
-
-    .trip-card__route-line {
-        margin-right: 11px;
-        transform: rotate(90deg);
     }
 }
 
