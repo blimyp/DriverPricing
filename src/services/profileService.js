@@ -3,6 +3,20 @@ import { supabase } from '../lib/supabaseClient'
 export async function saveUserProfile(user) {
     if (!user) return
 
+    // בדיקה האם המשתמש כבר קיים
+    const { data: existingProfile, error: fetchError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle()
+
+    if (fetchError) {
+        throw fetchError
+    }
+
+    const isNewUser = !existingProfile
+
+    // שמירת / עדכון הפרופיל
     const { error } = await supabase
         .from('profiles')
         .upsert(
@@ -26,5 +40,25 @@ export async function saveUserProfile(user) {
 
     if (error) {
         throw error
+    }
+
+    // אם זה משתמש חדש - שליחת מייל ברוכים הבאים
+    if (isNewUser) {
+        const { error: emailError } = await supabase.functions.invoke(
+            'welcome-email',
+            {
+                body: {
+                    email: user.email,
+                    name:
+                        user.user_metadata?.full_name ||
+                        user.user_metadata?.name ||
+                        '',
+                },
+            }
+        )
+
+        if (emailError) {
+            console.error('Welcome email error:', emailError)
+        }
     }
 }

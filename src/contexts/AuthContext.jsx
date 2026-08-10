@@ -19,12 +19,7 @@ export function AuthProvider({ children }) {
         async function loadSession() {
             try {
                 const currentSession = await getCurrentSession()
-
                 setSession(currentSession)
-
-                if (currentSession?.user) {
-                    await saveUserProfile(currentSession.user)
-                }
             } catch (error) {
                 console.error(error)
                 setErrorMessage(error.message)
@@ -38,11 +33,14 @@ export function AuthProvider({ children }) {
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange(
-            async (_event, newSession) => {
+            async (event, newSession) => {
                 setSession(newSession)
                 setLoading(false)
 
-                if (newSession?.user) {
+                if (
+                    event === 'SIGNED_IN' &&
+                    newSession?.user
+                ) {
                     try {
                         await saveUserProfile(newSession.user)
                     } catch (error) {
