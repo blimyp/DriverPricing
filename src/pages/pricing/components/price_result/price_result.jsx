@@ -2,9 +2,25 @@ import { useState } from "react"
 import { useAuth } from "../../../../contexts/AuthContext"
 import { saveTrip } from "../../../../services/tripsService"
 
+const vehiclePrices = {
+    van: {
+        basePrice: 20,
+        kmCntInLiter: 8.5,
+    },
+    minibus: {
+        basePrice: 30,
+        kmCntInLiter: 6.0,
+    },
+    bus: {
+        basePrice: 40,
+        kmCntInLiter: 6.0,
+    }
+}
+
+const literPrice = 7.5;
+
 function PriceResult({
     styles,
-    price,
     form
 }) {
     const { user } = useAuth()
@@ -13,13 +29,27 @@ function PriceResult({
     const [saveMessage, setSaveMessage] = useState('')
     const [saveError, setSaveError] = useState('')
 
+    const distance = Number(form.distanceKm)
+    const selectedVehicle = vehiclePrices[form.vehicleType]
+    const fuelPrice = distance / selectedVehicle.kmCntInLiter * literPrice;
+    let driverPrice = 0;
+    let totalPrice = 0;
+
+    if (form.driverPaymentType == 'hourly') {
+        driverPrice = form.duration * form.driverHourlyRate;
+        totalPrice = driverPrice + fuelPrice;
+    } else {
+        totalPrice = fuelPrice / 0.7;
+        driverPrice = totalPrice * 0.3;
+    }
+
     async function handleSaveTrip() {
         if (!user) {
             setSaveError('יש להתחבר כדי לשמור את הנסיעה')
             return
         }
 
-        if (price === null) {
+        if (fuelPrice === null) {
             setSaveError('יש לחשב את מחיר הנסיעה לפני השמירה')
             return
         }
@@ -36,7 +66,7 @@ function PriceResult({
                 stops: form.stops,
                 distance: form.distanceKm,
                 duration: form.duration,
-                calculatedPrice: price,
+                calculatedPrice: fuelPrice,
                 tripType: form.vehicleType,
                 driverPaymentType: form.driverPaymentType,
                 driverHourlyRate: form.driverHourlyRate,
@@ -75,22 +105,17 @@ function PriceResult({
             </div>
 
             <div className={styles.resultContent}>
-                <span className={styles.resultLabel}>
-                    המחיר המחושב
-                </span>
+                <p className={styles.resultTitle}>
+                    מחיר דלק לנסיעה זו: {fuelPrice.toFixed(2)}
+                </p>
 
-                <h2 className={styles.resultTitle}>
-                    מחיר הנסיעה
-                </h2>
+                <p className={styles.resultTitle}>
+                    מחיר נהג לנסיעה זו: {driverPrice.toFixed(2)}
+                </p>
 
                 <strong className={styles.resultPrice}>
-                    ₪{price.toFixed(2)}
+                    ₪{(fuelPrice + driverPrice).toFixed(2)}
                 </strong>
-
-                <p className={styles.resultDescription}>
-                    המחיר חושב לפי המרחק
-                    וסוג הרכב שבחרת.
-                </p>
             </div>
 
             <div className={styles.saveTripArea}>
@@ -120,4 +145,4 @@ function PriceResult({
     )
 }
 
-export default PriceResult
+export default PriceResult;

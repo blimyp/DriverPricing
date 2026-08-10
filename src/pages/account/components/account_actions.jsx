@@ -202,10 +202,7 @@ function AccountActions({
                             onClick={handleAddTrip}
                         >
                             <span className="accountActionsMenuIcon">
-                                <BusFront
-                                    size={21}
-                                    strokeWidth={2}
-                                />
+                                <BusFront size={21} strokeWidth={2} />
                             </span>
 
                             <span className="accountActionsMenuText">
@@ -220,16 +217,11 @@ function AccountActions({
                             type="button"
                             role="menuitem"
                             onClick={() =>
-                                openTransactionPopup(
-                                    'income'
-                                )
+                                openTransactionPopup('income')
                             }
                         >
                             <span className="accountActionsMenuIcon">
-                                <CirclePlus
-                                    size={21}
-                                    strokeWidth={2}
-                                />
+                                <CirclePlus size={21} strokeWidth={2} />
                             </span>
 
                             <span className="accountActionsMenuText">
@@ -244,16 +236,11 @@ function AccountActions({
                             type="button"
                             role="menuitem"
                             onClick={() =>
-                                openTransactionPopup(
-                                    'expense'
-                                )
+                                openTransactionPopup('expense')
                             }
                         >
                             <span className="accountActionsMenuIcon">
-                                <CircleMinus
-                                    size={21}
-                                    strokeWidth={2}
-                                />
+                                <CircleMinus size={21} strokeWidth={2} />
                             </span>
 
                             <span className="accountActionsMenuText">
@@ -285,14 +272,11 @@ function AccountActions({
                     <div className="transactionPopupHeader">
                         <div>
                             <h2>
-                                {isIncome
-                                    ? 'הוספת הכנסה'
-                                    : 'הוספת הוצאה'}
+                                {isIncome ? 'הוספת הכנסה' : 'הוספת הוצאה'}
                             </h2>
 
                             <p>
-                                הזיני את פרטי הפעולה
-                                לשמירה בעו״ש.
+                                הזן את פרטי הפעולה לשמירה בעו״ש.
                             </p>
                         </div>
                     </div>
@@ -381,21 +365,14 @@ function AccountActions({
                                             ? 'לדוגמה: תשלום שהתקבל'
                                             : 'לדוגמה: הוצאות רכב'
                                     }
-                                    value={
-                                        formData.description
-                                    }
-                                    onChange={
-                                        handleInputChange
-                                    }
+                                    value={formData.description}
+                                    onChange={handleInputChange}
                                     disabled={isSaving}
                                 />
                             </div>
 
                             <span className="transactionCharacterCount">
-                                {
-                                    formData.description
-                                        .length
-                                }
+                                {formData.description.length}
                                 /250
                             </span>
                         </div>
@@ -413,9 +390,7 @@ function AccountActions({
                             <button
                                 className="transactionCancelButton"
                                 type="button"
-                                onClick={() =>
-                                    setIsPopupOpen(false)
-                                }
+                                onClick={() => setIsPopupOpen(false)}
                                 disabled={isSaving}
                             >
                                 ביטול
@@ -426,10 +401,7 @@ function AccountActions({
                                 type="submit"
                                 disabled={isSaving}
                             >
-                                <Save
-                                    size={18}
-                                    strokeWidth={2}
-                                />
+                                <Save size={18} strokeWidth={2} />
 
                                 {isSaving
                                     ? 'שומר...'

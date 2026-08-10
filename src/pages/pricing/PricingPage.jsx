@@ -19,17 +19,6 @@ import DrivingDetails from './components/driving_details/driving_details'
 import PriceResult from './components/price_result/price_result'
 import Popup from '../../components/popup/popup'
 
-const vehiclePrices = {
-    regular: {
-        basePrice: 20,
-        pricePerKm: 4,
-    },
-    large: {
-        basePrice: 30,
-        pricePerKm: 5.5,
-    },
-}
-
 const steps = [
     {
         id: 'route',
@@ -61,7 +50,7 @@ const initialForm = {
 
     distanceKm: '',
     duration: '',
-    vehicleType: 'regular',
+    vehicleType: 'van',
 
     driverPaymentType: 'hourly',
     driverHourlyRate: '',
@@ -71,7 +60,6 @@ const initialForm = {
 function PricingPage() {
     const [form, setForm] = useState(initialForm)
     const [activeStep, setActiveStep] = useState(0)
-    const [price, setPrice] = useState(null)
     const [errorMessage, setErrorMessage] = useState('')
     const [showPriceModal, setShowPriceModal] = useState(false);
 
@@ -80,7 +68,6 @@ function PricingPage() {
 
     function clearCalculationState() {
         setErrorMessage('')
-        setPrice(null)
     }
 
     function updateFormField(name, value) {
@@ -254,17 +241,6 @@ function PricingPage() {
         return true
     }
 
-    function calculatePrice() {
-        const distance = Number(form.distanceKm)
-        const selectedVehicle =
-            vehiclePrices[form.vehicleType]
-
-        return (
-            selectedVehicle.basePrice +
-            distance * selectedVehicle.pricePerKm
-        )
-    }
-
     function handleSubmit(event) {
         event.preventDefault()
 
@@ -272,9 +248,6 @@ function PricingPage() {
             return
         }
 
-        const calculatedPrice = calculatePrice()
-
-        setPrice(calculatedPrice)
         setShowPriceModal(true)
         setErrorMessage('')
     }
@@ -468,9 +441,7 @@ function PricingPage() {
                     isOpen={showPriceModal}
                     onClose={() => setShowPriceModal(false)}
                 >
-                    {price !== null && (
-                        <PriceResult styles={styles} price={price} form={form} />
-                    )}
+                    <PriceResult styles={styles} form={form} />
                 </Popup>
 
             </div>

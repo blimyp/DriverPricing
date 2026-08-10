@@ -23,94 +23,8 @@
  .trips-page__container {
      position: relative;
      z-index: 2;
-     width: min(1180px, 100%);
+     width: min(880px, 100%);
      margin: 0 auto;
- }
-
- .trips-page__header {
-     display: flex;
-     align-items: flex-end;
-     justify-content: space-between;
-     gap: 35px;
-     margin-bottom: 50px;
-     animation: trips-header-enter 0.85s ease both;
- }
-
- .trips-page__refresh-button {
-     position: relative;
-     overflow: hidden;
-     display: inline-flex;
-     min-height: 54px;
-     flex-shrink: 0;
-     align-items: center;
-     justify-content: center;
-     gap: 10px;
-     padding: 0 22px;
-     border: 0;
-     border-radius: 17px;
-     color: #06312b;
-     background: linear-gradient(135deg, var(--primary), var(--secondary));
-     box-shadow:
-         inset 0 2px 0 rgba(255, 255, 255, 0.32),
-         inset 0 -8px 18px rgba(0, 0, 0, 0.1),
-         0 16px 32px rgba(22, 199, 154, 0.2);
-     font-family: inherit;
-     font-size: 14px;
-     font-weight: 900;
-     cursor: pointer;
-     transition:
-         transform 0.28s ease,
-         box-shadow 0.28s ease,
-         filter 0.28s ease;
- }
-
- .trips-page__refresh-button::before {
-     content: "";
-     position: absolute;
-     top: 0;
-     bottom: 0;
-     left: -70%;
-     width: 45%;
-     transform: skewX(-24deg);
-     background:
-         linear-gradient(90deg,
-             transparent,
-             rgba(255, 255, 255, 0.48),
-             transparent);
-     animation: trips-button-shine 4.5s ease-in-out infinite;
- }
-
- .trips-page__refresh-button:hover:not(:disabled) {
-     transform: translateY(-4px);
-     filter: brightness(1.05);
-     box-shadow:
-         inset 0 2px 0 rgba(255, 255, 255, 0.38),
-         inset 0 -8px 18px rgba(0, 0, 0, 0.08),
-         0 22px 42px rgba(22, 199, 154, 0.29);
- }
-
- .trips-page__refresh-button:active:not(:disabled) {
-     transform: translateY(-1px) scale(0.99);
- }
-
- .trips-page__refresh-button:disabled {
-     cursor: wait;
-     opacity: 0.68;
- }
-
- .trips-page__refresh-button span,
- .trips-page__refresh-icon {
-     position: relative;
-     z-index: 2;
- }
-
- .trips-page__refresh-icon {
-     width: 19px;
-     height: 19px;
- }
-
- .trips-page__refresh-icon--active {
-     animation: trips-spin 0.85s linear infinite;
  }
 
  .trips-page__count {
@@ -426,11 +340,6 @@
  }
 
  @media (max-width: 980px) {
-     .trips-page__header {
-         align-items: flex-start;
-         flex-direction: column;
-     }
-
      .trips-page__grid {
          grid-template-columns: 1fr;
      }
@@ -439,14 +348,6 @@
  @media (max-width: 700px) {
      .trips-page {
          padding: 35px 14px 65px;
-     }
-
-     .trips-page__header {
-         margin-bottom: 40px;
-     }
-
-     .trips-page__refresh-button {
-         align-self: flex-start;
      }
  }
 
@@ -469,9 +370,6 @@
  @media (prefers-reduced-motion: reduce) {
 
      .trips-page__background,
-     .trips-page__header,
-     .trips-page__refresh-button::before,
-     .trips-page__refresh-icon,
      .trips-page__empty,
      .trips-page__empty-icon,
      .trips-page__error,

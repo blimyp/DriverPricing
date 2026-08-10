@@ -4,11 +4,8 @@
     position: relative;
     overflow: hidden;
     padding: 29px;
-    border: 1px solid rgba(255, 255, 255, 0.11);
-    border-radius: 28px;
     color: #effffb;
-    box-shadow:
-        0 24px 55px rgba(5, 73, 66, 0.18);
+    box-shadow: 0 24px 55px rgba(5, 73, 66, 0.18);
     animation: trips-card-enter 0.65s ease both;
     animation-delay: calc(var(--trip-index) * 70ms);
     transition:
@@ -31,19 +28,6 @@
     }
 }
 
-.trip-card::after {
-    content: "";
-    position: absolute;
-    bottom: -155px;
-    left: -125px;
-    width: 280px;
-    height: 280px;
-    border-radius: 50%;
-    background: rgba(var(--trips-green-rgb), 0.05);
-    filter: blur(25px);
-    pointer-events: none;
-}
-
 .trip-card:hover {
     transform: translateY(-6px);
     border-color: rgba(var(--trips-green-rgb), 0.34);
@@ -52,27 +36,11 @@
         0 0 38px rgba(var(--trips-green-rgb), 0.08);
 }
 
-.trip-card__accent {
-    position: absolute;
-    top: 0;
-    right: 18%;
-    left: 18%;
-    height: 3px;
-    border-radius: 0 0 12px 12px;
-    background:
-        linear-gradient(90deg,
-            transparent,
-            var(--trips-green),
-            transparent);
-    box-shadow:
-        0 0 18px rgba(var(--trips-green-rgb), 0.8);
-}
-
 .trip-card__header {
     position: relative;
     z-index: 2;
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 20px;
     padding-bottom: 24px;
@@ -92,8 +60,8 @@
 
 .trip-card__route-icon {
     display: flex;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
@@ -114,7 +82,6 @@
 
 .trip-card__route-point span {
     display: block;
-    margin-bottom: 4px;
     color: rgba(239, 255, 251, 0.48);
     font-size: 11px;
     font-weight: 700;
@@ -142,7 +109,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
     align-items: center;
     justify-content: center;
     font-size: 14px;
@@ -188,7 +155,7 @@
     display: flex;
     min-width: 0;
     align-items: center;
-    gap: 20px;
+    gap: 5px;
     padding: 10px 20px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
@@ -219,7 +186,7 @@
 .trip-card__detail span {
     display: block;
     color: var(--text);
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
 }
 

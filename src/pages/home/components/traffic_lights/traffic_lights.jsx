@@ -77,10 +77,10 @@ function SmartSteps() {
                     <g className="smart-bus">
                         <image
                             href="/bus.png"
-                            width="80"
+                            width="90"
                             height="48"
                             x="-40"
-                            y="-39"
+                            y="-42"
                             preserveAspectRatio="xMidYMid meet"
                         />
 
@@ -89,7 +89,7 @@ function SmartSteps() {
                             repeatCount="indefinite"
                             rotate="auto-reverse"
                             calcMode="linear"
-                            path="M925 58 C790 112 670 -28 500 42 C315 120 190 -40 40 42"
+                            path="M925 55 C790 100 670 -28 500 42 C315 120 190 -40 40 42"
                         />
                     </g>
                 </svg>

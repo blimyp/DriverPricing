@@ -101,36 +101,6 @@ function TripsPage() {
     return (
         <main className="trips-page" dir="rtl">
             <div className="trips-page__container">
-                <header className="trips-page__header">
-
-                    <button
-                        type="button"
-                        className="trips-page__refresh-button"
-                        onClick={() =>
-                            fetchTrips({
-                                isRefresh: true,
-                            })
-                        }
-                        disabled={refreshing}
-                    >
-                        <RefreshCw
-                            className={
-                                refreshing
-                                    ? 'trips-page__refresh-icon trips-page__refresh-icon--active'
-                                    : 'trips-page__refresh-icon'
-                            }
-                            strokeWidth={2}
-                            aria-hidden="true"
-                        />
-
-                        <span>
-                            {refreshing
-                                ? 'מרענן נתונים...'
-                                : 'רענון נסיעות'}
-                        </span>
-                    </button>
-                </header>
-
                 {errorMessage && (
                     <div
                         className="trips-page__error"

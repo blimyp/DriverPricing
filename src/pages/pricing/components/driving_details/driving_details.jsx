@@ -105,12 +105,16 @@ function DrivingDetails({
                             value={form.vehicleType}
                             onChange={handleChange}
                         >
-                            <option value="regular">
-                                רכב רגיל
+                            <option value="van">
+                                טנדר
                             </option>
 
-                            <option value="large">
-                                רכב גדול
+                            <option value="minibus">
+                                מיניבוס
+                            </option>
+
+                            <option value="bus">
+                                אוטובוס
                             </option>
                         </select>
                     </div>

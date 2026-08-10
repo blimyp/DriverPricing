@@ -91,7 +91,7 @@ function DrivingRoute({
                                     className="formControl stopInput"
                                     id={`routeStop-${index}`}
                                     type="text"
-                                    placeholder="הזיני תחנה נוספת"
+                                    placeholder="הזן תחנה נוספת"
                                     value={stop}
                                     onChange={(event) =>
                                         updateStop(

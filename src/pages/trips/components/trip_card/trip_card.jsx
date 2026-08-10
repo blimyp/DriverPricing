@@ -1,10 +1,6 @@
 import {
     CalendarDays,
-    CarFront,
-    Clock3,
     MapPin,
-    Navigation,
-    Route,
 } from 'lucide-react'
 import BackgroundSection from '../../../../components/background_section/background_section'
 
@@ -60,11 +56,12 @@ function TripCard({ trip, index }) {
 
     function getTripTypeText(tripType) {
         switch (tripType) {
-            case 'regular':
-                return 'רכב רגיל'
-
-            case 'large':
-                return 'רכב גדול'
+            case 'bus':
+                return 'אוטובוס'
+            case 'minibus':
+                return 'מיניבוס'
+            case 'van':
+                return 'טנדר'
 
             default:
                 return tripType || 'לא צוין'
@@ -88,8 +85,6 @@ function TripCard({ trip, index }) {
                 key={trip.id}
                 style={{ '--trip-index': index, }}
             >
-                <div className="trip-card__accent" />
-
                 <div className="trip-card__header">
                     <div className="trip-card__route-point">
                         <div className="trip-card__route-icon">
@@ -127,51 +122,30 @@ function TripCard({ trip, index }) {
                         </div>
 
                         <div className="trip-card__route-icon">
-                            <Navigation strokeWidth={1.9} aria-hidden="true" />
+                            <MapPin strokeWidth={1.9} aria-hidden="true" />
                         </div>
                     </div>
                 </div >
 
                 <div className='trip-details'>
                     <div className="trip-card__detail">
-                        <Route strokeWidth={1.8} aria-hidden="true" />
-
-                        <div>
-                            <span>מרחק</span>
-
-                            <strong>
-                                {trip.distance !== null && trip.distance !== undefined
-                                    ? `${formatNumber(trip.distance)} ק"מ`
-                                    : 'לא צוין'
-                                }
-                            </strong >
-                        </div >
+                        <span>מרחק:</span>
+                        <strong>
+                            {trip.distance !== null && trip.distance !== undefined
+                                ? `${formatNumber(trip.distance)} ק"מ`
+                                : 'לא צוין'
+                            }
+                        </strong >
                     </div >
 
                     <div className="trip-card__detail">
-                        <Clock3 strokeWidth={1.8} aria-hidden="true" />
-
-                        <div>
-                            <span>
-                                משך נסיעה
-                            </span>
-
-                            <strong>
-                                {getDurationText(trip.duration)}
-                            </strong>
-                        </div>
+                        <span>משך נסיעה:</span>
+                        <strong>{getDurationText(trip.duration)}</strong>
                     </div>
 
                     <div className="trip-card__detail">
-                        <CarFront strokeWidth={1.8} aria-hidden="true" />
-
-                        <div>
-                            <span>סוג רכב</span>
-
-                            <strong>
-                                {getTripTypeText(trip.trip_type)}
-                            </strong>
-                        </div>
+                        <span>סוג רכב:</span>
+                        <strong>{getTripTypeText(trip.trip_type)}</strong>
                     </div>
                 </div>
 
