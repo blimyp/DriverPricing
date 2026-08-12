@@ -176,27 +176,6 @@
     line-height: 1.6;
 }
 
-@media (max-width: 720px) {
-    .driverPayment {
-        gap: 18px;
-    }
-
-    .driverPaymentSwitchArea {
-        width: 100%;
-
-        padding: 12px;
-
-        justify-content: space-between;
-        gap: 10px;
-    }
-
-    .driverPaymentSwitchLabel {
-        min-width: 0;
-
-        font-size: 12px;
-    }
-}
-
 @media (max-width: 480px) {
 
     .driverPaymentSwitchArea {

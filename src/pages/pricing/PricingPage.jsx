@@ -405,11 +405,6 @@ function PricingPage() {
                             <span>הקודם</span>
                         </button>
 
-                        <span className={styles.stepCounter}>
-                            שלב {activeStep + 1} מתוך{' '}
-                            {steps.length}
-                        </span>
-
                         {!isLastStep ? (
                             <button
                                 key={'next-button-key'}

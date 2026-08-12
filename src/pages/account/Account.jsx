@@ -50,13 +50,17 @@ function getGroupTitle(dateString, groupBy) {
     return date.toLocaleDateString("he-IL", {
         weekday: "long",
         day: "2-digit",
-        month: "long",
+        month: "2-digit",
         year: "numeric",
     });
 }
 
 function formatDate(dateString) {
-    return getDateParts(dateString).date.toLocaleDateString("he-IL");
+    return getDateParts(dateString).date.toLocaleDateString("he-IL", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+    });
 }
 
 function formatMoney(amount) {
@@ -259,7 +263,8 @@ function AccountPage() {
                         <thead>
                             <tr>
                                 <th>תאריך</th>
-                                <th>סוג פעולה</th>
+                                <th className="desktop-type">סוג פעולה</th>
+                                <th className="mobile-type">סוג</th>
                                 <th>הפעולה</th>
                                 <th>סכום</th>
                             </tr>
@@ -273,7 +278,7 @@ function AccountPage() {
                                 <tr className="group-title-row">
                                     <td colSpan="4">
                                         <div className="group-title-content">
-                                            <div className="group-summary">
+                                            <div className="group-summary-right">
                                                 <span className="group-title">
                                                     {group.title}
                                                 </span>
@@ -284,10 +289,10 @@ function AccountPage() {
                                                 </span>
                                             </div>
 
-                                            <div className="group-summary">
+                                            <div className="group-summary-left">
                                                 <div className="summary-item">
                                                     <span className="summary-label">
-                                                        סך הכנסות
+                                                        <span className="desktop-type">סך</span> הכנסות
                                                     </span>
 
                                                     <strong className="summary-value summary-income">
@@ -297,7 +302,7 @@ function AccountPage() {
 
                                                 <div className="summary-item">
                                                     <span className="summary-label">
-                                                        סך הוצאות
+                                                        <span className="desktop-type">סך</span> הוצאות
                                                     </span>
 
                                                     <strong className="summary-value summary-expense">
@@ -329,8 +334,7 @@ function AccountPage() {
 
                                     return (
                                         <tr
-                                            className={`transaction-row ${isTrip ? "transaction-row-clickable" : ""
-                                                }`}
+                                            className={`transaction-row ${isTrip ? "transaction-row-clickable" : ""}`}
                                             key={transaction.id}
                                             onClick={() => {
                                                 if (isTrip) {
@@ -352,12 +356,9 @@ function AccountPage() {
                                             <td>{formatDate(transaction.date)}</td>
 
                                             <td>
-                                                <span
-                                                    className={`transaction-type ${transaction.type}`}
-                                                >
-                                                    {transaction.type === "income"
-                                                        ? "הכנסה"
-                                                        : "הוצאה"}
+                                                <span className={`transaction-type ${transaction.type}`}>
+                                                    <span className="desktop-type">{transaction.type === "income" ? "הכנסה" : "הוצאה"}</span>
+                                                    <span className="mobile-type">{transaction.type === "income" ? "+" : "−"}</span>
                                                 </span>
                                             </td>
 

@@ -307,7 +307,7 @@
 
 /* התאמה למסכים קטנים */
 
-@media (max-width: 850px) {
+@media (max-width: 768px) {
     .login-page {
         padding: 45px 20px;
     }
@@ -327,7 +327,7 @@
     }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 480px) {
     .login-page {
         padding: 30px 14px;
     }

@@ -1,5 +1,9 @@
+.account-page {
+    padding: 0 50px;
+}
+
 .account-card {
-    max-width: min(calc(100% - 100px), 1200px);
+    max-width: min(100%, 1200px);
     margin: 100px auto;
     background: #fff;
     border-radius: 18px;
@@ -72,29 +76,20 @@
     border-collapse: collapse;
 }
 
-.account-table th,
-.account-table td {
+.transaction-row th,
+.transaction-row td {
     padding: 10px 18px;
     text-align: right;
     border-bottom: 1px solid #eceff3;
-}
-
-.account-table th {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text-dark);
-}
-
-.account-table td {
     font-size: 15px;
     color: var(--text-dark);
 }
 
-.account-table tbody tr {
+.transaction-row tr {
     transition: background 0.2s;
 }
 
-.account-table tbody tr:hover {
+.transaction-row tr:hover {
     background: #f8fafc;
 }
 
@@ -102,7 +97,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 6px 14px;
+    padding: 6px 12px;
     border-radius: 999px;
     font-size: 13px;
     font-weight: 600;
@@ -207,10 +202,15 @@
 
 /* שורת סיכום */
 
-.group-summary {
+.group-summary-right {
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+.group-summary-left {
+    display: flex;
+    align-items: center;
 }
 
 .summary-item {
@@ -230,14 +230,64 @@
     color: #778681;
 }
 
-@media (max-width: 700px) {
+.mobile-type {
+    display: none;
+}
+
+@media (max-width: 1024px) {
     .account-page {
-        padding: 20px;
+        padding: 0 30px;
     }
 
-    .account-table th,
-    .account-table td {
-        padding: 12px;
-        font-size: 14px;
+    .group-title-content {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .summary-item {
+        gap: 5px;
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .account-page {
+        padding: 0;
+    }
+
+    .account-card {
+        margin: auto;
+        border-radius: 0;
+        padding: 15px;
+    }
+
+    .account-title {
+        margin-bottom: 24px;
+        font-size: 20px;
+    }
+
+    .group-title-content {
+        flex-direction: column;
+        padding: 10px 0;
+    }
+
+    .transaction-row th,
+    .transaction-row td {
+        padding: 5px;
+        font-size: 12px;
+    }
+
+    .transaction-type {
+        font-size: 16px;
+        font-weight: bold;
+        padding: 2px 8px;
+    }
+
+    .mobile-type {
+        display: block;
+    }
+
+    .desktop-type {
+        display: none;
     }
 }

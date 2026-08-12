@@ -46,7 +46,7 @@
 
 .benefit-card-visible .benefit-card-border::before {
     animation: draw-top-line 0.65s ease forwards;
-    animation-delay: calc(var(--benefit-delay));
+    animation-delay: var(--benefit-delay);
 }
 
 @keyframes draw-top-line {
@@ -59,6 +59,7 @@
     }
 }
 
+
 /* משושה */
 .benefit-card-hexagon {
     position: absolute;
@@ -69,7 +70,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, rgba(0, 217, 154, 0.16), rgba(10, 169, 156, 0.26));
+    background: linear-gradient(135deg,
+            rgba(0, 217, 154, 0.16),
+            rgba(10, 169, 156, 0.26));
+
     clip-path: polygon(25% 0,
             75% 0,
             100% 50%,
@@ -78,12 +82,19 @@
             0 50%);
 
     opacity: 0;
-    transform: scale(0.45) rotate(-18deg) translateX(50%);
+    transform: translateX(50%) scale(0.45) rotate(-18deg);
+    scale: 1;
+    rotate: 0deg;
+    transition: top 0.3s ease;
 }
 
 .benefit-card-visible .benefit-card-hexagon {
     animation: show-benefit-card-hexagon 0.55s ease forwards;
     animation-delay: calc(var(--benefit-delay) + 200ms);
+}
+
+.benefit-card-component:hover .benefit-card-hexagon {
+    top: -40px;
 }
 
 @keyframes show-benefit-card-hexagon {
@@ -98,6 +109,7 @@
     }
 }
 
+/* מספר */
 .benefit-card-number {
     padding-top: 20px;
     color: #078c79;
@@ -105,21 +117,31 @@
     font-weight: 900;
 }
 
+/* אייקון */
+.benefit-card-icon {
+    translate: 0 0;
+    transition: translate 0.3s ease;
+}
+
+.benefit-card-component:hover .benefit-card-icon {
+    translate: 0 -15px;
+}
+
 .benefit-card-icon-image {
     height: 100px;
     opacity: 0;
-    transform: translateY(20px) scale(.9);
+    transform: translateY(20px) scale(0.9);
 }
 
 .benefit-card-visible .benefit-card-icon-image {
-    animation: show-benefit-icon .5s ease forwards;
+    animation: show-benefit-icon 0.5s ease forwards;
     animation-delay: calc(var(--benefit-delay) + 350ms);
 }
 
 @keyframes show-benefit-icon {
     from {
         opacity: 0;
-        transform: translateY(20px) scale(.9);
+        transform: translateY(20px) scale(0.9);
     }
 
     to {
@@ -128,26 +150,49 @@
     }
 }
 
+
+/* כותרת */
 .benefit-card-title {
     margin: 0 0 12px;
     color: #123b39;
     font-size: 20px;
     font-weight: 800;
+    translate: 0 0;
+    transition:
+        translate 0.3s ease,
+        color 0.3s ease;
 }
 
+.benefit-card-component:hover .benefit-card-title {
+    translate: 0 -8px;
+    color: #078c79;
+}
+
+
+/* טקסט */
 .benefit-card-text {
     margin: 0;
-
     color: #6b7f7d;
     font-size: 14px;
     line-height: 1.8;
+    translate: 0 0;
+    transition: translate 0.3s ease;
 }
 
+.benefit-card-component:hover .benefit-card-text {
+    translate: 0 -6px;
+}
+
+
+/* נגישות - ביטול אנימציות */
 @media (prefers-reduced-motion: reduce) {
 
     .benefit-card-component,
     .benefit-card-border,
-    .benefit-card-hexagon {
+    .benefit-card-hexagon,
+    .benefit-card-icon,
+    .benefit-card-title,
+    .benefit-card-text {
         animation: none !important;
         transition: none !important;
     }
@@ -165,6 +210,18 @@
     }
 
     .benefit-card-hexagon {
+        opacity: 1;
+        transform: translateX(50%);
+        scale: 1;
+    }
+
+    .benefit-card-icon,
+    .benefit-card-title,
+    .benefit-card-text {
+        translate: 0 0;
+    }
+
+    .benefit-card-icon-image {
         opacity: 1;
         transform: none;
     }
