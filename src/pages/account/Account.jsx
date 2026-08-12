@@ -76,7 +76,7 @@ function AccountPage() {
     const navigate = useNavigate();
 
     const [transactions, setTransactions] = useState([]);
-    const [groupBy, setGroupBy] = useState("day");
+    const [groupBy, setGroupBy] = useState("month");
 
     function openTrip(transaction) {
         if (transaction.sourceType !== "trip" || !transaction.tripId) {

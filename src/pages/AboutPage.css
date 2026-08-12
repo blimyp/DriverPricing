@@ -794,6 +794,7 @@
 
     .about-overview {
         margin-bottom: 70px;
+        grid-template-columns: 1fr;
     }
 
     .about-overview__main {
@@ -806,10 +807,6 @@
 
     .about-purpose {
         margin-bottom: 70px;
-    }
-
-    .about-principles {
-        grid-template-columns: 1fr;
     }
 
     .about-development {
@@ -848,11 +845,12 @@
 
     .about-principle-card {
         min-height: auto;
-        padding: 22px 19px;
+        padding: 10px;
     }
 
     .about-development {
         border-radius: 22px;
+        grid-template-columns: 1fr;
     }
 
     .about-timeline__item {
