@@ -6,77 +6,19 @@ function DrivingDetails({
     form
 }) {
     return (
-        <div className={styles.formCardFields}>
-            <div className={styles.formField}>
-                <label
-                    className={styles.formLabel}
-                    htmlFor="distanceKm"
-                >
-                    מרחק בקילומטרים
-                </label>
+        <>
+            <div className={styles.drivingDetails}>
+                <div className={styles.drivingDetail}>
+                    מרחק מסלול: {form.distanceKm || '-'} ק״מ
+                </div>
 
-                <div
-                    className={styles.inputWrapper}
-                >
-                    <Route
-                        className={styles.inputIcon}
-                        strokeWidth={1.9}
-                        aria-hidden="true"
-                    />
-
-                    <input
-                        className={styles.formControl}
-                        id="distanceKm"
-                        name="distanceKm"
-                        type="number"
-                        min="0.1"
-                        step="0.1"
-                        inputMode="decimal"
-                        placeholder="לדוגמה: 45"
-                        value={form.distanceKm}
-                        onChange={handleChange}
-                    />
-
-                    <span className={styles.inputSuffix}  >
-                        ק״מ
-                    </span>
+                <div className={styles.drivingDetail}>
+                    זמן נסיעה משוער: {form.routeDuration || '-'} שעות
                 </div>
             </div>
 
-            <div className={styles.formField}>
-                <label
-                    className={styles.formLabel}
-                    htmlFor="duration"
-                >
-                    משך זמן הנסיעה
-                </label>
 
-                <div
-                    className={styles.inputWrapper}
-                >
-                    <Clock3
-                        className={styles.inputIcon}
-                        strokeWidth={1.9}
-                        aria-hidden="true"
-                    />
-
-                    <input
-                        className={styles.formControl}
-                        id="duration"
-                        name="duration"
-                        type="number"
-                        min="0.1"
-                        step="0.1"
-                        inputMode="decimal"
-                        placeholder="לדוגמה: 5"
-                        value={form.duration}
-                        onChange={handleChange}
-                    />
-
-                    <span className={styles.inputSuffix}>
-                        שעות
-                    </span>
-                </div>
+            <div className={styles.formCardFields}>
 
                 <div className={styles.formField}>
                     <label
@@ -86,20 +28,18 @@ function DrivingDetails({
                         סוג רכב
                     </label>
 
-                    <div className={styles.inputWrapper}  >
+                    <div className={styles.inputWrapper}>
                         <CarFront
-                            className={
-                                styles.inputIcon
-                            }
+                            className={styles.inputIcon}
                             strokeWidth={1.9}
                             aria-hidden="true"
                         />
 
                         <select
                             className={`
-                        ${styles.formControl}
-                        ${styles.formSelect}
-                    `}
+                            ${styles.formControl}
+                            ${styles.formSelect}
+                        `}
                             id="vehicleType"
                             name="vehicleType"
                             value={form.vehicleType}
@@ -119,8 +59,42 @@ function DrivingDetails({
                         </select>
                     </div>
                 </div>
+
+                <div className={styles.formField}>
+                    <label
+                        className={styles.formLabel}
+                        htmlFor="plannedDuration"
+                    >
+                        שעות נסיעה מתוכננות
+                    </label>
+
+                    <div className={styles.inputWrapper}>
+                        <Clock3
+                            className={styles.inputIcon}
+                            strokeWidth={1.9}
+                            aria-hidden="true"
+                        />
+
+                        <input
+                            className={styles.formControl}
+                            id="plannedDuration"
+                            name="plannedDuration"
+                            type="number"
+                            min="0.1"
+                            step="0.1"
+                            inputMode="decimal"
+                            placeholder="לדוגמה: 5"
+                            value={form.plannedDuration}
+                            onChange={handleChange}
+                        />
+
+                        <span className={styles.inputSuffix}>
+                            שעות
+                        </span>
+                    </div>
+                </div>
             </div>
-        </div>
+        </>
     )
 }
 

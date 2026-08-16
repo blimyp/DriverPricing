@@ -18,6 +18,7 @@ import StepPanel from './components/pricing_step_panel'
 import DrivingDetails from './components/driving_details/driving_details'
 import PriceResult from './components/price_result/price_result'
 import Popup from '../../components/popup/popup'
+import { getRoute } from '../../services/openRouteService'
 
 const steps = [
     {
@@ -49,7 +50,8 @@ const initialForm = {
     stops: [],
 
     distanceKm: '',
-    duration: '',
+    routeDuration: '',
+    plannedDuration: '',
     vehicleType: 'van',
 
     driverPaymentType: 'hourly',
@@ -62,6 +64,7 @@ function PricingPage() {
     const [activeStep, setActiveStep] = useState(0)
     const [errorMessage, setErrorMessage] = useState('')
     const [showPriceModal, setShowPriceModal] = useState(false);
+    const [isLoadingRoute, setIsLoadingRoute] = useState(false);
 
     const isFirstStep = activeStep === 0
     const isLastStep = activeStep === steps.length - 1
@@ -110,14 +113,22 @@ function PricingPage() {
 
     function validateTripDetailsStep() {
         const distance = Number(form.distanceKm)
-        const duration = Number(form.duration)
+        const routeDuration = Number(form.routeDuration)
+        const plannedDuration = Number(form.plannedDuration)
 
         if (!Number.isFinite(distance) || distance <= 0) {
-            return 'יש להזין מרחק תקין'
+            return 'לא נמצא מרחק תקין למסלול'
         }
 
-        if (!Number.isFinite(duration) || duration <= 0) {
-            return 'יש להזין משך נסיעה תקין'
+        if (!Number.isFinite(routeDuration) || routeDuration <= 0) {
+            return 'לא נמצא זמן נסיעה תקין למסלול'
+        }
+
+        if (
+            !Number.isFinite(plannedDuration) ||
+            plannedDuration <= 0
+        ) {
+            return 'יש להזין שעות נסיעה מתוכננות'
         }
 
         if (!form.vehicleType) {
@@ -178,9 +189,38 @@ function PricingPage() {
         return !validationError
     }
 
-    function goToNextStep() {
+    async function goToNextStep() {
         if (!validateStep(activeStep)) {
             return
+        }
+
+        // כשעוברים משלב המסלול לשלב פרטי הנסיעה
+        if (activeStep === 0) {
+            try {
+                setIsLoadingRoute(true)
+                setErrorMessage('')
+
+                const result = await getRoute({
+                    origin: form.origin,
+                    destination: form.destination,
+                    stops: form.stops,
+                })
+
+                const routeDuration = (result.durationMinutes / 60).toFixed(1)
+
+                setForm((currentForm) => ({
+                    ...currentForm,
+                    distanceKm: result.distanceKm.toFixed(1),
+                    routeDuration,
+                    plannedDuration: currentForm.plannedDuration || routeDuration,
+                }))
+            } catch (error) {
+                console.error(error)
+                setErrorMessage('לא הצלחנו לחשב את המסלול')
+                return
+            } finally {
+                setIsLoadingRoute(false)
+            }
         }
 
         setActiveStep((currentStep) =>
@@ -386,7 +426,7 @@ function PricingPage() {
                         </div>
                     )}
 
-                    <BackgroundSection className={styles.stepContent}>
+                    <BackgroundSection className={styles.stepContent} withMovingLines={false}>
                         {renderStepContent()}
                     </BackgroundSection>
 
@@ -407,12 +447,12 @@ function PricingPage() {
 
                         {!isLastStep ? (
                             <button
-                                key={'next-button-key'}
                                 className={styles.nextButton}
                                 type="button"
                                 onClick={goToNextStep}
+                                disabled={isLoadingRoute}
                             >
-                                <span>הבא</span>
+                                <span>{isLoadingRoute ? 'מחשב מסלול...' : 'הבא'}</span>
                                 <ChevronLeft strokeWidth={2} aria-hidden="true" />
                             </button>
                         ) : (

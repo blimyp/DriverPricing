@@ -21,17 +21,12 @@ function DrivingRoute({
 
     function updateStop(index, value) {
         const updatedStops = [...stops]
-
         updatedStops[index] = value
-
         onStopsChange(updatedStops)
     }
 
     function removeStop(index) {
-        const updatedStops = stops.filter(
-            (_, stopIndex) => stopIndex !== index
-        )
-
+        const updatedStops = stops.filter((_, stopIndex) => stopIndex !== index)
         onStopsChange(updatedStops)
     }
 
@@ -39,10 +34,7 @@ function DrivingRoute({
         <div className="tripRoute">
             <div className="routeFields">
                 <div className="formField">
-                    <label
-                        className="formLabel"
-                        htmlFor="origin"
-                    >
+                    <label className="formLabel" htmlFor="origin">
                         מוצא
                     </label>
 
@@ -68,10 +60,7 @@ function DrivingRoute({
                 </div>
 
                 {stops.map((stop, index) => (
-                    <div
-                        className="extraStop"
-                        key={index}
-                    >
+                    <div className="extraStop" key={index}>
                         <div className="formField">
                             <label
                                 className="formLabel"
