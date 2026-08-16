@@ -4,8 +4,6 @@ import {
     WalletCards,
 } from 'lucide-react'
 
-import * as Switch from '@radix-ui/react-switch'
-
 import './driver_payment.css'
 
 function DriverPayment({
@@ -99,11 +97,11 @@ function DriverPayment({
                         </span>
                     </div>
 
-                    {form.duration &&
+                    {form.routeDuration &&
                         form.driverHourlyRate && (
                             <p className="fieldCalculationHint">
                                 {Number(
-                                    form.duration
+                                    form.routeDuration
                                 ).toFixed(1)}
                                 {' '}
                                 שעות × ₪

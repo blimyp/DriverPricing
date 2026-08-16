@@ -1,23 +1,9 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "../../../../contexts/AuthContext"
 import { saveTrip } from "../../../../services/tripsService"
+import { getVehiclePrices } from "../../../../services/vehiclePricesService"
 
-const vehiclePrices = {
-    van: {
-        basePrice: 20,
-        kmCntInLiter: 8.5,
-    },
-    minibus: {
-        basePrice: 30,
-        kmCntInLiter: 6.0,
-    },
-    bus: {
-        basePrice: 40,
-        kmCntInLiter: 6.0,
-    }
-}
-
-const literPrice = 7.5;
+const literPrice = 7.5
 
 function PriceResult({
     styles,
@@ -29,18 +15,84 @@ function PriceResult({
     const [saveMessage, setSaveMessage] = useState('')
     const [saveError, setSaveError] = useState('')
 
-    const distance = Number(form.distanceKm)
-    const selectedVehicle = vehiclePrices[form.vehicleType]
-    const fuelPrice = distance / selectedVehicle.kmCntInLiter * literPrice;
-    let driverPrice = 0;
-    let totalPrice = 0;
+    const [vehiclePrices, setVehiclePrices] = useState([])
+    const [pricesLoading, setPricesLoading] = useState(true)
+    const [pricesError, setPricesError] = useState('')
 
-    if (form.driverPaymentType == 'hourly') {
-        driverPrice = form.duration * form.driverHourlyRate;
-        totalPrice = driverPrice + fuelPrice;
+    useEffect(() => {
+        async function loadPrices() {
+            try {
+                setPricesLoading(true)
+                setPricesError('')
+
+                const data = await getVehiclePrices()
+
+                setVehiclePrices(data)
+            } catch (error) {
+                console.error('Get vehicle prices error:', error)
+
+                setPricesError(
+                    error?.message ||
+                    'אירעה שגיאה בטעינת מחירי הרכבים'
+                )
+            } finally {
+                setPricesLoading(false)
+            }
+        }
+
+        loadPrices()
+    }, [])
+
+    if (pricesLoading) {
+        return (
+            <section className={styles.priceResult}>
+                <p>טוען מחירים...</p>
+            </section>
+        )
+    }
+
+    if (pricesError) {
+        return (
+            <section className={styles.priceResult}>
+                <p className={styles.saveError}>
+                    {pricesError}
+                </p>
+            </section>
+        )
+    }
+
+    const selectedVehicle = vehiclePrices.find(
+        vehicle => vehicle.vehicle_type === form.vehicleType
+    )
+
+    if (!selectedVehicle) {
+        return (
+            <section className={styles.priceResult}>
+                <p className={styles.saveError}>
+                    לא נמצא מחיר עבור סוג הרכב שנבחר
+                </p>
+            </section>
+        )
+    }
+
+    const distance = Number(form.distanceKm)
+
+    const fuelPrice =
+        (distance / Number(selectedVehicle.km_cnt_in_liter)) *
+        literPrice
+
+    let driverPrice = 0
+    let totalPrice = 0
+
+    if (form.driverPaymentType === 'hourly') {
+        driverPrice =
+            Number(form.routeDuration) *
+            Number(form.driverHourlyRate)
+
+        totalPrice = driverPrice + fuelPrice
     } else {
-        totalPrice = fuelPrice / 0.7;
-        driverPrice = totalPrice * 0.3;
+        totalPrice = fuelPrice / 0.7
+        driverPrice = totalPrice * 0.3
     }
 
     async function handleSaveTrip() {
@@ -49,7 +101,7 @@ function PriceResult({
             return
         }
 
-        if (fuelPrice === null) {
+        if (!Number.isFinite(totalPrice)) {
             setSaveError('יש לחשב את מחיר הנסיעה לפני השמירה')
             return
         }
@@ -65,8 +117,8 @@ function PriceResult({
                 destination: form.destination,
                 stops: form.stops,
                 distance: form.distanceKm,
-                duration: form.duration,
-                calculatedPrice: fuelPrice,
+                duration: form.routeDuration,
+                calculatedPrice: totalPrice,
                 tripType: form.vehicleType,
                 driverPaymentType: form.driverPaymentType,
                 driverHourlyRate: form.driverHourlyRate,
@@ -87,20 +139,20 @@ function PriceResult({
     }
 
     return (
-        <section className={styles.priceResult} >
+        <section className={styles.priceResult}>
             <div className={styles.resultDecoration}>
                 <span
                     className={`
-                    ${styles.resultRing}
-                    ${styles.resultRingOne}
-                `}
+                        ${styles.resultRing}
+                        ${styles.resultRingOne}
+                    `}
                 />
 
                 <span
                     className={`
-                    ${styles.resultRing}
-                    ${styles.resultRingTwo}
-                `}
+                        ${styles.resultRing}
+                        ${styles.resultRingTwo}
+                    `}
                 />
             </div>
 
@@ -114,7 +166,7 @@ function PriceResult({
                 </p>
 
                 <strong className={styles.resultPrice}>
-                    ₪{(fuelPrice + driverPrice).toFixed(2)}
+                    ₪{totalPrice.toFixed(2)}
                 </strong>
             </div>
 
@@ -145,4 +197,4 @@ function PriceResult({
     )
 }
 
-export default PriceResult;
+export default PriceResult
