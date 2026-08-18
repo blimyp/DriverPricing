@@ -11,6 +11,7 @@ import PricingPage from './pages/pricing/PricingPage'
 import HomePage from './pages/home/HomePage'
 import AccountPage from './pages/account/Account'
 import TripsPage from './pages/trips/TripsPages'
+import PricesSettingsPage from './pages/prices_settings/PricesSettingsPage'
 
 function App() {
   const { user, loading } = useAuth()
@@ -71,6 +72,15 @@ function App() {
         element={
           user
             ? <AboutPage />
+            : <Navigate to="/login" replace />
+        }
+      />
+
+      <Route
+        path="/prices"
+        element={
+          user
+            ? <PricesSettingsPage />
             : <Navigate to="/login" replace />
         }
       />

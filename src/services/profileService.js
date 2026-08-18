@@ -62,3 +62,27 @@ export async function saveUserProfile(user) {
         }
     }
 }
+
+export async function getUserProfile(userId) {
+    if (!userId) return null
+
+    const { data, error } = await supabase
+        .from('profiles')
+        .select(`
+            id,
+            email,
+            full_name,
+            role,
+            avatar_url,
+            created_at,
+            updated_at
+        `)
+        .eq('id', userId)
+        .single()
+
+    if (error) {
+        throw error
+    }
+
+    return data
+}

@@ -4,64 +4,143 @@ import {
     useEffect,
     useState,
 } from 'react'
+
 import { supabase } from '../lib/supabaseClient'
+import {
+    getUserProfile,
+    saveUserProfile,
+} from '../services/profileService'
 import { getCurrentSession } from '../services/authService'
-import { saveUserProfile } from '../services/profileService'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-    const [session, setSession] = useState(null)
+    const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
     const [errorMessage, setErrorMessage] = useState('')
 
+    const loadUserProfile = async (userId) => {
+        const profile = await getUserProfile(userId)
+        setUser(profile)
+
+        return profile
+    }
+
     useEffect(() => {
-        async function loadSession() {
+        let isMounted = true
+
+        const initializeAuth = async () => {
             try {
-                const currentSession = await getCurrentSession()
-                setSession(currentSession)
+                setLoading(true)
+                setErrorMessage('')
+
+                const session = await getCurrentSession()
+
+                if (!isMounted) return
+
+                if (!session?.user) {
+                    setUser(null)
+                    return
+                }
+
+                await saveUserProfile(session.user)
+
+                if (!isMounted) return
+
+                await loadUserProfile(session.user.id)
             } catch (error) {
-                console.error(error)
-                setErrorMessage(error.message)
+                console.error('Failed to initialize auth:', error)
+
+                if (isMounted) {
+                    setUser(null)
+                    setErrorMessage(
+                        error.message || 'שגיאה בטעינת המשתמש'
+                    )
+                }
             } finally {
-                setLoading(false)
+                if (isMounted) {
+                    setLoading(false)
+                }
             }
         }
 
-        loadSession()
+        initializeAuth()
 
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange(
-            async (event, newSession) => {
-                setSession(newSession)
-                setLoading(false)
+            (event, session) => {
+                if (!isMounted) return
+
+                if (event === 'SIGNED_OUT') {
+                    setUser(null)
+                    setLoading(false)
+                    return
+                }
 
                 if (
                     event === 'SIGNED_IN' &&
-                    newSession?.user
+                    session?.user
                 ) {
-                    try {
-                        await saveUserProfile(newSession.user)
-                    } catch (error) {
-                        console.error(error)
-                        setErrorMessage(error.message)
-                    }
+                    setLoading(true)
+
+                    setTimeout(async () => {
+                        try {
+                            await saveUserProfile(session.user)
+
+                            if (!isMounted) return
+
+                            await loadUserProfile(session.user.id)
+                        } catch (error) {
+                            console.error(
+                                'Failed to load profile after sign in:',
+                                error
+                            )
+
+                            if (isMounted) {
+                                setUser(null)
+                                setErrorMessage(
+                                    error.message ||
+                                    'שגיאה בטעינת פרטי המשתמש'
+                                )
+                            }
+                        } finally {
+                            if (isMounted) {
+                                setLoading(false)
+                            }
+                        }
+                    }, 0)
                 }
             }
         )
 
         return () => {
+            isMounted = false
             subscription.unsubscribe()
         }
     }, [])
 
+    const refreshUser = async () => {
+        try {
+            setErrorMessage('')
+            return await loadUserProfile()
+        } catch (error) {
+            setErrorMessage(
+                error.message || 'שגיאה ברענון המשתמש'
+            )
+
+            return null
+        }
+    }
+
     const value = {
-        session,
-        user: session?.user ?? null,
+        user,
         loading,
         errorMessage,
         setErrorMessage,
+        refreshUser,
+        isAuthenticated: !!user,
+        isAdmin: user?.role === 'admin',
     }
 
     return (
@@ -75,7 +154,9 @@ export function useAuth() {
     const context = useContext(AuthContext)
 
     if (!context) {
-        throw new Error('useAuth must be used inside AuthProvider')
+        throw new Error(
+            'useAuth must be used inside AuthProvider'
+        )
     }
 
     return context

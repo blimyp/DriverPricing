@@ -10,7 +10,6 @@ function LoginPage() {
         try {
             setLoading(true)
             setErrorMessage('')
-
             await signInWithGoogle()
         } catch (error) {
             console.error(error)

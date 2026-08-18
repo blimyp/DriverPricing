@@ -1,0 +1,150 @@
+.prices_settings_page {
+    padding: 40px 24px;
+    direction: rtl;
+}
+
+.prices-settings-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Header */
+
+.prices-settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+    text-align: center;
+}
+
+.prices-settings-header h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.prices-settings-header p {
+    margin: 0;
+    font-size: 15px;
+    color: #6b7280;
+}
+
+/* Table */
+
+.prices-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.prices-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.prices-table thead {
+    background-color: #f9fafb;
+}
+
+.prices-table th {
+    padding: 16px 20px;
+    text-align: right;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.prices-table td {
+    padding: 18px 20px;
+    font-size: 15px;
+    color: #374151;
+    border-bottom: 1px solid #f0f1f3;
+}
+
+.prices-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.prices-table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.prices-table tbody tr:hover {
+    background-color: #fafafa;
+}
+
+/* Vehicle */
+
+.vehicle-type {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Price */
+
+.price-value {
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Loading */
+
+.prices-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    font-size: 16px;
+    color: #6b7280;
+}
+
+/* Error */
+
+.prices-error {
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    color: #b91c1c;
+    text-align: center;
+}
+
+/* Empty */
+
+.prices-empty {
+    padding: 50px 20px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    text-align: center;
+    color: #6b7280;
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+    .prices_settings_page {
+        padding: 24px 14px;
+    }
+
+    .prices-settings-header h1 {
+        font-size: 24px;
+    }
+
+    .prices-settings-header p {
+        font-size: 14px;
+    }
+
+    .prices-table th,
+    .prices-table td {
+        padding: 14px 12px;
+        font-size: 14px;
+    }
+}

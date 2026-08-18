@@ -5,7 +5,7 @@ import { signOut } from '../../services/authService'
 import './navbar.css'
 
 function Navbar() {
-    const { user } = useAuth()
+    const { user, isAdmin } = useAuth()
     const navigate = useNavigate()
 
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -25,7 +25,9 @@ function Navbar() {
         { to: '/trips', label: 'הנסיעות שלי' },
         { to: '/account', label: 'הארנק שלי' },
         { to: '/about', label: 'אודות' },
-    ]
+        ...(isAdmin
+            ? [{ to: '/prices', label: 'מחירים' }]
+            : []),]
 
     return (
         <>
