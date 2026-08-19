@@ -12,6 +12,7 @@ import HomePage from './pages/home/HomePage'
 import AccountPage from './pages/account/Account'
 import TripsPage from './pages/trips/TripsPages'
 import PricesSettingsPage from './pages/prices_settings/PricesSettingsPage'
+import InboxPage from './pages/inbox/InboxPage'
 
 function App() {
   const { user, loading } = useAuth()
@@ -81,6 +82,15 @@ function App() {
         element={
           user
             ? <PricesSettingsPage />
+            : <Navigate to="/login" replace />
+        }
+      />
+
+      <Route
+        path="/inbox"
+        element={
+          user
+            ? <InboxPage />
             : <Navigate to="/login" replace />
         }
       />

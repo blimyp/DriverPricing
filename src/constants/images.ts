@@ -7,6 +7,7 @@ export const Images = {
         benefit3: '/benefit3.png',
         benefit4: '/benefit4.png',
         benefit5: '/benefit5.png',
-        benefit6: '/benefit6.png',
+        benefit6: '/benefit6.png',  
     },
+    background: '/background_car.png',
 };

@@ -83,21 +83,20 @@
      position: relative;
      z-index: 2;
      display: flex;
-     width: 88px;
-     height: 88px;
+     width: 65px;
+     height: 65px;
      align-items: center;
      justify-content: center;
      margin-bottom: 22px;
-     border: 1px solid rgba(var(--trips-green-rgb), 0.3);
-     border-radius: 28px;
+     border-radius: 20px;
      color: #0b8a6d;
      background: white;
      box-shadow: 0 16px 35px rgba(22, 199, 154, 0.13);
  }
 
  .trips-page__empty-icon svg {
-     width: 39px;
-     height: 39px;
+     width: 30px;
+     height: 30px;
  }
 
  .trips-page__empty-label,

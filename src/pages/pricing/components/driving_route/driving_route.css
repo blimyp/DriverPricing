@@ -176,7 +176,7 @@
     border: 1px dashed rgba(255, 255, 255, 0.55);
     border-radius: 16px;
 
-    color: #ffffff;
+    color: white;
 
     background:
         linear-gradient(145deg,
@@ -229,7 +229,7 @@
     border-radius: 10px;
 
     color: var(--primary-dark);
-    background: rgba(255, 255, 255, 0.85);
+    background: white;
 
     box-shadow:
         0 6px 14px rgba(0, 73, 64, 0.12);

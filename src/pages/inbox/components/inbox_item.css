@@ -1,0 +1,277 @@
+.inbox-item-card {
+    width: 100%;
+    box-sizing: border-box;
+
+    border-radius: 14px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+
+    background: #ffffff;
+
+    overflow: hidden;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.inbox-item-card:hover {
+    border-color: #d8d8d8;
+}
+
+/* Header */
+
+.inbox-item-summary {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 17px 18px;
+
+    border: none;
+
+    background: #ffffff;
+
+    text-align: right;
+
+    cursor: pointer;
+
+    font: inherit;
+}
+
+.inbox-item-summary:hover {
+    background: #fafafa;
+}
+
+.inbox-item-main {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.inbox-item-icon {
+    width: 45px;
+    height: 45px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--primary-light);
+    box-shadow: 0 2px 2px var(--primary);
+
+}
+
+.inbox-item-info {
+    min-width: 0;
+}
+
+.inbox-item-info h3 {
+    margin: 0 0 5px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.inbox-item-info p {
+    margin: 0;
+
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+.inbox-item-chevron {
+    flex-shrink: 0;
+
+    opacity: 0.5;
+
+    transition:
+        transform 0.2s ease;
+}
+
+.inbox-item-card.open .inbox-item-chevron {
+    transform: rotate(180deg);
+}
+
+
+/* Conversation */
+
+.inbox-conversation {
+    background: #fafafa;
+}
+
+.inbox-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    max-height: 420px;
+    overflow-y: auto;
+
+    padding: 22px;
+}
+
+
+/* Message */
+
+.inbox-message-row {
+    width: 100%;
+
+    display: flex;
+}
+
+.inbox-message-row.mine {
+    justify-content: flex-start;
+}
+
+.inbox-message-row.other {
+    justify-content: flex-end;
+}
+
+.inbox-message-bubble {
+    max-width: 70%;
+
+    padding: 11px 14px;
+
+    border-radius: 14px;
+
+    background: #ffffff;
+    border: 1px solid #e8e8e8;
+}
+
+.inbox-message-row.mine .inbox-message-bubble {
+    background: var(--primary-dark);
+    color: #ffffff;
+    border-color: transparent;
+
+    border-bottom-right-radius: 4px;
+}
+
+.inbox-message-row.other .inbox-message-bubble {
+    border-bottom-left-radius: 4px;
+}
+
+.inbox-message-bubble p {
+    margin: 0 0 6px;
+
+    font-size: 14px;
+    line-height: 1.6;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.inbox-message-bubble span {
+    display: block;
+
+    font-size: 10px;
+    opacity: 0.65;
+}
+
+
+/* Reply */
+
+.inbox-reply-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 15px 18px;
+    background: #ffffff;
+}
+
+.inbox-reply-form textarea {
+    flex: 1;
+    box-sizing: border-box;
+
+    height: 40px;
+    min-height: 40px;
+    max-height: 120px;
+
+    padding: 8px 13px;
+
+    resize: none;
+    overflow-y: auto;
+
+    border: 1px solid #dddddd;
+    border-radius: 11px;
+
+    font: inherit;
+    outline: none;
+}
+
+.inbox-reply-form textarea:focus {
+    border-color: var(--primary-dark);
+}
+
+.inbox-send-button {
+    height: 40px;
+    width: 40px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 11px;
+    background: var(--primary-dark);
+    color: #ffffff;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+}
+
+.inbox-send-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.inbox-conversation-status {
+    padding: 25px;
+    text-align: center;
+    font-size: 13px;
+    opacity: 0.6;
+}
+
+.inbox-conversation-error {
+    margin: 12px 18px;
+    padding: 10px 12px;
+    border: 1px solid #f1cccc;
+    border-radius: 9px;
+    background: #fff2f2;
+    font-size: 13px;
+}
+
+
+@media (max-width: 600px) {
+    .inbox-item-summary {
+        padding: 14px;
+    }
+
+    .inbox-messages {
+        padding: 16px;
+    }
+
+    .inbox-message-bubble {
+        max-width: 85%;
+    }
+
+    .inbox-reply-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .inbox-send-button {
+        align-self: flex-end;
+    }
+}

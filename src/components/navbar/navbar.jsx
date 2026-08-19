@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
+import { Images } from '../../constants/images'
 import { useAuth } from '../../contexts/AuthContext'
 import { signOut } from '../../services/authService'
+import UserMenu from '../user_menu/user_menu'
 import './navbar.css'
 
 function Navbar() {
-    const { user, isAdmin } = useAuth()
+    const { user } = useAuth()
     const navigate = useNavigate()
 
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -25,13 +27,12 @@ function Navbar() {
         { to: '/trips', label: 'הנסיעות שלי' },
         { to: '/account', label: 'הארנק שלי' },
         { to: '/about', label: 'אודות' },
-        ...(isAdmin
-            ? [{ to: '/prices', label: 'מחירים' }]
-            : []),]
+    ]
 
     return (
         <>
             <header className="navbar">
+
                 <div className="navbar-container">
 
                     {/* Mobile hamburger */}
@@ -83,12 +84,7 @@ function Navbar() {
 
                     {/* Desktop login/logout */}
                     {user ? (
-                        <button
-                            className="navbar_button desktop-auth-button"
-                            onClick={handleLogout}
-                        >
-                            התנתקות
-                        </button>
+                        <UserMenu />
                     ) : (
                         <button
                             className="navbar_button desktop-auth-button"
@@ -99,6 +95,8 @@ function Navbar() {
                     )}
 
                 </div>
+                <img src={Images.background} className="navbar-image" />
+
             </header>
 
             {/* Mobile backdrop */}

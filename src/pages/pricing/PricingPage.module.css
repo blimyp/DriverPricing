@@ -444,9 +444,9 @@
     align-items: center;
     justify-content: center;
     gap: 9px;
-    border: 1px solid #8f3434;
+    border: 1px solid var(--red);
     border-radius: 30px;
-    color: #8f3434;
+    color: var(--red);
     background: rgba(255, 245, 245, 0.96);
     box-shadow: 0 11px 27px rgba(145, 49, 49, 0.09);
     font-size: 13px;
