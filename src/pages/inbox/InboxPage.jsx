@@ -8,11 +8,11 @@ import {
     getUserInboxes,
 } from '../../services/inboxService'
 
-import Popup from '../../components/popup/Popup'
 import { Sparkles } from 'lucide-react'
 import './InboxPage.css'
 import InboxForm from './components/inbox_form'
 import InboxItem from './components/inbox_item'
+import Popup from '../../components/popup/popup'
 
 function InboxPage() {
     const { user, isAdmin } = useAuth()
