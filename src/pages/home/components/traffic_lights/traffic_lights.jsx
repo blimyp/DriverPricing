@@ -34,66 +34,33 @@ function SmartSteps() {
     return (
         <section className="smart-steps" dir="rtl">
             <div className="smart-steps-heading">
-                <span>תהליך פשוט וחכם</span>
+                <span className="smart-eyebrow">תהליך פשוט וחכם</span>
 
-                <h2>
-                    שלושה שלבים
-                    <strong> לתמחור נכון</strong>
+                <h2 className="smart-title">
+                    <span className="smart-title-word smart-title-word-1">
+                        שלושה
+                    </span>
+
+                    <span className="smart-title-word smart-title-word-2">
+                        שלבים
+                    </span>
+
+                    <strong className="smart-title-word smart-title-word-3">
+                        לתמחור
+                    </strong>
+
+                    <strong className="smart-title-word smart-title-word-4">
+                        נכון
+                    </strong>
                 </h2>
 
-                <p>
+                <p className="smart-description">
                     המערכת מובילה אותך בצורה ברורה מהשלב הראשון
                     ועד לקבלת התוצאה.
                 </p>
             </div>
 
             <div className="smart-steps-track">
-                <svg
-                    className="smart-wave"
-                    viewBox="0 0 1000 100"
-                    preserveAspectRatio="none"
-                    aria-hidden="true"
-                >
-                    <linearGradient id="waveGradient" x1="0" x2="1" y1="0" y2="0">
-                        <stop offset="0%" stopColor="#10b981" />
-                        <stop offset="50%" stopColor="#f59e0b" />
-                        <stop offset="100%" stopColor="#ef4444" />
-                    </linearGradient>
-
-                    <filter id="waveGlow">
-                        <feGaussianBlur stdDeviation="3" result="blur" />
-
-                        <feMerge>
-                            <feMergeNode in="blur" />
-                            <feMergeNode in="SourceGraphic" />
-                        </feMerge>
-                    </filter>
-
-                    <path
-                        className="smart-wave-base"
-                        d="M40 42 C190 -40 315 120 500 42 C680 -35 805 120 960 42"
-                    />
-
-                    <g className="smart-bus">
-                        <image
-                            href="/bus.png"
-                            width="90"
-                            height="48"
-                            x="-40"
-                            y="-42"
-                            preserveAspectRatio="xMidYMid meet"
-                        />
-
-                        <animateMotion
-                            dur="4.5s"
-                            repeatCount="indefinite"
-                            rotate="auto-reverse"
-                            calcMode="linear"
-                            path="M925 55 C790 100 670 -28 500 42 C315 120 190 -40 40 42"
-                        />
-                    </g>
-                </svg>
-
                 <div className="smart-steps-grid">
                     {steps.map(({ id, className, title, subtitle, Icon }) => (
                         <article
