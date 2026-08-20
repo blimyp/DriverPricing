@@ -59,8 +59,6 @@ export async function createInbox(userId, title, message) {
 }
 
 export async function getInboxMessages(inboxId) {
-    console.log('GET MESSAGES FOR INBOX:', inboxId)
-
     const { data, error } = await supabase
         .from('inbox_messages')
         .select('*')
@@ -68,9 +66,6 @@ export async function getInboxMessages(inboxId) {
         .order('created_at', {
             ascending: true,
         })
-
-    console.log('MESSAGES DATA:', data)
-    console.log('MESSAGES ERROR:', error)
 
     if (error) {
         throw error

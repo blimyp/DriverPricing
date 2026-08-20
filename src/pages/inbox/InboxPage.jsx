@@ -129,7 +129,7 @@ function InboxPage() {
                     ) : (
                         <div className="inboxes-list">
                             {inboxes.map((inbox) => (
-                                <InboxItem key={inbox.id} inbox={inbox} />
+                                <InboxItem key={inbox.id} inbox={inbox} refreshInboxes={loadInboxes} />
                             ))}
                         </div>
                     )}

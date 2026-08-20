@@ -13,19 +13,14 @@ import {
 
 import './inbox_item.css'
 
-function InboxItem({ inbox }) {
+function InboxItem({ inbox, refreshInboxes }) {
     const { user } = useAuth()
 
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState([])
     const [message, setMessage] = useState('')
-
-    const [loadingMessages, setLoadingMessages] =
-        useState(false)
-
-    const [sending, setSending] =
-        useState(false)
-
+    const [loadingMessages, setLoadingMessages] = useState(false)
+    const [sending, setSending] = useState(false)
     const [error, setError] = useState('')
 
     const handleToggle = async () => {
@@ -46,8 +41,7 @@ function InboxItem({ inbox }) {
             setLoadingMessages(true)
             setError('')
 
-            const data =
-                await getInboxMessages(inbox.id)
+            const data = await getInboxMessages(inbox.id)
 
             setMessages(data)
         } catch (error) {
@@ -56,9 +50,7 @@ function InboxItem({ inbox }) {
                 error
             )
 
-            setError(
-                'לא הצלחנו לטעון את השיחה'
-            )
+            setError('לא הצלחנו לטעון את השיחה')
         } finally {
             setLoadingMessages(false)
         }
@@ -90,6 +82,8 @@ function InboxItem({ inbox }) {
                 newMessage,
             ])
 
+            await refreshInboxes();
+
             setMessage('')
         } catch (error) {
             console.error(
@@ -107,8 +101,7 @@ function InboxItem({ inbox }) {
 
     return (
         <article
-            className={`inbox-item-card ${isOpen ? 'open' : ''
-                }`}
+            className={`inbox-item-card ${isOpen ? 'open' : ''}`}
         >
             <button
                 type="button"
@@ -137,11 +130,18 @@ function InboxItem({ inbox }) {
                     </div>
                 </div>
 
-                <ChevronDown
-                    className="inbox-item-chevron"
-                    size={20}
-                    strokeWidth={2}
-                />
+                <div className='inbox-item-main'>
+                    {inbox.last_message_user_id !== user.id && (
+                        <span className="waiting-for-answare">
+                            ● ממתין למענה
+                        </span>
+                    )}
+                    <ChevronDown
+                        className="inbox-item-chevron"
+                        size={20}
+                        strokeWidth={2}
+                    />
+                </div>
             </button>
 
             {isOpen && (
