@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useAuth } from "../../../../contexts/AuthContext"
 import { saveTrip } from "../../../../services/tripsService"
-
-const literPrice = 7.5
 
 function PriceResult({
     styles,
@@ -44,7 +42,7 @@ function PriceResult({
 
     const fuelPrice =
         (distance / Number(getVehicleKmCnt())) *
-        literPrice
+        user.fuel_price_per_liter;
 
     let driverPrice = 0
     let totalPrice = 0
