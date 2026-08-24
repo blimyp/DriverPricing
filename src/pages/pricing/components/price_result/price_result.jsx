@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { useAuth } from "../../../../contexts/AuthContext"
 import { saveTrip } from "../../../../services/tripsService"
-import { getVehiclePrices } from "../../../../services/vehiclePricesService"
 
 const literPrice = 7.5
 
@@ -15,57 +14,23 @@ function PriceResult({
     const [saveMessage, setSaveMessage] = useState('')
     const [saveError, setSaveError] = useState('')
 
-    const [vehiclePrices, setVehiclePrices] = useState([])
-    const [pricesLoading, setPricesLoading] = useState(true)
-    const [pricesError, setPricesError] = useState('')
+    const getVehicleKmCnt = () => {
+        switch (form.vehicleType) {
+            case 'bus':
+                return user?.bus_km_per_liter
 
-    useEffect(() => {
-        async function loadPrices() {
-            try {
-                setPricesLoading(true)
-                setPricesError('')
+            case 'minibus':
+                return user?.minibus_km_per_liter
 
-                const data = await getVehiclePrices()
+            case 'van':
+                return user?.van_km_per_liter
 
-                setVehiclePrices(data)
-            } catch (error) {
-                console.error('Get vehicle prices error:', error)
-
-                setPricesError(
-                    error?.message ||
-                    'אירעה שגיאה בטעינת מחירי הרכבים'
-                )
-            } finally {
-                setPricesLoading(false)
-            }
+            default:
+                return 0
         }
-
-        loadPrices()
-    }, [])
-
-    if (pricesLoading) {
-        return (
-            <section className={styles.priceResult}>
-                <p>טוען מחירים...</p>
-            </section>
-        )
     }
 
-    if (pricesError) {
-        return (
-            <section className={styles.priceResult}>
-                <p className={styles.saveError}>
-                    {pricesError}
-                </p>
-            </section>
-        )
-    }
-
-    const selectedVehicle = vehiclePrices.find(
-        vehicle => vehicle.vehicle_type === form.vehicleType
-    )
-
-    if (!selectedVehicle) {
+    if (getVehicleKmCnt() == 0) {
         return (
             <section className={styles.priceResult}>
                 <p className={styles.saveError}>
@@ -78,7 +43,7 @@ function PriceResult({
     const distance = Number(form.distanceKm)
 
     const fuelPrice =
-        (distance / Number(selectedVehicle.km_cnt_in_liter)) *
+        (distance / Number(getVehicleKmCnt())) *
         literPrice
 
     let driverPrice = 0

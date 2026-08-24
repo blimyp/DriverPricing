@@ -69,15 +69,50 @@ export async function getUserProfile(userId) {
     const { data, error } = await supabase
         .from('profiles')
         .select(`
-            id,
-            email,
-            full_name,
-            role,
-            avatar_url,
-            created_at,
-            updated_at
-        `)
+        id,
+        email,
+        full_name,
+        role,
+        avatar_url,
+        created_at,
+        updated_at,
+        bus_km_per_liter,
+        minibus_km_per_liter,
+        van_km_per_liter,
+        hourly_driver_price,
+        driver_percentage,
+        fuel_price_per_liter
+    `)
         .eq('id', userId)
+        .single()
+
+    if (error) {
+        throw error
+    }
+
+    return data
+}
+
+const vehicleFields = {
+    bus: 'bus_km_per_liter',
+    minibus: 'minibus_km_per_liter',
+    van: 'van_km_per_liter',
+}
+
+export const updateVehiclePrice = async (userId, vehicleType, value) => {
+    const fieldName = vehicleFields[vehicleType]
+
+    if (!fieldName) {
+        throw new Error('סוג רכב לא תקין')
+    }
+
+    const { data, error } = await supabase
+        .from('profiles')
+        .update({
+            [fieldName]: value,
+        })
+        .eq('id', userId)
+        .select()
         .single()
 
     if (error) {

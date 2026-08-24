@@ -1,38 +1,28 @@
-import { useEffect, useState } from 'react'
-import {
-    getVehiclePrices,
-    updateVehiclePrice,
-} from '../../services/vehiclePricesService'
+import { useState } from 'react'
+import { useAuth } from '../../contexts/AuthContext';
+import { updateVehiclePrice } from '../../services/profileService';
 import './PricesSettingsPage.css'
 
 function PricesSettingsPage() {
-    const [prices, setPrices] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
+    const { user } = useAuth();
+    const [prices, setPrices] = useState([
+        {
+            vehicle_type: 'bus',
+            km_cnt_in_liter: user?.bus_km_per_liter,
+        },
+        {
+            vehicle_type: 'minibus',
+            km_cnt_in_liter: user?.minibus_km_per_liter,
+        },
+        {
+            vehicle_type: 'van',
+            km_cnt_in_liter: user?.van_km_per_liter,
+        },
+    ]);
 
     const [editingVehicle, setEditingVehicle] = useState(null)
     const [editedValue, setEditedValue] = useState('')
     const [savingVehicle, setSavingVehicle] = useState(null)
-
-    useEffect(() => {
-        const loadPrices = async () => {
-            try {
-                setLoading(true)
-                setError(null)
-
-                const data = await getVehiclePrices()
-
-                setPrices(data)
-            } catch (err) {
-                console.error('Error loading prices:', err)
-                setError('לא הצלחנו לטעון את נתוני המחירים')
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        loadPrices()
-    }, [])
 
     const handleEdit = (price) => {
         setEditingVehicle(price.vehicle_type)
@@ -56,6 +46,7 @@ function PricesSettingsPage() {
             setSavingVehicle(price.vehicle_type)
 
             const updatedPrice = await updateVehiclePrice(
+                user.id,
                 price.vehicle_type,
                 value
             )
@@ -69,7 +60,7 @@ function PricesSettingsPage() {
                     item.vehicle_type === price.vehicle_type
                         ? {
                             ...item,
-                            km_cnt_in_liter: updatedPrice.km_cnt_in_liter,
+                            km_cnt_in_liter: value,
                         }
                         : item
                 )
@@ -84,26 +75,6 @@ function PricesSettingsPage() {
         } finally {
             setSavingVehicle(null)
         }
-    }
-
-    if (loading) {
-        return (
-            <div className="prices_settings_page">
-                <div className="prices-loading">
-                    טוען נתוני מחירים...
-                </div>
-            </div>
-        )
-    }
-
-    if (error) {
-        return (
-            <div className="prices_settings_page">
-                <div className="prices-error">
-                    {error}
-                </div>
-            </div>
-        )
     }
 
     return (
@@ -234,7 +205,7 @@ const getVehicleLabel = (vehicleType) => {
     const labels = {
         bus: 'אוטובוס',
         minibus: 'מיניבוס',
-        van: 'וואן',
+        van: 'מונית',
     }
 
     return labels[vehicleType] || vehicleType
