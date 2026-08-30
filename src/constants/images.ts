@@ -10,4 +10,9 @@ export const Images = {
         benefit6: '/benefit6.png',  
     },
     background: '/background_car.png',
+    hero: [
+        '/hero-mountain-lake.png',
+        '/hero-coastal-road.png',
+        '/hero-countryside-sunset.png',
+    ],
 };

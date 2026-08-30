@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 import './HomePage.css'
 
-import SmartSteps from './components/traffic_lights/traffic_lights'
+import HeroSlider from './components/hero_slider/hero_slider'
 import ProductPreview from './components/product_preview/product_preview'
 import BenefitCard from './components/benefit_card/benefit_card'
 import Reveal from '../../components/reveal/reveal'
@@ -51,13 +51,7 @@ function HomePage() {
 
     return (
         <main dir="rtl" className="home-page">
-            <Reveal
-                className="component-reveal-wrapper"
-                direction="up"
-                threshold={0.08}
-            >
-                <SmartSteps />
-            </Reveal>
+            <HeroSlider />
 
             <ProductPreview />
 

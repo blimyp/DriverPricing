@@ -95,8 +95,6 @@ function Navbar() {
                     )}
 
                 </div>
-                <img src={Images.background} className="navbar-image" />
-
             </header>
 
             {/* Mobile backdrop */}
