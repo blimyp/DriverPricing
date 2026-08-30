@@ -1,22 +1,36 @@
-import { CarFront, Clock3, Route } from "lucide-react"
+import { CarFront, Clock3, Percent, Route } from "lucide-react"
 
 function DrivingDetails({
     styles,
     handleChange,
     form
 }) {
+    const isPercentage = form.driverPaymentType === 'percentage'
+
+    function handlePaymentTypeChange() {
+        handleChange({
+            target: {
+                name: 'driverPaymentType',
+                value: isPercentage
+                    ? 'hourly'
+                    : 'percentage',
+            },
+        })
+    }
+
     return (
         <>
-            <div className={styles.drivingDetails}>
-                <div className={styles.drivingDetail}>
-                    מרחק מסלול: {form.distanceKm || '-'} ק״מ
+            <div className={styles.routeSummary}>
+                <div className={styles.routeSummaryItem}>
+                    <span>מרחק מסלול</span>
+                    <strong>{form.distanceKm || '-'} ק״מ</strong>
                 </div>
 
-                <div className={styles.drivingDetail}>
-                    זמן נסיעה משוער: {form.routeDuration || '-'} שעות
+                <div className={styles.routeSummaryItem}>
+                    <span>זמן נסיעה משוער</span>
+                    <strong>{form.routeDuration || '-'} שעות</strong>
                 </div>
             </div>
-
 
             <div className={styles.formCardFields}>
 
@@ -91,6 +105,54 @@ function DrivingDetails({
                         <span className={styles.inputSuffix}>
                             שעות
                         </span>
+                    </div>
+                </div>
+
+                <div className={styles.paymentSwitchWrapper}>
+                    <span className={styles.formLabel}>
+                        תשלום לנהג
+                    </span>
+
+                    <div
+                        className={styles.paymentSwitchArea}
+                        onClick={handlePaymentTypeChange}
+                    >
+                        <div
+                            className={`${styles.paymentSwitchLabel} ${isPercentage
+                                ? styles.paymentSwitchLabelActive
+                                : ''
+                                }`}
+                        >
+                            <Percent
+                                className={styles.paymentSwitchIcon}
+                                strokeWidth={1.9}
+                                aria-hidden="true"
+                            />
+
+                            <span>אחוזים</span>
+                        </div>
+
+                        <div
+                            className={`${styles.paymentSwitchLabel} ${!isPercentage
+                                ? styles.paymentSwitchLabelActive
+                                : ''
+                                }`}
+                        >
+                            <Clock3
+                                className={styles.paymentSwitchIcon}
+                                strokeWidth={1.9}
+                                aria-hidden="true"
+                            />
+
+                            <span>מחיר שעתי</span>
+                        </div>
+
+                        <div
+                            className={`${styles.paymentSwitchThumb} ${isPercentage
+                                ? styles.paymentSwitchThumbRight
+                                : ''
+                                }`}
+                        />
                     </div>
                 </div>
             </div>

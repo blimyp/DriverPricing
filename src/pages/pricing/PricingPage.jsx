@@ -4,7 +4,6 @@ import {
     CircleAlert,
     Clock3,
     MapPinned,
-    WalletCards,
     ChevronLeft,
     ChevronRight,
 } from 'lucide-react'
@@ -13,7 +12,6 @@ import styles from './PricingPage.module.css'
 
 import BackgroundSection from '../../components/background_section/background_section'
 import DrivingRoute from './components/driving_route/driving_route'
-import DriverPayment from './components/driver_payment/driver_payment'
 import StepPanel from './components/pricing_step_panel'
 import DrivingDetails from './components/driving_details/driving_details'
 import PriceResult from './components/price_result/price_result'
@@ -35,13 +33,6 @@ const steps = [
         description: 'מרחק ומשך זמן',
         icon: Clock3,
     },
-    {
-        id: 'driver',
-        title: 'תשלום לנהג',
-        shortTitle: 'תשלום',
-        description: 'אופן וגובה התשלום',
-        icon: WalletCards,
-    },
 ]
 
 const initialForm = {
@@ -55,8 +46,6 @@ const initialForm = {
     vehicleType: 'van',
 
     driverPaymentType: 'hourly',
-    driverHourlyRate: '',
-    driverPercentage: '',
 }
 
 function PricingPage() {
@@ -138,35 +127,6 @@ function PricingPage() {
         return ''
     }
 
-    function validateDriverPaymentStep() {
-        if (form.driverPaymentType === 'hourly') {
-            const hourlyRate = Number(form.driverHourlyRate)
-
-            if (
-                !Number.isFinite(hourlyRate) ||
-                hourlyRate <= 0
-            ) {
-                return 'יש להזין תשלום תקין לנהג לשעה'
-            }
-        }
-
-        if (form.driverPaymentType === 'percentage') {
-            const percentage = Number(
-                form.driverPercentage
-            )
-
-            if (
-                !Number.isFinite(percentage) ||
-                percentage <= 0 ||
-                percentage > 100
-            ) {
-                return 'יש להזין אחוז תקין בין 1 ל־100'
-            }
-        }
-
-        return ''
-    }
-
     function getStepValidationError(stepIndex) {
         switch (stepIndex) {
             case 0:
@@ -174,9 +134,6 @@ function PricingPage() {
 
             case 1:
                 return validateTripDetailsStep()
-
-            case 2:
-                return validateDriverPaymentStep()
 
             default:
                 return ''
@@ -329,21 +286,6 @@ function PricingPage() {
         )
     }
 
-    function renderDriverPaymentStep() {
-        const step = steps[2]
-
-        return (
-            <StepPanel
-                step={step}
-                styles={styles}
-                stepNumber={3}
-                totalSteps={steps.length}
-            >
-                <DriverPayment form={form} onChange={handleChange} />
-            </StepPanel>
-        )
-    }
-
     function renderStepContent() {
         switch (activeStep) {
             case 0:
@@ -351,9 +293,6 @@ function PricingPage() {
 
             case 1:
                 return renderTripDetailsStep()
-
-            case 2:
-                return renderDriverPaymentStep()
 
             default:
                 return null

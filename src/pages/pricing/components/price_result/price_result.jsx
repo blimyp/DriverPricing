@@ -50,12 +50,14 @@ function PriceResult({
     if (form.driverPaymentType === 'hourly') {
         driverPrice =
             Number(form.routeDuration) *
-            Number(form.driverHourlyRate)
+            Number(user.hourly_driver_price)
 
         totalPrice = driverPrice + fuelPrice
     } else {
-        totalPrice = fuelPrice / 0.7
-        driverPrice = totalPrice * 0.3
+        const driverShare = Number(user.driver_percentage) / 100
+
+        totalPrice = fuelPrice / (1 - driverShare)
+        driverPrice = totalPrice * driverShare
     }
 
     async function handleSaveTrip() {
@@ -84,8 +86,6 @@ function PriceResult({
                 calculatedPrice: totalPrice,
                 tripType: form.vehicleType,
                 driverPaymentType: form.driverPaymentType,
-                driverHourlyRate: form.driverHourlyRate,
-                driverPercentage: form.driverPercentage,
             })
 
             setSaveMessage('הנסיעה נשמרה בהצלחה')

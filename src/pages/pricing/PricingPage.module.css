@@ -54,7 +54,7 @@
     padding: 10px;
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
     position: relative;
     z-index: 4;
@@ -386,51 +386,138 @@
     background: #ffffff;
 }
 
-.drivingDetails {
-    display: flex;
-    margin-bottom: 50px;
-}
-
-.drivingDetail {
-    padding: 10px;
-    width: fit-content;
-    margin: auto;
-    border-bottom: 1px solid white;
-}
-
 /* =========================
-   Vehicle summary
+   Route summary (distance / duration)
 ========================= */
 
-.vehicleSummary {
-    grid-column: 1 / -1;
-
+.routeSummary {
+    margin-bottom: 22px;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
 }
 
-.vehicleSummaryItem {
-    padding: 18px;
+.routeSummaryItem {
+    padding: 16px 18px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+    gap: 14px;
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 17px;
-    color: rgba(239, 255, 251, 0.72);
     background: rgba(255, 255, 255, 0.07);
 }
 
-.vehicleSummaryItem span {
-    font-size: 12px;
-    font-weight: 700;
+.routeSummaryIcon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--primary);
 }
 
-.vehicleSummaryItem strong {
-    color: #ffffff;
-    font-size: 20px;
-    font-weight: 900;
+/* =========================
+   Driver payment type switch
+========================= */
+
+.paymentSwitchWrapper {
+    grid-column: 1 / -1;
+
+    padding: 18px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.paymentSwitchArea {
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+    padding: 6px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.12);
+
+    cursor: pointer;
+
+    box-shadow:
+        0 3px 3px rgba(255, 255, 255, 0.4),
+        inset 0 3px 3px rgba(255, 255, 255, 0.4);
+}
+
+.paymentSwitchLabel {
+    min-width: 120px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    color: rgba(255, 255, 255, 0.85);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    transition:
+        color 0.3s ease,
+        transform 0.3s ease,
+        opacity 0.3s ease;
+}
+
+.paymentSwitchLabelActive {
+    color: var(--primary-dark);
+    transform: scale(1.04);
+}
+
+.paymentSwitchIcon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.paymentSwitchThumb {
+    position: absolute;
+    width: 120px;
+    height: 40px;
+
+    border-radius: 10px;
+    background-color: white;
+
+    left: 6px;
+    z-index: -1;
+
+    transition: transform 300ms ease;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.paymentSwitchThumbRight {
+    transform: translateX(120px);
+}
+
+@media (max-width: 480px) {
+    .routeSummary {
+        grid-template-columns: 1fr;
+    }
+
+    .paymentSwitchArea {
+        gap: 7px;
+    }
+
+    .paymentSwitchLabel {
+        gap: 4px;
+        font-size: 11px;
+    }
+
+    .paymentSwitchIcon {
+        width: 16px;
+        height: 16px;
+    }
 }
 
 /* =========================
