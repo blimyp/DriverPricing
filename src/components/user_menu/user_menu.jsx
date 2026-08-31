@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ChevronDown } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { signOut } from '../../services/authService'
 import './user_menu.css'
@@ -73,16 +74,20 @@ function UserMenu() {
                 aria-expanded={isOpen}
                 aria-haspopup="menu"
             >
+                <span className="user-menu-avatar">
+                    {userName.charAt(0).toUpperCase()}
+                </span>
+
                 <span className="user-menu-name">
                     {userName}
                 </span>
 
-                <span
+                <ChevronDown
                     className={`user-menu-arrow ${isOpen ? 'open' : ''
                         }`}
-                >
-                    ▼
-                </span>
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                />
             </button>
 
             {isOpen && (
