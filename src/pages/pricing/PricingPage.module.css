@@ -19,6 +19,67 @@
 }
 
 /* =========================
+   Page header
+========================= */
+
+.pageHeader {
+    width: min(800px, 100%);
+    margin: 0 auto 50px;
+    padding: 0 12px;
+    position: relative;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+    animation: pageHeaderEnter 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.pageTitle {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: clamp(32px, 5vw, 50px);
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: -1px;
+}
+
+.pageTitleAccent {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.pageNote {
+    max-width: 100%;
+    margin: 2px 0 0;
+    padding: 9px 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 30px;
+    color: var(--primary-dark);
+    background: var(--primary-light);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.6;
+}
+
+.pageNoteIcon {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 auto;
+}
+
+.pageNoteLink {
+    color: var(--primary-dark);
+    font-weight: 900;
+    text-decoration: underline;
+}
+
+/* =========================
    Chat card
 ========================= */
 
@@ -648,6 +709,18 @@
     }
 }
 
+@keyframes pageHeaderEnter {
+    from {
+        opacity: 0;
+        transform: translateY(-14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @keyframes pricingFormEnter {
     from {
         opacity: 0;
@@ -810,6 +883,16 @@
         padding: 28px 0 50px;
     }
 
+    .pageHeader {
+        margin-bottom: 4px;
+        gap: 10px;
+    }
+
+    .pageNote {
+        padding: 8px 14px;
+        font-size: 12px;
+    }
+
     .chatCard {
         padding: 10px;
         border-radius: 21px;
@@ -859,6 +942,7 @@
 @media (prefers-reduced-motion: reduce) {
 
     .pricingPage,
+    .pageHeader,
     .chatCard,
     .assistantBubble,
     .userAnswerBubble,

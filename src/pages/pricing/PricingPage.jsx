@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronLeft, CircleAlert } from 'lucide-react'
+import { ChevronLeft, CircleAlert, Info } from 'lucide-react'
 
 import styles from './PricingPage.module.css'
 
@@ -372,6 +372,28 @@ function PricingPage() {
 
     return (
         <main className={styles.pricingPage} dir="rtl">
+            <div className={styles.pageHeader}>
+                <h1 className={styles.pageTitle}>
+                    תמחור נסיעה <span className={styles.pageTitleAccent}>בקלות</span>
+                </h1>
+
+                <p className={styles.pageNote}>
+                    <Info
+                        className={styles.pageNoteIcon}
+                        strokeWidth={2}
+                        aria-hidden="true"
+                    />
+
+                    <span>
+                        לתשומת ליבכם, המחיר הסופי מתקבל בהתאם להגדרות האישיות שלכם בעמוד{' '}
+                        <Link to="/prices" className={styles.pageNoteLink}>
+                            ההגדרות
+                        </Link>
+                        .
+                    </span>
+                </p>
+            </div>
+
             <div className={styles.chatCard}>
                 {TURNS.slice(0, activeTurnIndex + 1).map(
                     (turnKey, index) => {
