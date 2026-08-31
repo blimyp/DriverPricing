@@ -145,7 +145,7 @@ function PriceResult({
                 </button>
 
                 {saveMessage && (
-                    <p className={styles.saveSuccess}>
+                    <p>
                         {saveMessage}
                     </p>
                 )}

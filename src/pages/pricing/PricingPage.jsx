@@ -1,39 +1,29 @@
-import { useState } from 'react'
-import {
-    Calculator,
-    CircleAlert,
-    Clock3,
-    MapPinned,
-    ChevronLeft,
-    ChevronRight,
-} from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { ChevronLeft, CircleAlert } from 'lucide-react'
 
 import styles from './PricingPage.module.css'
 
 import BackgroundSection from '../../components/background_section/background_section'
 import DrivingRoute from './components/driving_route/driving_route'
-import StepPanel from './components/pricing_step_panel'
-import DrivingDetails from './components/driving_details/driving_details'
+import {
+    PlannedDurationField,
+    VehicleTypeField,
+    PaymentTypeField,
+} from './components/driving_details/driving_details'
 import PriceResult from './components/price_result/price_result'
-import Popup from '../../components/popup/popup'
+import ChatMessage from './components/chat/ChatMessage'
+import UserAnswerBubble from './components/chat/UserAnswerBubble'
+import TypingIndicator from './components/chat/TypingIndicator'
 import { getRoute } from '../../services/openRouteService'
 
-const steps = [
-    {
-        id: 'route',
-        title: 'מסלול הנסיעה',
-        shortTitle: 'מסלול',
-        description: 'מוצא, יעד ותחנות',
-        icon: MapPinned,
-    },
-    {
-        id: 'details',
-        title: 'פרטי הנסיעה',
-        shortTitle: 'פרטים',
-        description: 'מרחק ומשך זמן',
-        icon: Clock3,
-    },
-]
+const TURNS = ['route', 'duration', 'vehicle', 'payment', 'result']
+
+const VEHICLE_LABELS = {
+    van: 'טנדר',
+    minibus: 'מיניבוס',
+    bus: 'אוטובוס',
+}
 
 const initialForm = {
     origin: '',
@@ -50,17 +40,25 @@ const initialForm = {
 
 function PricingPage() {
     const [form, setForm] = useState(initialForm)
-    const [activeStep, setActiveStep] = useState(0)
+    const [activeTurnIndex, setActiveTurnIndex] = useState(0)
+    const [seenTurnIndexes, setSeenTurnIndexes] = useState(() => new Set())
+    const [isActiveTextRevealed, setIsActiveTextRevealed] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
-    const [showPriceModal, setShowPriceModal] = useState(false);
-    const [isLoadingRoute, setIsLoadingRoute] = useState(false);
+    const [isLoadingRoute, setIsLoadingRoute] = useState(false)
 
-    const isFirstStep = activeStep === 0
-    const isLastStep = activeStep === steps.length - 1
+    const transcriptEndRef = useRef(null)
 
-    function clearCalculationState() {
-        setErrorMessage('')
-    }
+    useEffect(() => {
+        setIsActiveTextRevealed(seenTurnIndexes.has(activeTurnIndex))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeTurnIndex])
+
+    useEffect(() => {
+        transcriptEndRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'end',
+        })
+    }, [activeTurnIndex, isActiveTextRevealed, isLoadingRoute])
 
     function updateFormField(name, value) {
         setForm((currentForm) => ({
@@ -68,7 +66,7 @@ function PricingPage() {
             [name]: value,
         }))
 
-        clearCalculationState()
+        setErrorMessage('')
     }
 
     function handleChange(event) {
@@ -88,7 +86,23 @@ function PricingPage() {
         updateFormField('stops', newStops)
     }
 
-    function validateRouteStep() {
+    function markTurnSeen(index) {
+        setSeenTurnIndexes((currentSeen) => {
+            if (currentSeen.has(index)) {
+                return currentSeen
+            }
+
+            const nextSeen = new Set(currentSeen)
+            nextSeen.add(index)
+            return nextSeen
+        })
+
+        if (index === activeTurnIndex) {
+            setIsActiveTextRevealed(true)
+        }
+    }
+
+    function validateRouteTurn() {
         if (!form.origin.trim()) {
             return 'יש להזין נקודת מוצא'
         }
@@ -100,26 +114,17 @@ function PricingPage() {
         return ''
     }
 
-    function validateTripDetailsStep() {
-        const distance = Number(form.distanceKm)
-        const routeDuration = Number(form.routeDuration)
+    function validateDurationTurn() {
         const plannedDuration = Number(form.plannedDuration)
 
-        if (!Number.isFinite(distance) || distance <= 0) {
-            return 'לא נמצא מרחק תקין למסלול'
-        }
-
-        if (!Number.isFinite(routeDuration) || routeDuration <= 0) {
-            return 'לא נמצא זמן נסיעה תקין למסלול'
-        }
-
-        if (
-            !Number.isFinite(plannedDuration) ||
-            plannedDuration <= 0
-        ) {
+        if (!Number.isFinite(plannedDuration) || plannedDuration <= 0) {
             return 'יש להזין שעות נסיעה מתוכננות'
         }
 
+        return ''
+    }
+
+    function validateVehicleTurn() {
         if (!form.vehicleType) {
             return 'יש לבחור סוג רכב'
         }
@@ -127,32 +132,32 @@ function PricingPage() {
         return ''
     }
 
-    function getStepValidationError(stepIndex) {
-        switch (stepIndex) {
-            case 0:
-                return validateRouteStep()
+    function getTurnValidationError(turnKey) {
+        switch (turnKey) {
+            case 'route':
+                return validateRouteTurn()
 
-            case 1:
-                return validateTripDetailsStep()
+            case 'duration':
+                return validateDurationTurn()
+
+            case 'vehicle':
+                return validateVehicleTurn()
 
             default:
                 return ''
         }
     }
 
-    function validateStep(stepIndex) {
-        const validationError = getStepValidationError(stepIndex)
-        setErrorMessage(validationError)
-        return !validationError
-    }
+    async function handleAdvance() {
+        const turnKey = TURNS[activeTurnIndex]
+        const validationError = getTurnValidationError(turnKey)
 
-    async function goToNextStep() {
-        if (!validateStep(activeStep)) {
+        if (validationError) {
+            setErrorMessage(validationError)
             return
         }
 
-        // כשעוברים משלב המסלול לשלב פרטי הנסיעה
-        if (activeStep === 0) {
+        if (turnKey === 'route') {
             try {
                 setIsLoadingRoute(true)
                 setErrorMessage('')
@@ -180,119 +185,185 @@ function PricingPage() {
             }
         }
 
-        setActiveStep((currentStep) =>
-            Math.min(currentStep + 1, steps.length - 1)
+        markTurnSeen(activeTurnIndex)
+        setErrorMessage('')
+        setActiveTurnIndex((currentIndex) =>
+            Math.min(currentIndex + 1, TURNS.length - 1)
         )
-
-        setErrorMessage('')
     }
 
-    function goToPreviousStep() {
-        setActiveStep((currentStep) => Math.max(currentStep - 1, 0))
+    function handleEditTurn(index) {
+        setActiveTurnIndex(index)
         setErrorMessage('')
+
+        setSeenTurnIndexes((currentSeen) => {
+            const nextSeen = new Set()
+
+            currentSeen.forEach((seenIndex) => {
+                if (seenIndex <= index) {
+                    nextSeen.add(seenIndex)
+                }
+            })
+
+            return nextSeen
+        })
     }
 
-    function goToStep(stepIndex) {
-        if (stepIndex === activeStep) {
-            return
-        }
+    function getAssistantText(turnKey) {
+        switch (turnKey) {
+            case 'route':
+                return 'בוא נתמחר את הנסיעה שלך! מה המסלול שאתה מתכנן?'
 
-        if (stepIndex < activeStep) {
-            setActiveStep(stepIndex)
-            setErrorMessage('')
-            return
-        }
+            case 'duration':
+                return `מרחק המסלול הוא ${form.distanceKm} ק״מ, וזמן הנסיעה המשוער הוא ${form.routeDuration} שעות. יש לך הערכת זמן נסיעה שונה? אפשר לעדכן כאן:`
 
-        for (
-            let currentStep = activeStep;
-            currentStep < stepIndex;
-            currentStep += 1
-        ) {
-            if (!validateStep(currentStep)) {
-                setActiveStep(currentStep)
-                return
+            case 'vehicle':
+                return 'מעולה! באיזה סוג רכב אתה נוסע בנסיעה הזו?'
+
+            case 'payment':
+                return 'איך תרצה לשלם לנהג בנסיעה הזו — לפי אחוזים ממחיר הנסיעה או לפי מחיר שעתי?'
+
+            case 'result':
+                return 'הנה סיכום המחיר לנסיעה שלך:'
+
+            default:
+                return ''
+        }
+    }
+
+    function getAnswerSummary(turnKey) {
+        switch (turnKey) {
+            case 'route': {
+                const stopsCount = form.stops.filter((stop) => stop.trim()).length
+                const stopsSuffix = stopsCount ? ` (+${stopsCount} תחנות)` : ''
+
+                return `${form.origin} ← ${form.destination}${stopsSuffix}`
             }
-        }
 
-        setActiveStep(stepIndex)
-        setErrorMessage('')
+            case 'duration':
+                return `${form.plannedDuration} שעות`
+
+            case 'vehicle':
+                return VEHICLE_LABELS[form.vehicleType] || form.vehicleType
+
+            case 'payment':
+                return form.driverPaymentType === 'percentage'
+                    ? 'לפי אחוזים ממחיר הנסיעה'
+                    : 'לפי מחיר שעתי'
+
+            default:
+                return ''
+        }
     }
 
-    function validateAllSteps() {
-        for (
-            let stepIndex = 0;
-            stepIndex < steps.length;
-            stepIndex += 1
-        ) {
-            const validationError = getStepValidationError(stepIndex)
-
-            if (validationError) {
-                setErrorMessage(validationError)
-                setActiveStep(stepIndex)
-                return false
-            }
+    function renderTurnError() {
+        if (!errorMessage) {
+            return null
         }
-
-        setErrorMessage('')
-
-        return true
-    }
-
-    function handleSubmit(event) {
-        event.preventDefault()
-
-        if (!validateAllSteps()) {
-            return
-        }
-
-        setShowPriceModal(true)
-        setErrorMessage('')
-    }
-
-    function renderRouteStep() {
-        const step = steps[0]
 
         return (
-            <StepPanel
-                step={step}
-                styles={styles}
-                stepNumber={1}
-                totalSteps={steps.length}
-            >
-                <DrivingRoute
-                    origin={form.origin}
-                    destination={form.destination}
-                    stops={form.stops}
-                    onOriginChange={updateOrigin}
-                    onDestinationChange={updateDestination}
-                    onStopsChange={updateStops}
+            <div className={styles.inlineError} role="alert">
+                <CircleAlert
+                    className={styles.messageIcon}
+                    strokeWidth={2}
+                    aria-hidden="true"
                 />
-            </StepPanel>
+
+                <span>{errorMessage}</span>
+            </div>
         )
     }
 
-    function renderTripDetailsStep() {
-        const step = steps[1]
-
+    function renderAdvanceButton(label, disabled = false) {
         return (
-            <StepPanel
-                step={step}
-                styles={styles}
-                stepNumber={2}
-                totalSteps={steps.length}
+            <button
+                className={styles.nextButton}
+                type="button"
+                onClick={handleAdvance}
+                disabled={disabled}
             >
-                <DrivingDetails styles={styles} form={form} handleChange={handleChange} />
-            </StepPanel>
+                <span>{label}</span>
+                <ChevronLeft strokeWidth={2} aria-hidden="true" />
+            </button>
         )
     }
 
-    function renderStepContent() {
-        switch (activeStep) {
-            case 0:
-                return renderRouteStep()
+    function renderTurnInput(turnKey) {
+        switch (turnKey) {
+            case 'route':
+                return (
+                    <>
+                        <DrivingRoute
+                            origin={form.origin}
+                            destination={form.destination}
+                            stops={form.stops}
+                            onOriginChange={updateOrigin}
+                            onDestinationChange={updateDestination}
+                            onStopsChange={updateStops}
+                        />
 
-            case 1:
-                return renderTripDetailsStep()
+                        {renderTurnError()}
+
+                        {renderAdvanceButton(
+                            isLoadingRoute ? 'מחשב מסלול...' : 'הבא',
+                            isLoadingRoute
+                        )}
+                    </>
+                )
+
+            case 'duration':
+                return (
+                    <>
+                        <PlannedDurationField
+                            styles={styles}
+                            value={form.plannedDuration}
+                            onChange={handleChange}
+                        />
+
+                        {renderTurnError()}
+                        {renderAdvanceButton('הבא')}
+                    </>
+                )
+
+            case 'vehicle':
+                return (
+                    <>
+                        <VehicleTypeField
+                            styles={styles}
+                            value={form.vehicleType}
+                            onChange={handleChange}
+                        />
+
+                        {renderTurnError()}
+                        {renderAdvanceButton('הבא')}
+                    </>
+                )
+
+            case 'payment':
+                return (
+                    <>
+                        <PaymentTypeField
+                            styles={styles}
+                            value={form.driverPaymentType}
+                            onChange={handleChange}
+                        />
+
+                        <p className={styles.settingsHint}>
+                            אפשר לערוך את מחיר השעה ואת אחוז התשלום לנהג בעמוד{' '}
+                            <Link to="/prices" className={styles.settingsLink}>
+                                ההגדרות
+                            </Link>
+                            .
+                        </p>
+
+                        {renderTurnError()}
+
+                        {renderAdvanceButton('חשב מחיר')}
+                    </>
+                )
+
+            case 'result':
+                return <PriceResult styles={styles} form={form} />
 
             default:
                 return null
@@ -300,124 +371,52 @@ function PricingPage() {
     }
 
     return (
-        <main
-            className={styles.pricingPage}
-            dir="rtl"
-        >
+        <main className={styles.pricingPage} dir="rtl">
             <div className={styles.pricingContainer}>
-                <form
-                    className={styles.pricingForm}
-                    onSubmit={handleSubmit}
-                    noValidate
-                >
-                    <nav
-                        className={styles.stepsBar}
-                        aria-label="שלבי תמחור הנסיעה"
-                    >
-                        {steps.map((step, index) => {
-                            const isActive = activeStep === index
-                            const isCompleted = activeStep > index
+                <div className={styles.chatCard}>
+                    <div className={styles.chatBackground}>
+                        <div className={styles.chatTranscript}>
+                            {TURNS.slice(0, activeTurnIndex + 1).map(
+                                (turnKey, index) => {
+                                    const isActive = index === activeTurnIndex
 
-                            const stepClassName = [
-                                styles.stepTab,
-                                isActive ? styles.stepTabActive : '',
-                                isCompleted ? styles.stepTabCompleted : '',
-                            ]
-                                .filter(Boolean)
-                                .join(' ')
+                                    return (
+                                        <div className={styles.chatTurn} key={turnKey}>
+                                            <ChatMessage
+                                                styles={styles}
+                                                text={getAssistantText(turnKey)}
+                                                alreadySeen={!isActive || isActiveTextRevealed}
+                                                onDone={() => markTurnSeen(index)}
+                                            />
 
-                            return (
-                                <button
-                                    className={stepClassName}
-                                    type="button"
-                                    key={step.id}
-                                    onClick={() =>
-                                        goToStep(index)
-                                    }
-                                    aria-current={isActive ? 'step' : undefined}
-                                >
-                                    <span className={styles.stepText}>
-                                        {step.title}
-                                    </span>
+                                            {!isActive && (
+                                                <UserAnswerBubble
+                                                    styles={styles}
+                                                    text={getAnswerSummary(turnKey)}
+                                                    onClick={() => handleEditTurn(index)}
+                                                />
+                                            )}
 
-                                    <span className={styles.stepMobileTitle}>
-                                        {step.shortTitle}
-                                    </span>
-                                </button>
-                            )
-                        })}
-                    </nav>
-
-                    {errorMessage && (
-                        <div
-                            className={styles.inlineError}
-                            role="alert"
-                        >
-                            <CircleAlert
-                                className={
-                                    styles.messageIcon
+                                            {isActive && isActiveTextRevealed && (
+                                                <div
+                                                    className={`${styles.chatMessageRow} ${styles.chatMessageAssistant}`}
+                                                >
+                                                    <BackgroundSection className={styles.chatInputArea} withMovingLines={false}>
+                                                        {renderTurnInput(turnKey)}
+                                                    </BackgroundSection>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )
                                 }
-                                strokeWidth={2}
-                                aria-hidden="true"
-                            />
+                            )}
 
-                            <span>{errorMessage}</span>
+                            {isLoadingRoute && <TypingIndicator styles={styles} />}
+
+                            <div ref={transcriptEndRef} />
                         </div>
-                    )}
-
-                    <BackgroundSection className={styles.stepContent} withMovingLines={false}>
-                        {renderStepContent()}
-                    </BackgroundSection>
-
-                    <div className={styles.stepActions}>
-                        <button
-                            className={styles.previousButton}
-                            type="button"
-                            onClick={goToPreviousStep}
-                            disabled={isFirstStep}
-                        >
-                            <ChevronRight
-                                strokeWidth={2}
-                                aria-hidden="true"
-                            />
-
-                            <span>הקודם</span>
-                        </button>
-
-                        {!isLastStep ? (
-                            <button
-                                className={styles.nextButton}
-                                type="button"
-                                onClick={goToNextStep}
-                                disabled={isLoadingRoute}
-                            >
-                                <span>{isLoadingRoute ? 'מחשב מסלול...' : 'הבא'}</span>
-                                <ChevronLeft strokeWidth={2} aria-hidden="true" />
-                            </button>
-                        ) : (
-                            <button
-                                key={'submit-button-key'}
-                                className={styles.submitButton}
-                                type="submit"
-                            >
-                                <Calculator
-                                    className={styles.buttonIcon}
-                                    strokeWidth={2}
-                                    aria-hidden="true"
-                                />
-                                <span>חשב מחיר</span>
-                            </button>
-                        )}
                     </div>
-                </form>
-
-                <Popup
-                    isOpen={showPriceModal}
-                    onClose={() => setShowPriceModal(false)}
-                >
-                    <PriceResult styles={styles} form={form} />
-                </Popup>
-
+                </div>
             </div>
         </main>
     )
