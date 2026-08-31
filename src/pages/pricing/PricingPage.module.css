@@ -18,42 +18,18 @@
     box-sizing: border-box;
 }
 
-.pricingContainer {
-    width: 100%;
-    position: relative;
-    z-index: 2;
-}
-
 /* =========================
    Chat card
 ========================= */
 
 .chatCard {
-    width: min(900px, 100%);
+    width: min(800px, 100%);
     margin: auto;
     padding: 20px;
     position: relative;
     z-index: 5;
-    border: 1px solid white;
-    border-radius: 30px;
     color: #ffffff;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
     animation: pricingFormEnter 0.85s 0.22s both;
-}
-
-.chatBackground {
-    width: 100%;
-    padding: 26px;
-    min-height: 460px;
-}
-
-.chatTranscript {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    position: relative;
-    z-index: 2;
 }
 
 .chatTurn {
@@ -816,11 +792,6 @@
         border-radius: 24px;
     }
 
-    .chatBackground {
-        padding: 20px;
-        min-height: 420px;
-    }
-
     .assistantBubble,
     .userAnswerBubble,
     .chatInputArea {
@@ -842,11 +813,6 @@
     .chatCard {
         padding: 10px;
         border-radius: 21px;
-    }
-
-    .chatBackground {
-        padding: 16px;
-        min-height: 380px;
     }
 
     .assistantBubble,

@@ -6,7 +6,6 @@ import Navbar from './components/navbar/navbar'
 import './App.css'
 import AboutPage from './pages/AboutPage'
 import './styles/colors.css'
-import BackgroundLayout from './components/backgroud_layout/background_layout'
 import PricingPage from './pages/pricing/PricingPage'
 import HomePage from './pages/home/HomePage'
 import AccountPage from './pages/account/Account'
@@ -110,9 +109,7 @@ function App() {
   return (
     <div className={'home_wrapper'}>
       <Navbar />
-      <BackgroundLayout >
-        {appRoutes}
-      </BackgroundLayout>
+      {appRoutes}
     </div>
   )
 }

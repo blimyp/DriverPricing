@@ -1,5 +1,7 @@
 .prices_settings_page {
+    width: 100%;
     padding: 40px 24px;
+    box-sizing: border-box;
     direction: rtl;
 }
 

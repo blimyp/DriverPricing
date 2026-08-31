@@ -372,51 +372,45 @@ function PricingPage() {
 
     return (
         <main className={styles.pricingPage} dir="rtl">
-            <div className={styles.pricingContainer}>
-                <div className={styles.chatCard}>
-                    <div className={styles.chatBackground}>
-                        <div className={styles.chatTranscript}>
-                            {TURNS.slice(0, activeTurnIndex + 1).map(
-                                (turnKey, index) => {
-                                    const isActive = index === activeTurnIndex
+            <div className={styles.chatCard}>
+                {TURNS.slice(0, activeTurnIndex + 1).map(
+                    (turnKey, index) => {
+                        const isActive = index === activeTurnIndex
 
-                                    return (
-                                        <div className={styles.chatTurn} key={turnKey}>
-                                            <ChatMessage
-                                                styles={styles}
-                                                text={getAssistantText(turnKey)}
-                                                alreadySeen={!isActive || isActiveTextRevealed}
-                                                onDone={() => markTurnSeen(index)}
-                                            />
+                        return (
+                            <div className={styles.chatTurn} key={turnKey}>
+                                <ChatMessage
+                                    styles={styles}
+                                    text={getAssistantText(turnKey)}
+                                    alreadySeen={!isActive || isActiveTextRevealed}
+                                    onDone={() => markTurnSeen(index)}
+                                />
 
-                                            {!isActive && (
-                                                <UserAnswerBubble
-                                                    styles={styles}
-                                                    text={getAnswerSummary(turnKey)}
-                                                    onClick={() => handleEditTurn(index)}
-                                                />
-                                            )}
+                                {!isActive && (
+                                    <UserAnswerBubble
+                                        styles={styles}
+                                        text={getAnswerSummary(turnKey)}
+                                        onClick={() => handleEditTurn(index)}
+                                    />
+                                )}
 
-                                            {isActive && isActiveTextRevealed && (
-                                                <div
-                                                    className={`${styles.chatMessageRow} ${styles.chatMessageAssistant}`}
-                                                >
-                                                    <BackgroundSection className={styles.chatInputArea} withMovingLines={false}>
-                                                        {renderTurnInput(turnKey)}
-                                                    </BackgroundSection>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )
-                                }
-                            )}
+                                {isActive && isActiveTextRevealed && (
+                                    <div
+                                        className={`${styles.chatMessageRow} ${styles.chatMessageAssistant}`}
+                                    >
+                                        <BackgroundSection className={styles.chatInputArea} withMovingLines={false}>
+                                            {renderTurnInput(turnKey)}
+                                        </BackgroundSection>
+                                    </div>
+                                )}
+                            </div>
+                        )
+                    }
+                )}
 
-                            {isLoadingRoute && <TypingIndicator styles={styles} />}
+                {isLoadingRoute && <TypingIndicator styles={styles} />}
 
-                            <div ref={transcriptEndRef} />
-                        </div>
-                    </div>
-                </div>
+                <div ref={transcriptEndRef} />
             </div>
         </main>
     )
