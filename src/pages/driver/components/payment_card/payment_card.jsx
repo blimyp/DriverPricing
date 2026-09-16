@@ -1,12 +1,12 @@
 import {
     CalendarDays,
-    MapPin,
+    HandCoins,
 } from 'lucide-react'
 
-import './earning_card.css'
+import './payment_card.css'
 
-function EarningCard({ trip, index }) {
-    function formatPrice(value) {
+function PaymentCard({ payment, index }) {
+    function formatAmount(value) {
         const numericValue = Number(value)
 
         if (!Number.isFinite(numericValue)) {
@@ -19,14 +19,6 @@ function EarningCard({ trip, index }) {
             minimumFractionDigits: 0,
             maximumFractionDigits: 2,
         }).format(numericValue)
-    }
-
-    function getTripDescription(trip) {
-        if (trip.description && trip.description.trim()) {
-            return trip.description
-        }
-
-        return `נסיעה מ${trip.origin || 'לא ידוע'} ל${trip.destination || 'לא ידוע'}`
     }
 
     function formatDate(value) {
@@ -51,28 +43,27 @@ function EarningCard({ trip, index }) {
 
     return (
         <article
-            className="earning-card"
-            key={trip.id}
+            className="payment-card"
             style={{ '--trip-index': index }}
         >
-            <div className="earning-card__icon">
-                <MapPin strokeWidth={2} aria-hidden="true" />
+            <div className="payment-card__icon">
+                <HandCoins strokeWidth={2} aria-hidden="true" />
             </div>
 
-            <strong className="earning-card__label">
-                {getTripDescription(trip)}
+            <strong className="payment-card__label">
+                {payment.description || 'תשלום התקבל'}
             </strong>
 
-            <span className="earning-card__date">
+            <span className="payment-card__date">
                 <CalendarDays size={13} strokeWidth={2} aria-hidden="true" />
-                {formatDate(trip.created_at)}
+                {formatDate(payment.created_at)}
             </span>
 
-            <span className="earning-card__amount">
-                {formatPrice(trip.driverEarning)}
+            <span className="payment-card__amount">
+                {formatAmount(payment.amount)}
             </span>
         </article>
     )
 }
 
-export default EarningCard
+export default PaymentCard

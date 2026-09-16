@@ -22,7 +22,8 @@ function App() {
     return <p dir="rtl">טוען...</p>
   }
 
-  const homeRoute = user?.role === 'driver' ? '/driver' : '/home'
+  const isDriver = user?.role === 'driver'
+  const homeRoute = isDriver ? '/driver' : '/home'
 
   const appRoutes = (
     <Routes>
@@ -38,9 +39,11 @@ function App() {
       <Route
         path="/home"
         element={
-          user
-            ? <HomePage />
-            : <Navigate to="/login" replace />
+          !user
+            ? <Navigate to="/login" replace />
+            : isDriver
+              ? <Navigate to="/driver" replace />
+              : <HomePage />
         }
       />
 
@@ -56,54 +59,66 @@ function App() {
       <Route
         path="/pricing"
         element={
-          user
-            ? <PricingPage />
-            : <Navigate to="/login" replace />
+          !user
+            ? <Navigate to="/login" replace />
+            : isDriver
+              ? <Navigate to="/driver" replace />
+              : <PricingPage />
         }
       />
 
       <Route
         path="/trips"
         element={
-          user
-            ? <TripsPage />
-            : <Navigate to="/login" replace />
+          !user
+            ? <Navigate to="/login" replace />
+            : isDriver
+              ? <Navigate to="/driver" replace />
+              : <TripsPage />
         }
       />
 
       <Route
         path="/account"
         element={
-          user
-            ? <AccountPage />
-            : <Navigate to="/login" replace />
+          !user
+            ? <Navigate to="/login" replace />
+            : isDriver
+              ? <Navigate to="/driver" replace />
+              : <AccountPage />
         }
       />
 
       <Route
         path="/about"
         element={
-          user
-            ? <AboutPage />
-            : <Navigate to="/login" replace />
+          !user
+            ? <Navigate to="/login" replace />
+            : isDriver
+              ? <Navigate to="/driver" replace />
+              : <AboutPage />
         }
       />
 
       <Route
         path="/prices"
         element={
-          user
-            ? <PricesSettingsPage />
-            : <Navigate to="/login" replace />
+          !user
+            ? <Navigate to="/login" replace />
+            : isDriver
+              ? <Navigate to="/driver" replace />
+              : <PricesSettingsPage />
         }
       />
 
       <Route
         path="/inbox"
         element={
-          user
-            ? <InboxPage />
-            : <Navigate to="/login" replace />
+          !user
+            ? <Navigate to="/login" replace />
+            : isDriver
+              ? <Navigate to="/driver" replace />
+              : <InboxPage />
         }
       />
 
@@ -130,7 +145,7 @@ function App() {
 
   return (
     <div className={'home_wrapper'}>
-      <Navbar />
+      {!isDriver && <Navbar />}
       {appRoutes}
     </div>
   )
