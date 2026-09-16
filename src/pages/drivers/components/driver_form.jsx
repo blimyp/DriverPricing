@@ -1,0 +1,122 @@
+import { useState } from 'react'
+
+import './driver_form.css'
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+function DriverForm({ onSubmit, onCancel }) {
+    const [email, setEmail] = useState('')
+
+    const [sending, setSending] =
+        useState(false)
+
+    const [error, setError] = useState('')
+
+    const handleSubmit = async (event) => {
+        event.preventDefault()
+
+        const cleanEmail = email.trim()
+
+        if (!cleanEmail) {
+            setError('יש להזין כתובת מייל')
+            return
+        }
+
+        if (!EMAIL_PATTERN.test(cleanEmail)) {
+            setError('כתובת המייל אינה תקינה')
+            return
+        }
+
+        try {
+            setSending(true)
+            setError('')
+
+            await onSubmit({ email: cleanEmail })
+        } catch (error) {
+            console.error(
+                'Error adding driver:',
+                error
+            )
+
+            setError(
+                error.message ||
+                'לא הצלחנו להוסיף את הנהג'
+            )
+        } finally {
+            setSending(false)
+        }
+    }
+
+    return (
+        <div
+            className="driver-form-popup"
+            dir="rtl"
+        >
+            <div className="driver-form-header">
+                <h2>
+                    הוספת נהג
+                </h2>
+
+                <p>
+                    הזיני את כתובת המייל של המשתמש שברצונך
+                    להגדיר כנהג. על המשתמש להיות רשום
+                    במערכת (להתחבר לפחות פעם אחת) לפני כן.
+                </p>
+            </div>
+
+            {error && (
+                <div className="driver-form-error">
+                    {error}
+                </div>
+            )}
+
+            <form
+                className="driver-form"
+                onSubmit={handleSubmit}
+            >
+                <div className="driver-form-field">
+                    <label htmlFor="driver-email">
+                        כתובת מייל
+                    </label>
+
+                    <input
+                        id="driver-email"
+                        type="email"
+                        value={email}
+                        onChange={(event) =>
+                            setEmail(
+                                event.target.value
+                            )
+                        }
+                        placeholder="driver@example.com"
+                        disabled={sending}
+                        autoFocus
+                    />
+                </div>
+
+                <div className="driver-form-actions">
+                    <button
+                        type="button"
+                        className="driver-form-cancel"
+                        onClick={onCancel}
+                        disabled={sending}
+                    >
+                        ביטול
+                    </button>
+
+                    <button
+                        type="submit"
+                        className="driver-form-submit"
+                        disabled={sending}
+                    >
+                        {sending
+                            ? 'מוסיף...'
+                            : 'הוספת נהג'}
+                    </button>
+                </div>
+            </form>
+        </div>
+    )
+}
+
+export default DriverForm

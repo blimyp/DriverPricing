@@ -12,13 +12,17 @@ import AccountPage from './pages/account/Account'
 import TripsPage from './pages/trips/TripsPages'
 import PricesSettingsPage from './pages/prices_settings/PricesSettingsPage'
 import InboxPage from './pages/inbox/InboxPage'
+import DriverPage from './pages/driver/DriverPage'
+import DriversPage from './pages/drivers/DriversPage'
 
 function App() {
-  const { user, loading } = useAuth()
+  const { user, loading, isAdmin } = useAuth()
 
   if (loading) {
     return <p dir="rtl">טוען...</p>
   }
+
+  const homeRoute = user?.role === 'driver' ? '/driver' : '/home'
 
   const appRoutes = (
     <Routes>
@@ -26,7 +30,7 @@ function App() {
         path="/login"
         element={
           user
-            ? <Navigate to="/home" replace />
+            ? <Navigate to={homeRoute} replace />
             : <LoginPage />
         }
       />
@@ -36,6 +40,15 @@ function App() {
         element={
           user
             ? <HomePage />
+            : <Navigate to="/login" replace />
+        }
+      />
+
+      <Route
+        path="/driver"
+        element={
+          user
+            ? <DriverPage />
             : <Navigate to="/login" replace />
         }
       />
@@ -95,10 +108,19 @@ function App() {
       />
 
       <Route
+        path="/drivers"
+        element={
+          user && isAdmin
+            ? <DriversPage />
+            : <Navigate to={user ? homeRoute : '/login'} replace />
+        }
+      />
+
+      <Route
         path="*"
         element={
           <Navigate
-            to={user ? '/home' : '/login'}
+            to={user ? homeRoute : '/login'}
             replace
           />
         }

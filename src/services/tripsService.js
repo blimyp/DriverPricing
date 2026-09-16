@@ -43,3 +43,84 @@ export async function saveTrip({
 
     return data
 }
+
+export async function saveDriverTrip({
+    driverId,
+    tripDate,
+    price,
+    description,
+}) {
+    if (!driverId) {
+        throw new Error('יש לבחור נהג')
+    }
+
+    if (!tripDate) {
+        throw new Error('יש לבחור תאריך לנסיעה')
+    }
+
+    if (
+        price === null ||
+        price === undefined ||
+        !Number.isFinite(Number(price))
+    ) {
+        throw new Error('יש להזין מחיר תקין לנסיעה')
+    }
+
+    const { data, error } = await supabase
+        .from('trips')
+        .insert({
+            user_id: driverId,
+            description: description || null,
+            calculated_price: Number(price),
+            created_at: new Date(tripDate).toISOString(),
+        })
+        .select()
+        .single()
+
+    if (error) {
+        throw error
+    }
+
+    return data
+}
+
+export async function getDriverTrips(driverIds) {
+    if (!driverIds || driverIds.length === 0) {
+        return []
+    }
+
+    const { data, error } = await supabase
+        .from('trips')
+        .select(
+            'id, user_id, description, calculated_price, created_at'
+        )
+        .in('user_id', driverIds)
+        .order('created_at', { ascending: false })
+
+    console.log(
+        '[DEBUG getDriverTrips] driverIds:',
+        driverIds,
+        'data:',
+        data,
+        'error:',
+        error
+    )
+
+    const { data: allVisibleTrips, error: allTripsError } =
+        await supabase
+            .from('trips')
+            .select('id, user_id, calculated_price')
+
+    console.log(
+        '[DEBUG all trips visible to current user]',
+        allVisibleTrips,
+        'error:',
+        allTripsError
+    )
+
+    if (error) {
+        throw error
+    }
+
+    return data
+}

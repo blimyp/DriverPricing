@@ -6,7 +6,7 @@ import { signOut } from '../../services/authService'
 import './user_menu.css'
 
 function UserMenu() {
-    const { user } = useAuth()
+    const { user, isAdmin } = useAuth()
     const navigate = useNavigate()
 
     const [isOpen, setIsOpen] = useState(false)
@@ -49,6 +49,11 @@ function UserMenu() {
     const handleSettings = () => {
         setIsOpen(false)
         navigate('/prices')
+    }
+
+    const handleDrivers = () => {
+        setIsOpen(false)
+        navigate('/drivers')
     }
 
     if (!user) {
@@ -110,6 +115,16 @@ function UserMenu() {
                     >
                         פניות למנהל המערכת
                     </button>
+
+                    {isAdmin && (
+                        <button
+                            type="button"
+                            className="user-menu-item"
+                            onClick={handleDrivers}
+                        >
+                            ניהול נהגים
+                        </button>
+                    )}
 
                     <div className="user-menu-divider" />
 

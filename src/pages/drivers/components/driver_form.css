@@ -1,0 +1,136 @@
+.driver-form-popup {
+    width: min(450px, 85vw);
+
+    direction: rtl;
+    background-color: white;
+    padding: 30px;
+    box-sizing: border-box;
+    border-radius: 25px;
+}
+
+.driver-form-header {
+    margin-bottom: 24px;
+
+    padding-left: 40px;
+}
+
+.driver-form-header h2 {
+    margin: 0 0 7px;
+
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.driver-form-header p {
+    margin: 0;
+
+    font-size: 14px;
+    line-height: 1.6;
+
+    opacity: 0.65;
+}
+
+.driver-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.driver-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.driver-form-field label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.driver-form-field input {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    font: inherit;
+    direction: ltr;
+    text-align: right;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.driver-form-field input:focus {
+    border-color: #777;
+
+    box-shadow:
+        0 0 0 3px rgba(0, 0, 0, 0.04);
+}
+
+.driver-form-field input:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.driver-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 10px;
+
+    margin-top: 4px;
+}
+
+.driver-form-submit,
+.driver-form-cancel {
+    padding: 10px 18px;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font: inherit;
+    font-weight: 600;
+}
+
+.driver-form-submit {
+    border: none;
+    background-color: var(--primary-dark);
+    color: white;
+}
+
+.driver-form-cancel {
+    border: 1px solid #dddddd;
+
+    background: transparent;
+}
+
+.driver-form-submit:disabled,
+.driver-form-cancel:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.driver-form-error {
+    margin-bottom: 18px;
+    padding: 5px 13px;
+    border: 1px solid var(--red);
+    color: var(--red);
+    border-radius: 50vh;
+    margin: auto;
+    background: #fff2f2;
+    width: fit-content;
+    font-size: 12px;
+    font-weight: bold;
+}
