@@ -18,6 +18,14 @@ function DriverTripItem({ trip }) {
         }).format(numericValue)
     }
 
+    function getTripDescription(trip) {
+        if (trip.description && trip.description.trim()) {
+            return trip.description
+        }
+
+        return `נסיעה מ${trip.origin || 'לא ידוע'} ל${trip.destination || 'לא ידוע'}`
+    }
+
     function formatDate(value) {
         if (!value) {
             return 'לא צוין'
@@ -46,9 +54,7 @@ function DriverTripItem({ trip }) {
                 <div className="driver-trip-item-info">
                     <h3>{trip.driverName}</h3>
 
-                    {trip.description && (
-                        <p>{trip.description}</p>
-                    )}
+                    <p>{getTripDescription(trip)}</p>
                 </div>
             </div>
 

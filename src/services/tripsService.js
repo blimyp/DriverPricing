@@ -92,31 +92,10 @@ export async function getDriverTrips(driverIds) {
     const { data, error } = await supabase
         .from('trips')
         .select(
-            'id, user_id, description, calculated_price, created_at'
+            'id, user_id, origin, destination, description, calculated_price, created_at'
         )
         .in('user_id', driverIds)
         .order('created_at', { ascending: false })
-
-    console.log(
-        '[DEBUG getDriverTrips] driverIds:',
-        driverIds,
-        'data:',
-        data,
-        'error:',
-        error
-    )
-
-    const { data: allVisibleTrips, error: allTripsError } =
-        await supabase
-            .from('trips')
-            .select('id, user_id, calculated_price')
-
-    console.log(
-        '[DEBUG all trips visible to current user]',
-        allVisibleTrips,
-        'error:',
-        allTripsError
-    )
 
     if (error) {
         throw error
