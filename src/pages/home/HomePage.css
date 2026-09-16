@@ -56,7 +56,7 @@
 }
 
 .section-heading h2 span {
-    color: var(--primary);
+    color: var(--accent);
 }
 
 .section-heading p {
@@ -176,7 +176,7 @@
 
 .final-cta-content h2 strong {
     display: block;
-    color: #d9fff3;
+    color: var(--accent);
 }
 
 .final-cta-content p {

@@ -112,7 +112,7 @@
 /* מספר */
 .benefit-card-number {
     padding-top: 20px;
-    color: #078c79;
+    color: var(--accent);
     font-size: 20px;
     font-weight: 900;
 }
