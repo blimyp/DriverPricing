@@ -2,15 +2,17 @@ import { useState } from 'react'
 import { signInWithGoogle } from '../services/authService'
 import './LoginPage.css'
 
-function LoginPage() {
+function LoginPage({ errorMessage: externalErrorMessage }) {
     const [loading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
+
+    const displayError = externalErrorMessage || errorMessage
 
     async function handleGoogleLogin() {
         try {
             setLoading(true)
             setErrorMessage('')
-            await signInWithGoogle()
+            await signInWithGoogle(window.location.pathname)
         } catch (error) {
             console.error(error)
             setErrorMessage(error.message || 'ההתחברות נכשלה, נסי שוב.')
@@ -71,9 +73,9 @@ function LoginPage() {
                         </p>
                     </div>
 
-                    {errorMessage && (
+                    {displayError && (
                         <div className="login-error" role="alert">
-                            {errorMessage}
+                            {displayError}
                         </div>
                     )}
 

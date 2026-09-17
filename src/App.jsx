@@ -1,6 +1,7 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 import LoginPage from './pages/LoginPage'
+import DriverLoginPage from './pages/DriverLoginPage'
 import Navbar from './components/navbar/navbar'
 
 import './App.css'
@@ -17,6 +18,7 @@ import DriversPage from './pages/drivers/DriversPage'
 
 function App() {
   const { user, loading, isAdmin } = useAuth()
+  const location = useLocation()
 
   if (loading) {
     return (
@@ -45,6 +47,11 @@ function App() {
       />
 
       <Route
+        path="/driver-login"
+        element={<DriverLoginPage />}
+      />
+
+      <Route
         path="/home"
         element={
           !user
@@ -60,7 +67,7 @@ function App() {
         element={
           user
             ? <DriverPage />
-            : <Navigate to="/login" replace />
+            : <Navigate to="/driver-login" replace />
         }
       />
 
@@ -151,9 +158,12 @@ function App() {
     </Routes>
   )
 
+  const hideNavbar =
+    isDriver || location.pathname === '/driver-login'
+
   return (
     <div className={'home_wrapper'}>
-      {!isDriver && <Navbar />}
+      {!hideNavbar && <Navbar />}
       {appRoutes}
     </div>
   )
