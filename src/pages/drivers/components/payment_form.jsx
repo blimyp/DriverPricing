@@ -6,8 +6,16 @@ function getTodayDate() {
     return new Date().toISOString().split('T')[0]
 }
 
-function PaymentForm({ drivers, onSubmit, onCancel }) {
-    const [driverId, setDriverId] = useState('')
+function PaymentForm({
+    drivers,
+    initialDriverId,
+    lockDriver,
+    onSubmit,
+    onCancel,
+}) {
+    const [driverId, setDriverId] = useState(
+        initialDriverId || ''
+    )
     const [paymentDate, setPaymentDate] = useState(getTodayDate())
     const [amount, setAmount] = useState('')
     const [description, setDescription] = useState('')
@@ -103,7 +111,7 @@ function PaymentForm({ drivers, onSubmit, onCancel }) {
                                 event.target.value
                             )
                         }
-                        disabled={sending}
+                        disabled={sending || lockDriver}
                     >
                         <option value="">
                             בחרי נהג

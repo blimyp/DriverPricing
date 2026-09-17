@@ -6,8 +6,16 @@ function getTodayDate() {
     return new Date().toISOString().split('T')[0]
 }
 
-function DriverTripForm({ drivers, onSubmit, onCancel }) {
-    const [driverId, setDriverId] = useState('')
+function DriverTripForm({
+    drivers,
+    initialDriverId,
+    lockDriver,
+    onSubmit,
+    onCancel,
+}) {
+    const [driverId, setDriverId] = useState(
+        initialDriverId || ''
+    )
     const [tripDate, setTripDate] = useState(getTodayDate())
     const [price, setPrice] = useState('')
     const [description, setDescription] = useState('')
@@ -103,7 +111,7 @@ function DriverTripForm({ drivers, onSubmit, onCancel }) {
                                 event.target.value
                             )
                         }
-                        disabled={sending}
+                        disabled={sending || lockDriver}
                     >
                         <option value="">
                             בחרי נהג

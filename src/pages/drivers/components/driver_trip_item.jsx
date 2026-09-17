@@ -2,7 +2,7 @@ import { CalendarDays, User, Wallet } from 'lucide-react'
 
 import './driver_trip_item.css'
 
-function DriverTripItem({ trip }) {
+function DriverTripItem({ trip, compact = false }) {
     function formatPrice(value) {
         const numericValue = Number(value)
 
@@ -45,16 +45,31 @@ function DriverTripItem({ trip }) {
     }
 
     return (
-        <article className="driver-trip-item">
+        <article
+            className={
+                compact
+                    ? 'driver-trip-item driver-trip-item-trip'
+                    : 'driver-trip-item'
+            }
+        >
             <div className="driver-trip-item-main">
-                <div className="driver-trip-item-icon">
-                    <User size={18} strokeWidth={2} />
-                </div>
+                {!compact && (
+                    <div className="driver-trip-item-icon">
+                        <User size={18} strokeWidth={2} />
+                    </div>
+                )}
 
                 <div className="driver-trip-item-info">
-                    <h3>{trip.driverName}</h3>
-
-                    <p>{getTripDescription(trip)}</p>
+                    {compact ? (
+                        <h3 className="driver-trip-item-title-compact">
+                            {getTripDescription(trip)}
+                        </h3>
+                    ) : (
+                        <>
+                            <h3>{trip.driverName}</h3>
+                            <p>{getTripDescription(trip)}</p>
+                        </>
+                    )}
                 </div>
             </div>
 

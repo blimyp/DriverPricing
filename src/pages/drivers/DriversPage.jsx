@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react'
-import { BusFront, HandCoins, Plus, Users } from 'lucide-react'
+import {
+    BusFront,
+    HandCoins,
+    LayoutGrid,
+    Plus,
+    Rows3,
+    Users,
+} from 'lucide-react'
 
 import {
     addDriverByEmail,
@@ -16,6 +23,7 @@ import {
 
 import './DriversPage.css'
 import DriverForm from './components/driver_form'
+import DriverGroupCard from './components/driver_group_card'
 import DriverItem from './components/driver_item'
 import DriverTripForm from './components/driver_trip_form'
 import DriverTripItem from './components/driver_trip_item'
@@ -45,9 +53,23 @@ function DriversPage() {
     const [isAddPaymentPopupOpen, setIsAddPaymentPopupOpen] =
         useState(false)
 
+    const [viewMode, setViewMode] = useState('category')
+    const [selectedDriverId, setSelectedDriverId] =
+        useState(null)
+
     const registeredDrivers = drivers.filter(
         (driver) => !driver.pending
     )
+
+    const driverGroups = drivers.map((driver) => ({
+        driver,
+        trips: trips.filter(
+            (trip) => trip.user_id === driver.id
+        ),
+        payments: payments.filter(
+            (payment) => payment.driver_id === driver.id
+        ),
+    }))
 
     useEffect(() => {
         initialize()
@@ -179,6 +201,16 @@ function DriversPage() {
         }
     }
 
+    const openAddTripPopup = (driverId = null) => {
+        setSelectedDriverId(driverId)
+        setIsAddTripPopupOpen(true)
+    }
+
+    const openAddPaymentPopup = (driverId = null) => {
+        setSelectedDriverId(driverId)
+        setIsAddPaymentPopupOpen(true)
+    }
+
     const handleAddDriver = async ({ email }) => {
         const newDriver = await addDriverByEmail(email)
 
@@ -219,6 +251,7 @@ function DriversPage() {
         ])
 
         setIsAddTripPopupOpen(false)
+        setSelectedDriverId(null)
     }
 
     const handleAddPayment = async ({
@@ -250,6 +283,7 @@ function DriversPage() {
         ])
 
         setIsAddPaymentPopupOpen(false)
+        setSelectedDriverId(null)
     }
 
     return (
@@ -261,6 +295,99 @@ function DriversPage() {
                     </div>
                 )}
 
+                <div className="drivers-view-toggle">
+                    <button
+                        type="button"
+                        className={
+                            viewMode === 'category'
+                                ? 'drivers-view-toggle-button active'
+                                : 'drivers-view-toggle-button'
+                        }
+                        onClick={() => setViewMode('category')}
+                    >
+                        <Rows3 size={15} strokeWidth={2.2} />
+                        לפי קטגוריה
+                    </button>
+
+                    <button
+                        type="button"
+                        className={
+                            viewMode === 'driver'
+                                ? 'drivers-view-toggle-button active'
+                                : 'drivers-view-toggle-button'
+                        }
+                        onClick={() => setViewMode('driver')}
+                    >
+                        <LayoutGrid size={15} strokeWidth={2.2} />
+                        לפי נהג
+                    </button>
+                </div>
+
+                {viewMode === 'driver' ? (
+                    <div className="drivers-by-driver-view">
+                        <div className="drivers-by-driver-header">
+                            <div>
+                                <h2>נהגים</h2>
+
+                                <div className="drivers-section-span">
+                                    <Users size={15} />
+                                    <p>כל הפעולות של כל נהג במקום אחד</p>
+                                </div>
+                            </div>
+
+                            <span className="drivers-count">
+                                סך נהגים {drivers.length}
+                            </span>
+                        </div>
+
+                        {loading || tripsLoading || paymentsLoading ? (
+                            <div className="drivers-empty">
+                                טוען נתונים...
+                            </div>
+                        ) : drivers.length === 0 ? (
+                            <div className="drivers-empty">
+                                <div className="drivers-empty-icon">
+                                    <Users size={28} strokeWidth={1.8} />
+                                </div>
+
+                                <h3>
+                                    אין עדיין נהגים
+                                </h3>
+
+                                <p>
+                                    לחץ על "הוספת נהג" כדי להוסיף
+                                    נהג לפי כתובת המייל שלו
+                                </p>
+                            </div>
+                        ) : (
+                            driverGroups.map(
+                                ({
+                                    driver,
+                                    trips: driverTrips,
+                                    payments: driverPayments,
+                                }) => (
+                                    <DriverGroupCard
+                                        key={driver.id}
+                                        driver={driver}
+                                        trips={driverTrips}
+                                        payments={driverPayments}
+                                        onAddTrip={() =>
+                                            openAddTripPopup(
+                                                driver.id
+                                            )
+                                        }
+                                        onAddPayment={() =>
+                                            openAddPaymentPopup(
+                                                driver.id
+                                            )
+                                        }
+                                    />
+                                )
+                            )
+                        )}
+                    </div>
+                ) : (
+                    <>
                 <section className="drivers-section">
                     <div className="drivers-section-header">
                         <div>
@@ -335,7 +462,7 @@ function DriversPage() {
                                 <button
                                     type="button"
                                     className="section-add-button"
-                                    onClick={() => setIsAddTripPopupOpen(true)}
+                                    onClick={() => openAddTripPopup()}
                                     disabled={registeredDrivers.length === 0}
                                     aria-label="הוספת נסיעה"
                                     data-tooltip="הוספת נסיעה"
@@ -401,7 +528,7 @@ function DriversPage() {
                                 <button
                                     type="button"
                                     className="section-add-button"
-                                    onClick={() => setIsAddPaymentPopupOpen(true)}
+                                    onClick={() => openAddPaymentPopup()}
                                     disabled={registeredDrivers.length === 0}
                                     aria-label="הוספת תשלום"
                                     data-tooltip="הוספת תשלום"
@@ -451,6 +578,8 @@ function DriversPage() {
                         </div>
                     )}
                 </section>
+                    </>
+                )}
             </div>
 
             <Popup
@@ -465,23 +594,39 @@ function DriversPage() {
 
             <Popup
                 isOpen={isAddTripPopupOpen}
-                onClose={() => setIsAddTripPopupOpen(false)}
+                onClose={() => {
+                    setIsAddTripPopupOpen(false)
+                    setSelectedDriverId(null)
+                }}
             >
                 <DriverTripForm
                     drivers={registeredDrivers}
+                    initialDriverId={selectedDriverId}
+                    lockDriver={Boolean(selectedDriverId)}
                     onSubmit={handleAddTrip}
-                    onCancel={() => setIsAddTripPopupOpen(false)}
+                    onCancel={() => {
+                        setIsAddTripPopupOpen(false)
+                        setSelectedDriverId(null)
+                    }}
                 />
             </Popup>
 
             <Popup
                 isOpen={isAddPaymentPopupOpen}
-                onClose={() => setIsAddPaymentPopupOpen(false)}
+                onClose={() => {
+                    setIsAddPaymentPopupOpen(false)
+                    setSelectedDriverId(null)
+                }}
             >
                 <PaymentForm
                     drivers={registeredDrivers}
+                    initialDriverId={selectedDriverId}
+                    lockDriver={Boolean(selectedDriverId)}
                     onSubmit={handleAddPayment}
-                    onCancel={() => setIsAddPaymentPopupOpen(false)}
+                    onCancel={() => {
+                        setIsAddPaymentPopupOpen(false)
+                        setSelectedDriverId(null)
+                    }}
                 />
             </Popup>
         </div>

@@ -2,7 +2,7 @@ import { CalendarDays, HandCoins, User } from 'lucide-react'
 
 import './driver_trip_item.css'
 
-function PaymentItem({ payment }) {
+function PaymentItem({ payment, compact = false }) {
     function formatAmount(value) {
         const numericValue = Number(value)
 
@@ -37,17 +37,33 @@ function PaymentItem({ payment }) {
     }
 
     return (
-        <article className="driver-trip-item">
+        <article
+            className={
+                compact
+                    ? 'driver-trip-item driver-trip-item-payment'
+                    : 'driver-trip-item'
+            }
+        >
             <div className="driver-trip-item-main">
-                <div className="driver-trip-item-icon">
-                    <User size={18} strokeWidth={2} />
-                </div>
+                {!compact && (
+                    <div className="driver-trip-item-icon">
+                        <User size={18} strokeWidth={2} />
+                    </div>
+                )}
 
                 <div className="driver-trip-item-info">
-                    <h3>{payment.driverName}</h3>
+                    {compact ? (
+                        <h3 className="driver-trip-item-title-compact">
+                            {payment.description || 'תשלום'}
+                        </h3>
+                    ) : (
+                        <>
+                            <h3>{payment.driverName}</h3>
 
-                    {payment.description && (
-                        <p>{payment.description}</p>
+                            {payment.description && (
+                                <p>{payment.description}</p>
+                            )}
+                        </>
                     )}
                 </div>
             </div>

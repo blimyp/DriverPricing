@@ -74,6 +74,30 @@
     text-overflow: ellipsis;
 }
 
+.driver-trip-item-title-compact {
+    font-weight: 400;
+}
+
+.driver-trip-item-trip,
+.driver-trip-item-trip:hover {
+    border-inline-start-color: var(--primary-dark);
+}
+
+.driver-trip-item-payment,
+.driver-trip-item-payment:hover {
+    border-inline-start-color: #b45309;
+}
+
+.driver-trip-item-trip {
+    border-inline-start-width: 3px;
+    border-inline-start-style: solid;
+}
+
+.driver-trip-item-payment {
+    border-inline-start-width: 3px;
+    border-inline-start-style: solid;
+}
+
 .driver-trip-item-info p {
     margin: 0;
 

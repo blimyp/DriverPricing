@@ -1,0 +1,141 @@
+.driver-group-card {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 22px;
+
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+
+    text-align: right;
+}
+
+.driver-group-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    margin-bottom: 16px;
+}
+
+.driver-group-card-main {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.driver-group-card-avatar {
+    flex-shrink: 0;
+
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--primary-light);
+    color: var(--primary-dark);
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.driver-group-card-info {
+    min-width: 0;
+}
+
+.driver-group-card-info h3 {
+    margin: 0 0 4px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.driver-group-card-info p {
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    font-size: 12px;
+    opacity: 0.6;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.driver-group-card-badge-pending {
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 6px 12px;
+
+    border-radius: 999px;
+
+    background: #fef3c7;
+    color: #92400e;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.driver-group-card-actions {
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-add-button-secondary {
+    background-color: #b45309;
+}
+
+.driver-group-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.driver-group-card-empty {
+    margin: 0;
+
+    padding: 12px;
+
+    border: 1px dashed #dddddd;
+    border-radius: 10px;
+
+    font-size: 12px;
+    opacity: 0.6;
+
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .driver-group-card {
+        padding: 14px;
+    }
+
+    .driver-group-card-header {
+        flex-wrap: wrap;
+    }
+}
