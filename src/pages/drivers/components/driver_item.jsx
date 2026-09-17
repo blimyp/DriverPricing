@@ -1,4 +1,4 @@
-import { Car, Mail } from 'lucide-react'
+import { Car, Clock, Mail } from 'lucide-react'
 
 import './driver_item.css'
 
@@ -20,13 +20,26 @@ function DriverItem({ driver }) {
                         <Mail size={13} strokeWidth={2} />
                         {driver.email}
                     </p>
+
+                    {driver.pending && (
+                        <p className="driver-item-pending-note">
+                            ממתין להתחברות ראשונה למערכת
+                        </p>
+                    )}
                 </div>
             </div>
 
-            <span className="driver-item-badge">
-                <Car size={14} strokeWidth={2} />
-                נהג
-            </span>
+            {driver.pending ? (
+                <span className="driver-item-badge driver-item-badge-pending">
+                    <Clock size={14} strokeWidth={2} />
+                    ממתין
+                </span>
+            ) : (
+                <span className="driver-item-badge">
+                    <Car size={14} strokeWidth={2} />
+                    נהג
+                </span>
+            )}
         </article>
     )
 }

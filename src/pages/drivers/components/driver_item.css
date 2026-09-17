@@ -112,6 +112,16 @@
     font-weight: 700;
 }
 
+.driver-item-badge-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.driver-item-pending-note {
+    color: #b45309;
+    opacity: 0.85 !important;
+}
+
 @media (max-width: 768px) {
     .driver-item {
         padding: 14px;

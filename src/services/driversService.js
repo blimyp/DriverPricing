@@ -2,6 +2,18 @@ import { supabase } from '../lib/supabaseClient'
 
 const DRIVER_COLUMNS = 'id, email, full_name, avatar_url, role, created_at'
 
+function mapInviteToDriver(invite) {
+    return {
+        id: `invite-${invite.email}`,
+        email: invite.email,
+        full_name: '',
+        avatar_url: null,
+        role: 'driver',
+        created_at: invite.created_at,
+        pending: true,
+    }
+}
+
 export async function getAllDrivers() {
     const { data, error } = await supabase
         .from('profiles')
@@ -9,24 +21,22 @@ export async function getAllDrivers() {
         .eq('role', 'driver')
         .order('created_at', { ascending: false })
 
-    console.log('[DEBUG getAllDrivers] data:', data, 'error:', error)
-
     if (error) {
         throw error
     }
 
-    const { data: allVisibleProfiles, error: allError } = await supabase
-        .from('profiles')
-        .select('id, email, role')
+    const { data: invites, error: invitesError } = await supabase
+        .from('driver_invites')
+        .select('email, created_at')
+        .order('created_at', { ascending: false })
 
-    console.log(
-        '[DEBUG all profiles visible to current user]',
-        allVisibleProfiles,
-        'error:',
-        allError
-    )
+    if (invitesError) {
+        throw invitesError
+    }
 
-    return data
+    const pendingDrivers = (invites || []).map(mapInviteToDriver)
+
+    return [...pendingDrivers, ...data]
 }
 
 export async function addDriverByEmail(email) {
@@ -47,9 +57,20 @@ export async function addDriverByEmail(email) {
     }
 
     if (!profile) {
-        throw new Error(
-            'לא נמצא משתמש עם כתובת המייל הזו. על המשתמש להתחבר למערכת לפחות פעם אחת לפני שניתן להגדיר אותו כנהג'
-        )
+        const { data: invite, error: inviteError } = await supabase
+            .from('driver_invites')
+            .upsert(
+                { email: cleanEmail },
+                { onConflict: 'email' }
+            )
+            .select()
+            .single()
+
+        if (inviteError) {
+            throw inviteError
+        }
+
+        return mapInviteToDriver(invite)
     }
 
     if (profile.role === 'driver') {

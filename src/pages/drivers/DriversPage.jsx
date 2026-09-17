@@ -45,6 +45,10 @@ function DriversPage() {
     const [isAddPaymentPopupOpen, setIsAddPaymentPopupOpen] =
         useState(false)
 
+    const registeredDrivers = drivers.filter(
+        (driver) => !driver.pending
+    )
+
     useEffect(() => {
         initialize()
     }, [])
@@ -86,9 +90,9 @@ function DriversPage() {
             setTripsLoading(true)
             setTripsError('')
 
-            const driverIds = driversList.map(
-                (driver) => driver.id
-            )
+            const driverIds = driversList
+                .filter((driver) => !driver.pending)
+                .map((driver) => driver.id)
 
             const data = await getDriverTrips(driverIds)
 
@@ -133,9 +137,9 @@ function DriversPage() {
             setPaymentsLoading(true)
             setPaymentsError('')
 
-            const driverIds = driversList.map(
-                (driver) => driver.id
-            )
+            const driverIds = driversList
+                .filter((driver) => !driver.pending)
+                .map((driver) => driver.id)
 
             const data = await getDriverPayments(driverIds)
 
@@ -316,7 +320,7 @@ function DriversPage() {
                     type="button"
                     className="add-driver-button add-trip-button"
                     onClick={() => setIsAddTripPopupOpen(true)}
-                    disabled={drivers.length === 0}
+                    disabled={registeredDrivers.length === 0}
                 >
                     <Plus size={18} strokeWidth={2.2} />
                     <span>הוספת נסיעה</span>
@@ -378,7 +382,7 @@ function DriversPage() {
                     type="button"
                     className="add-driver-button add-trip-button"
                     onClick={() => setIsAddPaymentPopupOpen(true)}
-                    disabled={drivers.length === 0}
+                    disabled={registeredDrivers.length === 0}
                 >
                     <Plus size={18} strokeWidth={2.2} />
                     <span>הוספת תשלום</span>
@@ -452,7 +456,7 @@ function DriversPage() {
                 onClose={() => setIsAddTripPopupOpen(false)}
             >
                 <DriverTripForm
-                    drivers={drivers}
+                    drivers={registeredDrivers}
                     onSubmit={handleAddTrip}
                     onCancel={() => setIsAddTripPopupOpen(false)}
                 />
@@ -463,7 +467,7 @@ function DriversPage() {
                 onClose={() => setIsAddPaymentPopupOpen(false)}
             >
                 <PaymentForm
-                    drivers={drivers}
+                    drivers={registeredDrivers}
                     onSubmit={handleAddPayment}
                     onCancel={() => setIsAddPaymentPopupOpen(false)}
                 />

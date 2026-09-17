@@ -16,6 +16,24 @@ export async function saveUserProfile(user) {
 
     const isNewUser = !existingProfile
 
+    const cleanEmail = (user.email || '').trim().toLowerCase()
+
+    let invite = null
+
+    if (isNewUser && cleanEmail) {
+        const { data: inviteData, error: inviteFetchError } = await supabase
+            .from('driver_invites')
+            .select('email')
+            .eq('email', cleanEmail)
+            .maybeSingle()
+
+        if (inviteFetchError) {
+            console.error('Error checking driver invite:', inviteFetchError)
+        } else {
+            invite = inviteData
+        }
+    }
+
     // שמירת / עדכון הפרופיל
     const { error } = await supabase
         .from('profiles')
@@ -31,6 +49,7 @@ export async function saveUserProfile(user) {
                     user.user_metadata?.avatar_url ||
                     user.user_metadata?.picture ||
                     null,
+                ...(invite ? { role: 'driver' } : {}),
                 updated_at: new Date().toISOString(),
             },
             {
@@ -40,6 +59,17 @@ export async function saveUserProfile(user) {
 
     if (error) {
         throw error
+    }
+
+    if (invite) {
+        const { error: inviteDeleteError } = await supabase
+            .from('driver_invites')
+            .delete()
+            .eq('email', invite.email)
+
+        if (inviteDeleteError) {
+            console.error('Error clearing driver invite:', inviteDeleteError)
+        }
     }
 
     // אם זה משתמש חדש - שליחת מייל ברוכים הבאים
