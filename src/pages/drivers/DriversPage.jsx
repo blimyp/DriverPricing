@@ -255,15 +255,6 @@ function DriversPage() {
     return (
         <div className="drivers-page">
             <div className="drivers-container">
-                <button
-                    type="button"
-                    className="add-driver-button"
-                    onClick={() => setIsAddPopupOpen(true)}
-                >
-                    <Plus size={18} strokeWidth={2.2} />
-                    <span>הוספת נהג</span>
-                </button>
-
                 {error && (
                     <div className="drivers-error">
                         {error}
@@ -273,7 +264,20 @@ function DriversPage() {
                 <section className="drivers-section">
                     <div className="drivers-section-header">
                         <div>
-                            <h2>נהגים</h2>
+                            <div className="drivers-section-title-row">
+                                <h2>נהגים</h2>
+
+                                <button
+                                    type="button"
+                                    className="section-add-button"
+                                    onClick={() => setIsAddPopupOpen(true)}
+                                    aria-label="הוספת נהג"
+                                    data-tooltip="הוספת נהג"
+                                >
+                                    <Plus size={18} strokeWidth={2.4} />
+                                </button>
+                            </div>
+
                             <div className="drivers-section-span">
                                 <Users size={15} />
                                 <p>כל הנהגים במקום אחד</p>
@@ -316,16 +320,6 @@ function DriversPage() {
                     )}
                 </section>
 
-                <button
-                    type="button"
-                    className="add-driver-button add-trip-button"
-                    onClick={() => setIsAddTripPopupOpen(true)}
-                    disabled={registeredDrivers.length === 0}
-                >
-                    <Plus size={18} strokeWidth={2.2} />
-                    <span>הוספת נסיעה</span>
-                </button>
-
                 {tripsError && (
                     <div className="drivers-error">
                         {tripsError}
@@ -335,7 +329,21 @@ function DriversPage() {
                 <section className="drivers-section">
                     <div className="drivers-section-header">
                         <div>
-                            <h2>נסיעות</h2>
+                            <div className="drivers-section-title-row">
+                                <h2>נסיעות</h2>
+
+                                <button
+                                    type="button"
+                                    className="section-add-button"
+                                    onClick={() => setIsAddTripPopupOpen(true)}
+                                    disabled={registeredDrivers.length === 0}
+                                    aria-label="הוספת נסיעה"
+                                    data-tooltip="הוספת נסיעה"
+                                >
+                                    <Plus size={18} strokeWidth={2.4} />
+                                </button>
+                            </div>
+
                             <div className="drivers-section-span">
                                 <BusFront size={15} />
                                 <p>כל הנסיעות שהוקצו לנהגים</p>
@@ -378,16 +386,6 @@ function DriversPage() {
                     )}
                 </section>
 
-                <button
-                    type="button"
-                    className="add-driver-button add-trip-button"
-                    onClick={() => setIsAddPaymentPopupOpen(true)}
-                    disabled={registeredDrivers.length === 0}
-                >
-                    <Plus size={18} strokeWidth={2.2} />
-                    <span>הוספת תשלום</span>
-                </button>
-
                 {paymentsError && (
                     <div className="drivers-error">
                         {paymentsError}
@@ -397,7 +395,21 @@ function DriversPage() {
                 <section className="drivers-section">
                     <div className="drivers-section-header">
                         <div>
-                            <h2>תשלומים</h2>
+                            <div className="drivers-section-title-row">
+                                <h2>תשלומים</h2>
+
+                                <button
+                                    type="button"
+                                    className="section-add-button"
+                                    onClick={() => setIsAddPaymentPopupOpen(true)}
+                                    disabled={registeredDrivers.length === 0}
+                                    aria-label="הוספת תשלום"
+                                    data-tooltip="הוספת תשלום"
+                                >
+                                    <Plus size={18} strokeWidth={2.4} />
+                                </button>
+                            </div>
+
                             <div className="drivers-section-span">
                                 <HandCoins size={15} />
                                 <p>כל התשלומים שבוצעו לנהגים</p>
