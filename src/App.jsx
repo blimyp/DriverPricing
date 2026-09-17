@@ -19,7 +19,15 @@ function App() {
   const { user, loading, isAdmin } = useAuth()
 
   if (loading) {
-    return <p dir="rtl">טוען...</p>
+    return (
+      <div className="app-loading-screen" dir="rtl">
+        <img
+          src="/logo.png"
+          alt="טוען..."
+          className="app-loading-logo"
+        />
+      </div>
+    )
   }
 
   const isDriver = user?.role === 'driver'
