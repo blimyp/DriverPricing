@@ -1,8 +1,24 @@
-import { Clock, Mail, Plus } from 'lucide-react'
+import { useState } from 'react'
+import { Check, Clock, Mail, Pencil, Plus, X } from 'lucide-react'
 
 import DriverTripItem from './driver_trip_item'
 import PaymentItem from './payment_item'
 import './driver_group_card.css'
+
+function formatCurrency(value) {
+    const numericValue = Number(value)
+
+    if (!Number.isFinite(numericValue)) {
+        return '₪0'
+    }
+
+    return new Intl.NumberFormat('he-IL', {
+        style: 'currency',
+        currency: 'ILS',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(numericValue)
+}
 
 function DriverGroupCard({
     driver,
@@ -10,9 +26,36 @@ function DriverGroupCard({
     payments,
     onAddTrip,
     onAddPayment,
+    onUpdateStartingBalance,
 }) {
     const displayName =
         driver.full_name || driver.email || 'נהג'
+
+    const [isEditingBalance, setIsEditingBalance] = useState(false)
+    const [balanceInput, setBalanceInput] = useState('')
+    const [savingBalance, setSavingBalance] = useState(false)
+
+    const startBalanceEdit = () => {
+        setBalanceInput(String(driver.starting_balance || 0))
+        setIsEditingBalance(true)
+    }
+
+    const cancelBalanceEdit = () => {
+        setIsEditingBalance(false)
+        setSavingBalance(false)
+    }
+
+    const saveBalanceEdit = async () => {
+        try {
+            setSavingBalance(true)
+            await onUpdateStartingBalance(Number(balanceInput) || 0)
+            setIsEditingBalance(false)
+        } catch (error) {
+            console.error('Error updating starting balance:', error)
+        } finally {
+            setSavingBalance(false)
+        }
+    }
 
     const activity = [
         ...trips.map((trip) => ({
@@ -75,6 +118,54 @@ function DriverGroupCard({
                             <Plus size={16} strokeWidth={2.4} />
                         </button>
                     </div>
+                )}
+            </div>
+
+            <div className="driver-group-card-balance">
+                <span className="driver-group-card-balance-label">
+                    יתרת פתיחה
+                </span>
+
+                {isEditingBalance ? (
+                    <div className="driver-group-card-balance-edit">
+                        <input
+                            type="number"
+                            step="1"
+                            value={balanceInput}
+                            onChange={(event) =>
+                                setBalanceInput(event.target.value)
+                            }
+                            disabled={savingBalance}
+                            autoFocus
+                        />
+
+                        <button
+                            type="button"
+                            onClick={saveBalanceEdit}
+                            disabled={savingBalance}
+                            aria-label="שמירה"
+                        >
+                            <Check size={14} strokeWidth={2.4} />
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={cancelBalanceEdit}
+                            disabled={savingBalance}
+                            aria-label="ביטול"
+                        >
+                            <X size={14} strokeWidth={2.4} />
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        type="button"
+                        className="driver-group-card-balance-value"
+                        onClick={startBalanceEdit}
+                    >
+                        {formatCurrency(driver.starting_balance)}
+                        <Pencil size={12} strokeWidth={2.2} />
+                    </button>
                 )}
             </div>
 

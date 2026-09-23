@@ -6,6 +6,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function DriverForm({ onSubmit, onCancel }) {
     const [email, setEmail] = useState('')
+    const [startingBalance, setStartingBalance] = useState('')
 
     const [sending, setSending] =
         useState(false)
@@ -27,11 +28,16 @@ function DriverForm({ onSubmit, onCancel }) {
             return
         }
 
+        const cleanStartingBalance = Number(startingBalance) || 0
+
         try {
             setSending(true)
             setError('')
 
-            await onSubmit({ email: cleanEmail })
+            await onSubmit({
+                email: cleanEmail,
+                startingBalance: cleanStartingBalance,
+            })
         } catch (error) {
             console.error(
                 'Error adding driver:',
@@ -92,6 +98,27 @@ function DriverForm({ onSubmit, onCancel }) {
                         placeholder="driver@example.com"
                         disabled={sending}
                         autoFocus
+                    />
+                </div>
+
+                <div className="driver-form-field">
+                    <label htmlFor="driver-starting-balance">
+                        יתרת פתיחה (מחיר התחלתי)
+                    </label>
+
+                    <input
+                        id="driver-starting-balance"
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={startingBalance}
+                        onChange={(event) =>
+                            setStartingBalance(
+                                event.target.value
+                            )
+                        }
+                        placeholder="לדוגמה: 10000"
+                        disabled={sending}
                     />
                 </div>
 

@@ -34,6 +34,8 @@ function DriverPage() {
         ? Number(user.driver_percentage)
         : DEFAULT_DRIVER_PERCENTAGE
 
+    const startingBalance = Number(user?.starting_balance) || 0
+
     const fetchLedger = useCallback(
         async ({ isRefresh = false } = {}) => {
             if (!user) {
@@ -138,7 +140,7 @@ function DriverPage() {
         [payments]
     )
 
-    const balance = totalEarnings - totalPaid
+    const balance = startingBalance + totalEarnings - totalPaid
 
     const ledgerItems = useMemo(
         () => [
@@ -237,6 +239,9 @@ function DriverPage() {
                     </strong>
 
                     <p className="driver-page__hero-sub">
+                        {startingBalance !== 0 && (
+                            <>יתרת פתיחה {formatCurrency(startingBalance)} · </>
+                        )}
                         הרווחת {formatCurrency(totalEarnings)} · שולם לך {formatCurrency(totalPaid)}
                     </p>
 

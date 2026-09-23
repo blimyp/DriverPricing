@@ -11,6 +11,7 @@ import {
 import {
     addDriverByEmail,
     getAllDrivers,
+    updateDriverStartingBalance,
 } from '../../services/driversService'
 import {
     getDriverTrips,
@@ -211,8 +212,8 @@ function DriversPage() {
         setIsAddPaymentPopupOpen(true)
     }
 
-    const handleAddDriver = async ({ email }) => {
-        const newDriver = await addDriverByEmail(email)
+    const handleAddDriver = async ({ email, startingBalance }) => {
+        const newDriver = await addDriverByEmail(email, startingBalance)
 
         setDrivers((current) => [
             newDriver,
@@ -220,6 +221,19 @@ function DriversPage() {
         ])
 
         setIsAddPopupOpen(false)
+    }
+
+    const handleUpdateStartingBalance = async (driver, value) => {
+        const updatedDriver = await updateDriverStartingBalance(
+            driver,
+            value
+        )
+
+        setDrivers((current) =>
+            current.map((item) =>
+                item.id === driver.id ? updatedDriver : item
+            )
+        )
     }
 
     const handleAddTrip = async ({
@@ -381,6 +395,12 @@ function DriversPage() {
                                                 driver.id
                                             )
                                         }
+                                        onUpdateStartingBalance={(value) =>
+                                            handleUpdateStartingBalance(
+                                                driver,
+                                                value
+                                            )
+                                        }
                                     />
                                 )
                             )
@@ -441,6 +461,12 @@ function DriversPage() {
                                 <DriverItem
                                     key={driver.id}
                                     driver={driver}
+                                    onUpdateStartingBalance={(value) =>
+                                        handleUpdateStartingBalance(
+                                            driver,
+                                            value
+                                        )
+                                    }
                                 />
                             ))}
                         </div>

@@ -1,6 +1,7 @@
 import { supabase } from '../lib/supabaseClient'
 
-const DRIVER_COLUMNS = 'id, email, full_name, avatar_url, role, created_at'
+const DRIVER_COLUMNS =
+    'id, email, full_name, avatar_url, role, created_at, starting_balance'
 
 function mapInviteToDriver(invite) {
     return {
@@ -10,6 +11,7 @@ function mapInviteToDriver(invite) {
         avatar_url: null,
         role: 'driver',
         created_at: invite.created_at,
+        starting_balance: Number(invite.starting_balance) || 0,
         pending: true,
     }
 }
@@ -27,7 +29,7 @@ export async function getAllDrivers() {
 
     const { data: invites, error: invitesError } = await supabase
         .from('driver_invites')
-        .select('email, created_at')
+        .select('email, created_at, starting_balance')
         .order('created_at', { ascending: false })
 
     if (invitesError) {
@@ -39,12 +41,14 @@ export async function getAllDrivers() {
     return [...pendingDrivers, ...data]
 }
 
-export async function addDriverByEmail(email) {
+export async function addDriverByEmail(email, startingBalance = 0) {
     const cleanEmail = (email || '').trim().toLowerCase()
 
     if (!cleanEmail) {
         throw new Error('יש להזין כתובת מייל')
     }
+
+    const cleanStartingBalance = Number(startingBalance) || 0
 
     const { data: profile, error: fetchError } = await supabase
         .from('profiles')
@@ -60,7 +64,10 @@ export async function addDriverByEmail(email) {
         const { data: invite, error: inviteError } = await supabase
             .from('driver_invites')
             .upsert(
-                { email: cleanEmail },
+                {
+                    email: cleanEmail,
+                    starting_balance: cleanStartingBalance,
+                },
                 { onConflict: 'email' }
             )
             .select()
@@ -81,6 +88,7 @@ export async function addDriverByEmail(email) {
         .from('profiles')
         .update({
             role: 'driver',
+            starting_balance: cleanStartingBalance,
             updated_at: new Date().toISOString(),
         })
         .eq('id', profile.id)
@@ -89,6 +97,41 @@ export async function addDriverByEmail(email) {
 
     if (updateError) {
         throw updateError
+    }
+
+    return updatedProfile
+}
+
+export async function updateDriverStartingBalance(driver, startingBalance) {
+    const cleanStartingBalance = Number(startingBalance) || 0
+
+    if (driver.pending) {
+        const { data: invite, error } = await supabase
+            .from('driver_invites')
+            .update({ starting_balance: cleanStartingBalance })
+            .eq('email', driver.email)
+            .select()
+            .single()
+
+        if (error) {
+            throw error
+        }
+
+        return mapInviteToDriver(invite)
+    }
+
+    const { data: updatedProfile, error } = await supabase
+        .from('profiles')
+        .update({
+            starting_balance: cleanStartingBalance,
+            updated_at: new Date().toISOString(),
+        })
+        .eq('id', driver.id)
+        .select(DRIVER_COLUMNS)
+        .single()
+
+    if (error) {
+        throw error
     }
 
     return updatedProfile

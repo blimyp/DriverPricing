@@ -23,7 +23,7 @@ export async function saveUserProfile(user) {
     if (isNewUser && cleanEmail) {
         const { data: inviteData, error: inviteFetchError } = await supabase
             .from('driver_invites')
-            .select('email')
+            .select('email, starting_balance')
             .eq('email', cleanEmail)
             .maybeSingle()
 
@@ -49,7 +49,13 @@ export async function saveUserProfile(user) {
                     user.user_metadata?.avatar_url ||
                     user.user_metadata?.picture ||
                     null,
-                ...(invite ? { role: 'driver' } : {}),
+                ...(invite
+                    ? {
+                        role: 'driver',
+                        starting_balance:
+                            Number(invite.starting_balance) || 0,
+                    }
+                    : {}),
                 updated_at: new Date().toISOString(),
             },
             {
@@ -111,7 +117,8 @@ export async function getUserProfile(userId) {
             van_km_per_liter,
             hourly_driver_price,
             driver_percentage,
-            fuel_price_per_liter
+            fuel_price_per_liter,
+            starting_balance
         `)
         .eq('id', userId)
         .single()

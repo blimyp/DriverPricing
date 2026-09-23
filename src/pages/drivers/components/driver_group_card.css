@@ -110,6 +110,91 @@
     background-color: #b45309;
 }
 
+.driver-group-card-balance {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    margin-bottom: 14px;
+    padding: 10px 14px;
+
+    border-radius: 12px;
+
+    background: #f6f6f6;
+}
+
+.driver-group-card-balance-label {
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.6;
+}
+
+.driver-group-card-balance-value {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    border: none;
+    background: none;
+    padding: 0;
+
+    color: inherit;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.driver-group-card-balance-value:hover {
+    opacity: 0.75;
+}
+
+.driver-group-card-balance-edit {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.driver-group-card-balance-edit input {
+    width: 100px;
+
+    box-sizing: border-box;
+
+    padding: 6px 8px;
+
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+
+    font: inherit;
+    text-align: right;
+
+    outline: none;
+}
+
+.driver-group-card-balance-edit button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 26px;
+    height: 26px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: var(--primary-light);
+    color: var(--primary-dark);
+
+    cursor: pointer;
+}
+
+.driver-group-card-balance-edit button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .driver-group-card-list {
     display: flex;
     flex-direction: column;
