@@ -264,7 +264,7 @@
 
 @media (max-width: 768px) {
     .driver-group-card {
-        padding: 14px;
+        padding: 15px 10px;
     }
 
     .driver-group-card-header {

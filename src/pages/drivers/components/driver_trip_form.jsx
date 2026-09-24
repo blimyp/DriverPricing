@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import './driver_trip_form.css'
+import './drivers_form.css'
 
 function getTodayDate() {
     return new Date().toISOString().split('T')[0]
@@ -75,30 +75,30 @@ function DriverTripForm({
 
     return (
         <div
-            className="driver-trip-form-popup"
+            className="drivers-form-popup"
             dir="rtl"
         >
-            <div className="driver-trip-form-header">
+            <div className="drivers-form-header">
                 <h2>
                     הוספת נסיעה
                 </h2>
 
                 <p>
-                    מלאי את פרטי הנסיעה ושייכי אותה לנהג הרלוונטי
+                    מלא את פרטי הנסיעה ושייך אותה לנהג הרלוונטי
                 </p>
             </div>
 
             {error && (
-                <div className="driver-trip-form-error">
+                <div className="drivers-form-error">
                     {error}
                 </div>
             )}
 
             <form
-                className="driver-trip-form"
+                className="drivers-form"
                 onSubmit={handleSubmit}
             >
-                <div className="driver-trip-form-field">
+                <div className="drivers-form-field">
                     <label htmlFor="trip-driver">
                         נהג
                     </label>
@@ -128,7 +128,7 @@ function DriverTripForm({
                     </select>
                 </div>
 
-                <div className="driver-trip-form-field">
+                <div className="drivers-form-field">
                     <label htmlFor="trip-date">
                         תאריך הנסיעה
                     </label>
@@ -146,12 +146,12 @@ function DriverTripForm({
                     />
                 </div>
 
-                <div className="driver-trip-form-field">
+                <div className="drivers-form-field">
                     <label htmlFor="trip-price">
                         מחיר הנסיעה
                     </label>
 
-                    <div className="driver-trip-price-wrapper">
+                    <div className="drivers-form-price-wrapper">
                         <input
                             id="trip-price"
                             type="number"
@@ -172,7 +172,7 @@ function DriverTripForm({
                     </div>
                 </div>
 
-                <div className="driver-trip-form-field">
+                <div className="drivers-form-field">
                     <label htmlFor="trip-description">
                         תיאור הנסיעה
                     </label>
@@ -191,10 +191,10 @@ function DriverTripForm({
                     />
                 </div>
 
-                <div className="driver-trip-form-actions">
+                <div className="drivers-form-actions">
                     <button
                         type="button"
-                        className="driver-trip-form-cancel"
+                        className="drivers-form-cancel"
                         onClick={onCancel}
                         disabled={sending}
                     >
@@ -203,7 +203,7 @@ function DriverTripForm({
 
                     <button
                         type="submit"
-                        className="driver-trip-form-submit"
+                        className="drivers-form-submit"
                         disabled={sending}
                     >
                         {sending

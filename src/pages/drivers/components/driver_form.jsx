@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import './driver_form.css'
+import './drivers_form.css'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -55,33 +55,31 @@ function DriverForm({ onSubmit, onCancel }) {
 
     return (
         <div
-            className="driver-form-popup"
+            className="drivers-form-popup"
             dir="rtl"
         >
-            <div className="driver-form-header">
+            <div className="drivers-form-header">
                 <h2>
                     הוספת נהג
                 </h2>
 
                 <p>
-                    הזיני את כתובת המייל של המשתמש שברצונך
-                    להגדיר כנהג. אם המשתמש עוד לא התחבר
-                    למערכת, הוא יוגדר כנהג באופן אוטומטי
-                    בהתחברות הראשונה שלו.
+                    הזן את כתובת המייל של המשתמש שברצונך
+                    להגדיר כנהג.
                 </p>
             </div>
 
             {error && (
-                <div className="driver-form-error">
+                <div className="drivers-form-error">
                     {error}
                 </div>
             )}
 
             <form
-                className="driver-form"
+                className="drivers-form"
                 onSubmit={handleSubmit}
             >
-                <div className="driver-form-field">
+                <div className="drivers-form-field">
                     <label htmlFor="driver-email">
                         כתובת מייל
                     </label>
@@ -101,7 +99,7 @@ function DriverForm({ onSubmit, onCancel }) {
                     />
                 </div>
 
-                <div className="driver-form-field">
+                <div className="drivers-form-field">
                     <label htmlFor="driver-starting-balance">
                         יתרת פתיחה (מחיר התחלתי)
                     </label>
@@ -122,10 +120,10 @@ function DriverForm({ onSubmit, onCancel }) {
                     />
                 </div>
 
-                <div className="driver-form-actions">
+                <div className="drivers-form-actions">
                     <button
                         type="button"
-                        className="driver-form-cancel"
+                        className="drivers-form-cancel"
                         onClick={onCancel}
                         disabled={sending}
                     >
@@ -134,7 +132,7 @@ function DriverForm({ onSubmit, onCancel }) {
 
                     <button
                         type="submit"
-                        className="driver-form-submit"
+                        className="drivers-form-submit"
                         disabled={sending}
                     >
                         {sending

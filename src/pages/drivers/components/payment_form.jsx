@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import './driver_trip_form.css'
+import './drivers_form.css'
 
 function getTodayDate() {
     return new Date().toISOString().split('T')[0]
@@ -75,30 +75,30 @@ function PaymentForm({
 
     return (
         <div
-            className="driver-trip-form-popup"
+            className="drivers-form-popup"
             dir="rtl"
         >
-            <div className="driver-trip-form-header">
+            <div className="drivers-form-header">
                 <h2>
                     הוספת תשלום
                 </h2>
 
                 <p>
-                    מלאי את פרטי התשלום ושייכי אותו לנהג הרלוונטי
+                    מלא את פרטי התשלום ושייך אותו לנהג הרלוונטי
                 </p>
             </div>
 
             {error && (
-                <div className="driver-trip-form-error">
+                <div className="drivers-form-error">
                     {error}
                 </div>
             )}
 
             <form
-                className="driver-trip-form"
+                className="drivers-form"
                 onSubmit={handleSubmit}
             >
-                <div className="driver-trip-form-field">
+                <div className="drivers-form-field">
                     <label htmlFor="payment-driver">
                         נהג
                     </label>
@@ -128,7 +128,7 @@ function PaymentForm({
                     </select>
                 </div>
 
-                <div className="driver-trip-form-field">
+                <div className="drivers-form-field">
                     <label htmlFor="payment-date">
                         תאריך התשלום
                     </label>
@@ -146,12 +146,12 @@ function PaymentForm({
                     />
                 </div>
 
-                <div className="driver-trip-form-field">
+                <div className="drivers-form-field">
                     <label htmlFor="payment-amount">
                         סכום התשלום
                     </label>
 
-                    <div className="driver-trip-price-wrapper">
+                    <div className="drivers-form-price-wrapper">
                         <input
                             id="payment-amount"
                             type="number"
@@ -172,7 +172,7 @@ function PaymentForm({
                     </div>
                 </div>
 
-                <div className="driver-trip-form-field">
+                <div className="drivers-form-field">
                     <label htmlFor="payment-description">
                         הערה (לא חובה)
                     </label>
@@ -191,10 +191,10 @@ function PaymentForm({
                     />
                 </div>
 
-                <div className="driver-trip-form-actions">
+                <div className="drivers-form-actions">
                     <button
                         type="button"
-                        className="driver-trip-form-cancel"
+                        className="drivers-form-cancel"
                         onClick={onCancel}
                         disabled={sending}
                     >
@@ -203,7 +203,7 @@ function PaymentForm({
 
                     <button
                         type="submit"
-                        className="driver-trip-form-submit"
+                        className="drivers-form-submit"
                         disabled={sending}
                     >
                         {sending
