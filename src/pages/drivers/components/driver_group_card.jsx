@@ -1,8 +1,8 @@
-import { useState } from 'react'
-import { Check, Clock, Mail, Pencil, Plus, X } from 'lucide-react'
+import { Clock, Mail, Plus } from 'lucide-react'
 
 import DriverTripItem from './driver_trip_item'
 import PaymentItem from './payment_item'
+import StartingBalanceEditor from './starting_balance_editor'
 import './driver_group_card.css'
 
 function formatCurrency(value) {
@@ -26,36 +26,11 @@ function DriverGroupCard({
     payments,
     onAddTrip,
     onAddPayment,
+    balance,
     onUpdateStartingBalance,
 }) {
     const displayName =
         driver.full_name || driver.email || 'נהג'
-
-    const [isEditingBalance, setIsEditingBalance] = useState(false)
-    const [balanceInput, setBalanceInput] = useState('')
-    const [savingBalance, setSavingBalance] = useState(false)
-
-    const startBalanceEdit = () => {
-        setBalanceInput(String(driver.starting_balance || 0))
-        setIsEditingBalance(true)
-    }
-
-    const cancelBalanceEdit = () => {
-        setIsEditingBalance(false)
-        setSavingBalance(false)
-    }
-
-    const saveBalanceEdit = async () => {
-        try {
-            setSavingBalance(true)
-            await onUpdateStartingBalance(Number(balanceInput) || 0)
-            setIsEditingBalance(false)
-        } catch (error) {
-            console.error('Error updating starting balance:', error)
-        } finally {
-            setSavingBalance(false)
-        }
-    }
 
     const activity = [
         ...trips.map((trip) => ({
@@ -80,23 +55,28 @@ function DriverGroupCard({
                     </div>
 
                     <div className="driver-group-card-info">
-                        <h3>{displayName}</h3>
+                        <div className="driver-group-card-name-row">
+                            <h3>{displayName}</h3>
+
+                            <StartingBalanceEditor
+                                initialValue={driver.starting_balance}
+                                onSave={onUpdateStartingBalance}
+                            />
+                        </div>
 
                         <p>
                             <Mail size={13} strokeWidth={2} />
                             {driver.email}
                         </p>
                     </div>
-
-                    {driver.pending && (
-                        <span className="driver-group-card-badge-pending">
-                            <Clock size={13} strokeWidth={2} />
-                            ממתין
-                        </span>
-                    )}
                 </div>
 
-                {!driver.pending && (
+                {driver.pending ? (
+                    <span className="driver-group-card-badge-pending">
+                        <Clock size={13} strokeWidth={2} />
+                        ממתין
+                    </span>
+                ) : (
                     <div className="driver-group-card-actions">
                         <button
                             type="button"
@@ -123,50 +103,19 @@ function DriverGroupCard({
 
             <div className="driver-group-card-balance">
                 <span className="driver-group-card-balance-label">
-                    יתרת פתיחה
+                    יתרה לתשלום
                 </span>
 
-                {isEditingBalance ? (
-                    <div className="driver-group-card-balance-edit">
-                        <input
-                            type="number"
-                            step="1"
-                            value={balanceInput}
-                            onChange={(event) =>
-                                setBalanceInput(event.target.value)
-                            }
-                            disabled={savingBalance}
-                            autoFocus
-                        />
-
-                        <button
-                            type="button"
-                            onClick={saveBalanceEdit}
-                            disabled={savingBalance}
-                            aria-label="שמירה"
-                        >
-                            <Check size={14} strokeWidth={2.4} />
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={cancelBalanceEdit}
-                            disabled={savingBalance}
-                            aria-label="ביטול"
-                        >
-                            <X size={14} strokeWidth={2.4} />
-                        </button>
-                    </div>
-                ) : (
-                    <button
-                        type="button"
-                        className="driver-group-card-balance-value"
-                        onClick={startBalanceEdit}
-                    >
-                        {formatCurrency(driver.starting_balance)}
-                        <Pencil size={12} strokeWidth={2.2} />
-                    </button>
-                )}
+                <span
+                    className={
+                        balance < 0
+                            ? 'driver-group-card-balance-value negative'
+                            : 'driver-group-card-balance-value'
+                    }
+                    dir="ltr"
+                >
+                    {formatCurrency(balance)}
+                </span>
             </div>
 
             <div className="driver-group-card-section">

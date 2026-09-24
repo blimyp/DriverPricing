@@ -1,7 +1,7 @@
 import { supabase } from '../lib/supabaseClient'
 
 const DRIVER_COLUMNS =
-    'id, email, full_name, avatar_url, role, created_at, starting_balance'
+    'id, email, full_name, avatar_url, role, created_at, starting_balance, driver_percentage'
 
 function mapInviteToDriver(invite) {
     return {

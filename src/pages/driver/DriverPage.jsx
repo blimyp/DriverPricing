@@ -17,9 +17,11 @@ import { supabase } from '../../lib/supabaseClient'
 import { signOut } from '../../services/authService'
 import EarningCard from './components/earning_card/earning_card'
 import PaymentCard from './components/payment_card/payment_card'
+import {
+    getDriverPercentage,
+    getTripDriverEarning,
+} from '../../utils/driverBalance'
 import './DriverPage.css'
-
-const DEFAULT_DRIVER_PERCENTAGE = 30
 
 function DriverPage() {
     const { user } = useAuth()
@@ -30,9 +32,7 @@ function DriverPage() {
     const [refreshing, setRefreshing] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
 
-    const driverPercentage = Number(user?.driver_percentage) > 0
-        ? Number(user.driver_percentage)
-        : DEFAULT_DRIVER_PERCENTAGE
+    const driverPercentage = getDriverPercentage(user)
 
     const startingBalance = Number(user?.starting_balance) || 0
 
@@ -112,15 +112,11 @@ function DriverPage() {
     }, [fetchLedger])
 
     const earnings = useMemo(
-        () => trips.map((trip) => {
-            const price = Number(trip.calculated_price) || 0
-
-            return {
-                ...trip,
-                kind: 'trip',
-                driverEarning: price * (driverPercentage / 100),
-            }
-        }),
+        () => trips.map((trip) => ({
+            ...trip,
+            kind: 'trip',
+            driverEarning: getTripDriverEarning(trip, driverPercentage),
+        })),
         [trips, driverPercentage]
     )
 

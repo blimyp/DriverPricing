@@ -21,6 +21,7 @@ import {
     getDriverPayments,
     savePayment,
 } from '../../services/paymentsService'
+import { calculateDriverBalance } from '../../utils/driverBalance'
 
 import './DriversPage.css'
 import DriverForm from './components/driver_form'
@@ -62,15 +63,28 @@ function DriversPage() {
         (driver) => !driver.pending
     )
 
-    const driverGroups = drivers.map((driver) => ({
-        driver,
-        trips: trips.filter(
+    const driverGroups = drivers.map((driver) => {
+        const driverTrips = trips.filter(
             (trip) => trip.user_id === driver.id
-        ),
-        payments: payments.filter(
+        )
+
+        const driverPayments = payments.filter(
             (payment) => payment.driver_id === driver.id
-        ),
-    }))
+        )
+
+        return {
+            driver,
+            trips: driverTrips,
+            payments: driverPayments,
+            balance: calculateDriverBalance(
+                driver,
+                driverTrips,
+                driverPayments
+            ),
+        }
+    })
+
+    const balancesLoading = tripsLoading || paymentsLoading
 
     useEffect(() => {
         initialize()
@@ -379,12 +393,14 @@ function DriversPage() {
                                     driver,
                                     trips: driverTrips,
                                     payments: driverPayments,
+                                    balance,
                                 }) => (
                                     <DriverGroupCard
                                         key={driver.id}
                                         driver={driver}
                                         trips={driverTrips}
                                         payments={driverPayments}
+                                        balance={balance}
                                         onAddTrip={() =>
                                             openAddTripPopup(
                                                 driver.id
@@ -457,10 +473,12 @@ function DriversPage() {
                         </div>
                     ) : (
                         <div className="drivers-list">
-                            {drivers.map((driver) => (
+                            {driverGroups.map(({ driver, balance }) => (
                                 <DriverItem
                                     key={driver.id}
                                     driver={driver}
+                                    balance={balance}
+                                    balanceLoading={balancesLoading}
                                     onUpdateStartingBalance={(value) =>
                                         handleUpdateStartingBalance(
                                             driver,

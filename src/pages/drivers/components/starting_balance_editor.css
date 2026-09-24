@@ -1,0 +1,166 @@
+.starting-balance-editor {
+    position: relative;
+    z-index: 10;
+    flex-shrink: 0;
+
+    display: inline-flex;
+}
+
+.driver-edit-button.open {
+    background: #f3f4f6;
+}
+
+.driver-edit-button.open::after,
+.driver-edit-button.open::before {
+    display: none;
+}
+
+.starting-balance-editor-popover {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: calc(-8px - var(--popover-shift, 0px));
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    padding: 10px 12px;
+
+    border: 1px solid #ececec;
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+    animation: starting-balance-popover-in 0.15s ease;
+}
+
+.starting-balance-editor-popover::before {
+    content: '';
+
+    position: absolute;
+    top: -6px;
+    right: calc(16px + var(--popover-shift, 0px));
+
+    width: 10px;
+    height: 10px;
+
+    border-top: 1px solid #ececec;
+    border-left: 1px solid #ececec;
+
+    background: #ffffff;
+
+    transform: rotate(45deg);
+}
+
+.starting-balance-editor-popover.above {
+    top: auto;
+    bottom: calc(100% + 8px);
+}
+
+.starting-balance-editor-popover.above::before {
+    top: auto;
+    bottom: -6px;
+
+    border-top: none;
+    border-left: none;
+    border-bottom: 1px solid #ececec;
+    border-right: 1px solid #ececec;
+}
+
+@keyframes starting-balance-popover-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.starting-balance-editor-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.starting-balance-editor-label {
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.6;
+
+    white-space: nowrap;
+}
+
+.starting-balance-editor-row input {
+    width: 90px;
+    height: 28px;
+
+    box-sizing: border-box;
+
+    padding: 0 8px;
+
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    font: inherit;
+    font-size: 13px;
+    text-align: right;
+
+    outline: none;
+
+    transition: border-color 0.15s ease;
+}
+
+.starting-balance-editor-row input:focus {
+    border-color: var(--primary-dark);
+}
+
+.starting-balance-editor-row input.error {
+    border-color: #dc2626;
+}
+
+.starting-balance-editor-row button {
+    flex-shrink: 0;
+
+    width: 26px;
+    height: 26px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease;
+}
+
+.starting-balance-editor-row button:hover:not(:disabled) {
+    transform: scale(1.08);
+}
+
+.starting-balance-editor-row button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.starting-balance-editor-save {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.starting-balance-editor-cancel {
+    background: #f3f4f6;
+    color: #4b5563;
+}

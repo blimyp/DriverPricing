@@ -213,6 +213,87 @@
     transform: translateX(-50%) translateY(0);
 }
 
+.driver-edit-button {
+    position: relative;
+    flex-shrink: 0;
+
+    width: 28px;
+    height: 28px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+
+    background: transparent;
+    color: #111827;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease;
+}
+
+.driver-edit-button:hover {
+    background: #f3f4f6;
+}
+
+.driver-edit-button::after,
+.driver-edit-button::before {
+    position: absolute;
+    left: 50%;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease;
+}
+
+.driver-edit-button::after {
+    content: attr(data-tooltip);
+
+    bottom: calc(100% + 10px);
+    transform: translateX(-50%) translateY(4px);
+
+    padding: 5px 10px;
+    border-radius: 6px;
+
+    background: #1f2937;
+    color: white;
+
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    z-index: 5;
+}
+
+.driver-edit-button::before {
+    content: '';
+
+    bottom: calc(100% + 4px);
+    transform: translateX(-50%) translateY(4px);
+
+    border: 5px solid transparent;
+    border-top-color: #1f2937;
+
+    z-index: 5;
+}
+
+.driver-edit-button:hover::after,
+.driver-edit-button:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
 .drivers-section-header p {
     margin: 0;
 

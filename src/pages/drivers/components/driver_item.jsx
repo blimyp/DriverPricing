@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { Check, Mail, Pencil, X } from 'lucide-react'
+import { Mail } from 'lucide-react'
+
+import StartingBalanceEditor from './starting_balance_editor'
 
 import './driver_item.css'
 
@@ -18,35 +19,14 @@ function formatCurrency(value) {
     }).format(numericValue)
 }
 
-function DriverItem({ driver, onUpdateStartingBalance }) {
+function DriverItem({
+    driver,
+    balance,
+    balanceLoading,
+    onUpdateStartingBalance,
+}) {
     const displayName =
         driver.full_name || driver.email || 'נהג'
-
-    const [isEditingBalance, setIsEditingBalance] = useState(false)
-    const [balanceInput, setBalanceInput] = useState('')
-    const [savingBalance, setSavingBalance] = useState(false)
-
-    const startBalanceEdit = () => {
-        setBalanceInput(String(driver.starting_balance || 0))
-        setIsEditingBalance(true)
-    }
-
-    const cancelBalanceEdit = () => {
-        setIsEditingBalance(false)
-        setSavingBalance(false)
-    }
-
-    const saveBalanceEdit = async () => {
-        try {
-            setSavingBalance(true)
-            await onUpdateStartingBalance(Number(balanceInput) || 0)
-            setIsEditingBalance(false)
-        } catch (error) {
-            console.error('Error updating starting balance:', error)
-        } finally {
-            setSavingBalance(false)
-        }
-    }
 
     return (
         <article className="driver-item">
@@ -56,7 +36,14 @@ function DriverItem({ driver, onUpdateStartingBalance }) {
                 </div>
 
                 <div className="driver-item-info">
-                    <h3>{displayName}</h3>
+                    <div className="driver-item-name-row">
+                        <h3>{displayName}</h3>
+
+                        <StartingBalanceEditor
+                            initialValue={driver.starting_balance}
+                            onSave={onUpdateStartingBalance}
+                        />
+                    </div>
 
                     <p>
                         <Mail size={13} strokeWidth={2} />
@@ -73,50 +60,19 @@ function DriverItem({ driver, onUpdateStartingBalance }) {
 
             <div className="driver-item-actions">
                 <span className="driver-item-balance-label">
-                    יתרת פתיחה
+                    יתרה לתשלום
                 </span>
 
-                {isEditingBalance ? (
-                    <div className="driver-item-balance-edit">
-                        <input
-                            type="number"
-                            step="1"
-                            value={balanceInput}
-                            onChange={(event) =>
-                                setBalanceInput(event.target.value)
-                            }
-                            disabled={savingBalance}
-                            autoFocus
-                        />
-
-                        <button
-                            type="button"
-                            onClick={saveBalanceEdit}
-                            disabled={savingBalance}
-                            aria-label="שמירה"
-                        >
-                            <Check size={14} strokeWidth={2.4} />
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={cancelBalanceEdit}
-                            disabled={savingBalance}
-                            aria-label="ביטול"
-                        >
-                            <X size={14} strokeWidth={2.4} />
-                        </button>
-                    </div>
-                ) : (
-                    <button
-                        type="button"
-                        className="driver-item-balance-value"
-                        onClick={startBalanceEdit}
-                    >
-                        {formatCurrency(driver.starting_balance)}
-                        <Pencil size={12} strokeWidth={2.2} />
-                    </button>
-                )}
+                <span
+                    className={
+                        balance < 0
+                            ? 'driver-item-balance-value negative'
+                            : 'driver-item-balance-value'
+                    }
+                    dir="ltr"
+                >
+                    {balanceLoading ? '...' : formatCurrency(balance)}
+                </span>
             </div>
         </article>
     )
