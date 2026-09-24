@@ -1,5 +1,7 @@
-import { Clock, Mail, Plus } from 'lucide-react'
+import { useState } from 'react'
+import { ChevronDown, Clock, ListOrdered, Mail, Plus } from 'lucide-react'
 
+import Collapsible from '../../../components/collapsible/collapsible'
 import DriverTripItem from './driver_trip_item'
 import PaymentItem from './payment_item'
 import StartingBalanceEditor from './starting_balance_editor'
@@ -31,6 +33,8 @@ function DriverGroupCard({
 }) {
     const displayName =
         driver.full_name || driver.email || 'נהג'
+
+    const [isActivityOpen, setIsActivityOpen] = useState(false)
 
     const activity = [
         ...trips.map((trip) => ({
@@ -118,31 +122,61 @@ function DriverGroupCard({
                 </span>
             </div>
 
-            <div className="driver-group-card-section">
-                {activity.length === 0 ? (
-                    <p className="driver-group-card-empty">
-                        אין עדיין פעילות לנהג זה
-                    </p>
-                ) : (
-                    <div className="driver-group-card-list">
-                        {activity.map((item) =>
-                            item.activityType === 'trip' ? (
-                                <DriverTripItem
-                                    key={`trip-${item.id}`}
-                                    trip={item}
-                                    compact
-                                />
-                            ) : (
-                                <PaymentItem
-                                    key={`payment-${item.id}`}
-                                    payment={item}
-                                    compact
-                                />
-                            )
-                        )}
-                    </div>
-                )}
-            </div>
+            <button
+                type="button"
+                className={
+                    isActivityOpen
+                        ? 'driver-group-card-toggle open'
+                        : 'driver-group-card-toggle'
+                }
+                onClick={() => setIsActivityOpen((current) => !current)}
+                aria-expanded={isActivityOpen}
+            >
+                <span className="driver-group-card-toggle-label">
+                    <ListOrdered size={15} strokeWidth={2.2} />
+                    {isActivityOpen ? 'הסתרת פירוט תנועות' : 'פירוט תנועות'}
+                </span>
+
+                <span className="driver-group-card-toggle-end">
+                    <span className="driver-group-card-toggle-count">
+                        {activity.length}
+                    </span>
+
+                    <ChevronDown
+                        className="driver-group-card-toggle-chevron"
+                        size={16}
+                        strokeWidth={2.2}
+                    />
+                </span>
+            </button>
+
+            <Collapsible isOpen={isActivityOpen}>
+                <div className="driver-group-card-section">
+                    {activity.length === 0 ? (
+                        <p className="driver-group-card-empty">
+                            אין עדיין פעילות לנהג זה
+                        </p>
+                    ) : (
+                        <div className="driver-group-card-list">
+                            {activity.map((item) =>
+                                item.activityType === 'trip' ? (
+                                    <DriverTripItem
+                                        key={`trip-${item.id}`}
+                                        trip={item}
+                                        compact
+                                    />
+                                ) : (
+                                    <PaymentItem
+                                        key={`payment-${item.id}`}
+                                        payment={item}
+                                        compact
+                                    />
+                                )
+                            )}
+                        </div>
+                    )}
+                </div>
+            </Collapsible>
         </article>
     )
 }

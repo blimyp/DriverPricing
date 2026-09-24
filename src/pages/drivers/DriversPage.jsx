@@ -3,7 +3,6 @@ import {
     BusFront,
     HandCoins,
     LayoutGrid,
-    Plus,
     Rows3,
     Users,
 } from 'lucide-react'
@@ -27,6 +26,7 @@ import './DriversPage.css'
 import DriverForm from './components/driver_form'
 import DriverGroupCard from './components/driver_group_card'
 import DriverItem from './components/driver_item'
+import DriversSection from './components/drivers_section'
 import DriverTripForm from './components/driver_trip_form'
 import DriverTripItem from './components/driver_trip_item'
 import PaymentForm from './components/payment_form'
@@ -424,33 +424,14 @@ function DriversPage() {
                     </div>
                 ) : (
                     <>
-                <section className="drivers-section">
-                    <div className="drivers-section-header">
-                        <div>
-                            <div className="drivers-section-title-row">
-                                <h2>נהגים</h2>
-
-                                <button
-                                    type="button"
-                                    className="section-add-button"
-                                    onClick={() => setIsAddPopupOpen(true)}
-                                    aria-label="הוספת נהג"
-                                    data-tooltip="הוספת נהג"
-                                >
-                                    <Plus size={18} strokeWidth={2.4} />
-                                </button>
-                            </div>
-
-                            <div className="drivers-section-span">
-                                <Users size={15} />
-                                <p>כל הנהגים במקום אחד</p>
-                            </div>
-                        </div>
-
-                        <span className="drivers-count">
-                            סך נהגים {drivers.length}
-                        </span>
-                    </div>
+                <DriversSection
+                    title="נהגים"
+                    description="כל הנהגים במקום אחד"
+                    icon={Users}
+                    countLabel={`סך נהגים ${drivers.length}`}
+                    addLabel="הוספת נהג"
+                    onAdd={() => setIsAddPopupOpen(true)}
+                >
 
                     {loading ? (
                         <div className="drivers-empty">
@@ -489,7 +470,7 @@ function DriversPage() {
                             ))}
                         </div>
                     )}
-                </section>
+                </DriversSection>
 
                 {tripsError && (
                     <div className="drivers-error">
@@ -497,34 +478,15 @@ function DriversPage() {
                     </div>
                 )}
 
-                <section className="drivers-section">
-                    <div className="drivers-section-header">
-                        <div>
-                            <div className="drivers-section-title-row">
-                                <h2>נסיעות</h2>
-
-                                <button
-                                    type="button"
-                                    className="section-add-button"
-                                    onClick={() => openAddTripPopup()}
-                                    disabled={registeredDrivers.length === 0}
-                                    aria-label="הוספת נסיעה"
-                                    data-tooltip="הוספת נסיעה"
-                                >
-                                    <Plus size={18} strokeWidth={2.4} />
-                                </button>
-                            </div>
-
-                            <div className="drivers-section-span">
-                                <BusFront size={15} />
-                                <p>כל הנסיעות שהוקצו לנהגים</p>
-                            </div>
-                        </div>
-
-                        <span className="drivers-count">
-                            סך נסיעות {trips.length}
-                        </span>
-                    </div>
+                <DriversSection
+                    title="נסיעות"
+                    description="כל הנסיעות שהוקצו לנהגים"
+                    icon={BusFront}
+                    countLabel={`סך נסיעות ${trips.length}`}
+                    addLabel="הוספת נסיעה"
+                    onAdd={() => openAddTripPopup()}
+                    addDisabled={registeredDrivers.length === 0}
+                >
 
                     {tripsLoading ? (
                         <div className="drivers-empty">
@@ -555,7 +517,7 @@ function DriversPage() {
                             ))}
                         </div>
                     )}
-                </section>
+                </DriversSection>
 
                 {paymentsError && (
                     <div className="drivers-error">
@@ -563,34 +525,15 @@ function DriversPage() {
                     </div>
                 )}
 
-                <section className="drivers-section">
-                    <div className="drivers-section-header">
-                        <div>
-                            <div className="drivers-section-title-row">
-                                <h2>תשלומים</h2>
-
-                                <button
-                                    type="button"
-                                    className="section-add-button"
-                                    onClick={() => openAddPaymentPopup()}
-                                    disabled={registeredDrivers.length === 0}
-                                    aria-label="הוספת תשלום"
-                                    data-tooltip="הוספת תשלום"
-                                >
-                                    <Plus size={18} strokeWidth={2.4} />
-                                </button>
-                            </div>
-
-                            <div className="drivers-section-span">
-                                <HandCoins size={15} />
-                                <p>כל התשלומים שבוצעו לנהגים</p>
-                            </div>
-                        </div>
-
-                        <span className="drivers-count">
-                            סך תשלומים {payments.length}
-                        </span>
-                    </div>
+                <DriversSection
+                    title="תשלומים"
+                    description="כל התשלומים שבוצעו לנהגים"
+                    icon={HandCoins}
+                    countLabel={`סך תשלומים ${payments.length}`}
+                    addLabel="הוספת תשלום"
+                    onAdd={() => openAddPaymentPopup()}
+                    addDisabled={registeredDrivers.length === 0}
+                >
 
                     {paymentsLoading ? (
                         <div className="drivers-empty">
@@ -621,7 +564,7 @@ function DriversPage() {
                             ))}
                         </div>
                     )}
-                </section>
+                </DriversSection>
                     </>
                 )}
             </div>

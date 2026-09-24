@@ -10,7 +10,7 @@
     padding: 40px 0 60px;
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 20px;
 }
 
 .drivers-view-toggle {
@@ -76,9 +76,15 @@
     background: #ffffff;
     border-radius: 18px;
 
-    padding: 50px 24px;
+    padding: 24px;
 
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+
+    transition: box-shadow 0.2s ease;
+}
+
+.drivers-section:not(.open):hover {
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.13);
 }
 
 .drivers-by-driver-view {
@@ -109,7 +115,63 @@
     justify-content: space-between;
     gap: 16px;
 
-    margin-bottom: 30px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.drivers-section-header-end {
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.drivers-section-toggle {
+    width: 34px;
+    height: 34px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #ececec;
+    border-radius: 50%;
+    cursor: pointer;
+
+    background: #ffffff;
+    color: #4b5563;
+
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.drivers-section-toggle svg {
+    transition: transform 0.25s ease;
+}
+
+.drivers-section-header:hover .drivers-section-toggle {
+    background: #f3f4f6;
+}
+
+/* The spacing lives inside the collapsible content so it animates with
+   the height instead of appearing at once when the section opens. */
+.drivers-section-body {
+    padding-top: 20px;
+}
+
+.drivers-section.open .drivers-section-toggle {
+    background: var(--primary-light);
+    border-color: transparent;
+    color: var(--primary-dark);
+}
+
+.drivers-section.open .drivers-section-toggle svg {
+    transform: rotate(180deg);
 }
 
 .drivers-section-header h2 {
@@ -382,7 +444,11 @@
     }
 
     .drivers-section {
-        padding: 18px;
+        padding: 16px;
         border-radius: 14px;
+    }
+
+    .drivers-section-header {
+        gap: 10px;
     }
 }

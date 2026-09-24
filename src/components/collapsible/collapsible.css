@@ -1,0 +1,36 @@
+.collapsible {
+    display: grid;
+    grid-template-rows: 0fr;
+
+    opacity: 0;
+
+    transition:
+        grid-template-rows 0.3s ease,
+        opacity 0.2s ease;
+}
+
+.collapsible.open {
+    grid-template-rows: 1fr;
+
+    opacity: 1;
+}
+
+.collapsible-inner {
+    min-height: 0;
+
+    overflow: hidden;
+}
+
+.collapsible.settled > .collapsible-inner {
+    overflow: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .collapsible {
+        transition: none;
+    }
+
+    .collapsible.open > .collapsible-inner {
+        overflow: visible;
+    }
+}
