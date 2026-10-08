@@ -1,8 +1,8 @@
-import { CalendarDays, User, Wallet } from 'lucide-react'
+import { CalendarDays, Pencil, User, Wallet } from 'lucide-react'
 
 import './driver_trip_item.css'
 
-function DriverTripItem({ trip, compact = false }) {
+function DriverTripItem({ trip, compact = false, onEdit }) {
     function formatPrice(value) {
         const numericValue = Number(value)
 
@@ -83,6 +83,18 @@ function DriverTripItem({ trip, compact = false }) {
                     <Wallet size={13} strokeWidth={2} />
                     {formatPrice(trip.calculated_price)}
                 </span>
+
+                {onEdit && (
+                    <button
+                        type="button"
+                        className="driver-edit-button"
+                        onClick={onEdit}
+                        aria-label="עריכת נסיעה"
+                        data-tooltip="עריכת נסיעה"
+                    >
+                        <Pencil size={14} strokeWidth={2} />
+                    </button>
+                )}
             </div>
         </article>
     )

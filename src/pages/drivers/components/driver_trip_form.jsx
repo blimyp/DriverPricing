@@ -6,19 +6,38 @@ function getTodayDate() {
     return new Date().toISOString().split('T')[0]
 }
 
+function toDateInputValue(value) {
+    const date = new Date(value)
+
+    if (!value || Number.isNaN(date.getTime())) {
+        return getTodayDate()
+    }
+
+    return date.toISOString().split('T')[0]
+}
+
 function DriverTripForm({
     drivers,
     initialDriverId,
     lockDriver,
+    trip = null,
     onSubmit,
     onCancel,
 }) {
+    const isEdit = Boolean(trip)
+
     const [driverId, setDriverId] = useState(
-        initialDriverId || ''
+        trip?.user_id || initialDriverId || ''
     )
-    const [tripDate, setTripDate] = useState(getTodayDate())
-    const [price, setPrice] = useState('')
-    const [description, setDescription] = useState('')
+    const [tripDate, setTripDate] = useState(
+        isEdit ? toDateInputValue(trip.created_at) : getTodayDate()
+    )
+    const [price, setPrice] = useState(
+        isEdit ? String(trip.calculated_price ?? '') : ''
+    )
+    const [description, setDescription] = useState(
+        trip?.description || ''
+    )
 
     const [sending, setSending] =
         useState(false)
@@ -80,11 +99,13 @@ function DriverTripForm({
         >
             <div className="drivers-form-header">
                 <h2>
-                    הוספת נסיעה
+                    {isEdit ? 'עריכת נסיעה' : 'הוספת נסיעה'}
                 </h2>
 
                 <p>
-                    מלא את פרטי הנסיעה ושייך אותה לנהג הרלוונטי
+                    {isEdit
+                        ? 'עדכן את פרטי הנסיעה ושמור את השינויים'
+                        : 'מלא את פרטי הנסיעה ושייך אותה לנהג הרלוונטי'}
                 </p>
             </div>
 
@@ -111,7 +132,7 @@ function DriverTripForm({
                                 event.target.value
                             )
                         }
-                        disabled={sending || lockDriver}
+                        disabled={sending || lockDriver || isEdit}
                     >
                         <option value="">
                             בחרי נהג
@@ -208,7 +229,9 @@ function DriverTripForm({
                     >
                         {sending
                             ? 'שומר...'
-                            : 'שמירת נסיעה'}
+                            : isEdit
+                                ? 'שמירת שינויים'
+                                : 'שמירת נסיעה'}
                     </button>
                 </div>
             </form>

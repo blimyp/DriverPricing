@@ -15,10 +15,12 @@ import {
 import {
     getDriverTrips,
     saveDriverTrip,
+    updateDriverTrip,
 } from '../../services/tripsService'
 import {
     getDriverPayments,
     savePayment,
+    updatePayment,
 } from '../../services/paymentsService'
 import { calculateDriverBalance } from '../../utils/driverBalance'
 
@@ -54,6 +56,9 @@ function DriversPage() {
 
     const [isAddPaymentPopupOpen, setIsAddPaymentPopupOpen] =
         useState(false)
+
+    const [editingTrip, setEditingTrip] = useState(null)
+    const [editingPayment, setEditingPayment] = useState(null)
 
     const [viewMode, setViewMode] = useState('category')
     const [selectedDriverId, setSelectedDriverId] =
@@ -224,6 +229,90 @@ function DriversPage() {
     const openAddPaymentPopup = (driverId = null) => {
         setSelectedDriverId(driverId)
         setIsAddPaymentPopupOpen(true)
+    }
+
+    const closeTripPopup = () => {
+        setIsAddTripPopupOpen(false)
+        setSelectedDriverId(null)
+        setEditingTrip(null)
+    }
+
+    const closePaymentPopup = () => {
+        setIsAddPaymentPopupOpen(false)
+        setSelectedDriverId(null)
+        setEditingPayment(null)
+    }
+
+    const openEditTripPopup = (trip) => {
+        setEditingTrip(trip)
+        setIsAddTripPopupOpen(true)
+    }
+
+    const openEditPaymentPopup = (payment) => {
+        setEditingPayment(payment)
+        setIsAddPaymentPopupOpen(true)
+    }
+
+    // Only send the date when it was changed, so the original time
+    // of the record is kept.
+    const getChangedDate = (newDate, originalValue) => {
+        const original = new Date(originalValue)
+
+        if (
+            !Number.isNaN(original.getTime()) &&
+            original.toISOString().split('T')[0] === newDate
+        ) {
+            return null
+        }
+
+        return newDate
+    }
+
+    const handleEditTrip = async ({
+        tripDate,
+        price,
+        description,
+    }) => {
+        const updatedTrip = await updateDriverTrip(editingTrip.id, {
+            tripDate: getChangedDate(tripDate, editingTrip.created_at),
+            price,
+            description,
+        })
+
+        setTrips((current) =>
+            current.map((item) =>
+                item.id === updatedTrip.id
+                    ? { ...item, ...updatedTrip }
+                    : item
+            )
+        )
+
+        closeTripPopup()
+    }
+
+    const handleEditPayment = async ({
+        paymentDate,
+        amount,
+        description,
+    }) => {
+        const updatedPayment = await updatePayment(editingPayment.id, {
+            paymentDate: getChangedDate(
+                paymentDate,
+                editingPayment.created_at
+            ),
+            amount,
+            description,
+        })
+
+        setPayments((current) =>
+            current.map((item) =>
+                item.id === updatedPayment.id
+                    ? { ...item, ...updatedPayment }
+                    : item
+            )
+        )
+
+        closePaymentPopup()
     }
 
     const handleAddDriver = async ({ email, startingBalance }) => {
@@ -411,6 +500,8 @@ function DriversPage() {
                                                 driver.id
                                             )
                                         }
+                                        onEditTrip={openEditTripPopup}
+                                        onEditPayment={openEditPaymentPopup}
                                         onUpdateStartingBalance={(value) =>
                                             handleUpdateStartingBalance(
                                                 driver,
@@ -513,6 +604,9 @@ function DriversPage() {
                                 <DriverTripItem
                                     key={trip.id}
                                     trip={trip}
+                                    onEdit={() =>
+                                        openEditTripPopup(trip)
+                                    }
                                 />
                             ))}
                         </div>
@@ -560,6 +654,9 @@ function DriversPage() {
                                 <PaymentItem
                                     key={payment.id}
                                     payment={payment}
+                                    onEdit={() =>
+                                        openEditPaymentPopup(payment)
+                                    }
                                 />
                             ))}
                         </div>
@@ -581,39 +678,37 @@ function DriversPage() {
 
             <Popup
                 isOpen={isAddTripPopupOpen}
-                onClose={() => {
-                    setIsAddTripPopupOpen(false)
-                    setSelectedDriverId(null)
-                }}
+                onClose={closeTripPopup}
             >
                 <DriverTripForm
+                    key={editingTrip?.id || 'new-trip'}
                     drivers={registeredDrivers}
                     initialDriverId={selectedDriverId}
                     lockDriver={Boolean(selectedDriverId)}
-                    onSubmit={handleAddTrip}
-                    onCancel={() => {
-                        setIsAddTripPopupOpen(false)
-                        setSelectedDriverId(null)
-                    }}
+                    trip={editingTrip}
+                    onSubmit={
+                        editingTrip ? handleEditTrip : handleAddTrip
+                    }
+                    onCancel={closeTripPopup}
                 />
             </Popup>
 
             <Popup
                 isOpen={isAddPaymentPopupOpen}
-                onClose={() => {
-                    setIsAddPaymentPopupOpen(false)
-                    setSelectedDriverId(null)
-                }}
+                onClose={closePaymentPopup}
             >
                 <PaymentForm
+                    key={editingPayment?.id || 'new-payment'}
                     drivers={registeredDrivers}
                     initialDriverId={selectedDriverId}
                     lockDriver={Boolean(selectedDriverId)}
-                    onSubmit={handleAddPayment}
-                    onCancel={() => {
-                        setIsAddPaymentPopupOpen(false)
-                        setSelectedDriverId(null)
-                    }}
+                    payment={editingPayment}
+                    onSubmit={
+                        editingPayment
+                            ? handleEditPayment
+                            : handleAddPayment
+                    }
+                    onCancel={closePaymentPopup}
                 />
             </Popup>
         </div>

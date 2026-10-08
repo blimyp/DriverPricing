@@ -6,19 +6,38 @@ function getTodayDate() {
     return new Date().toISOString().split('T')[0]
 }
 
+function toDateInputValue(value) {
+    const date = new Date(value)
+
+    if (!value || Number.isNaN(date.getTime())) {
+        return getTodayDate()
+    }
+
+    return date.toISOString().split('T')[0]
+}
+
 function PaymentForm({
     drivers,
     initialDriverId,
     lockDriver,
+    payment = null,
     onSubmit,
     onCancel,
 }) {
+    const isEdit = Boolean(payment)
+
     const [driverId, setDriverId] = useState(
-        initialDriverId || ''
+        payment?.driver_id || initialDriverId || ''
     )
-    const [paymentDate, setPaymentDate] = useState(getTodayDate())
-    const [amount, setAmount] = useState('')
-    const [description, setDescription] = useState('')
+    const [paymentDate, setPaymentDate] = useState(
+        isEdit ? toDateInputValue(payment.created_at) : getTodayDate()
+    )
+    const [amount, setAmount] = useState(
+        isEdit ? String(payment.amount ?? '') : ''
+    )
+    const [description, setDescription] = useState(
+        payment?.description || ''
+    )
 
     const [sending, setSending] =
         useState(false)
@@ -80,11 +99,13 @@ function PaymentForm({
         >
             <div className="drivers-form-header">
                 <h2>
-                    הוספת תשלום
+                    {isEdit ? 'עריכת תשלום' : 'הוספת תשלום'}
                 </h2>
 
                 <p>
-                    מלא את פרטי התשלום ושייך אותו לנהג הרלוונטי
+                    {isEdit
+                        ? 'עדכן את פרטי התשלום ושמור את השינויים'
+                        : 'מלא את פרטי התשלום ושייך אותו לנהג הרלוונטי'}
                 </p>
             </div>
 
@@ -111,7 +132,7 @@ function PaymentForm({
                                 event.target.value
                             )
                         }
-                        disabled={sending || lockDriver}
+                        disabled={sending || lockDriver || isEdit}
                     >
                         <option value="">
                             בחרי נהג
@@ -208,7 +229,9 @@ function PaymentForm({
                     >
                         {sending
                             ? 'שומר...'
-                            : 'שמירת תשלום'}
+                            : isEdit
+                                ? 'שמירת שינויים'
+                                : 'שמירת תשלום'}
                     </button>
                 </div>
             </form>

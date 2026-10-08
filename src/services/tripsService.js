@@ -103,3 +103,48 @@ export async function getDriverTrips(driverIds) {
 
     return data
 }
+export async function updateDriverTrip(tripId, {
+    tripDate,
+    price,
+    description,
+}) {
+    if (!tripId) {
+        throw new Error('לא נמצאה הנסיעה לעדכון')
+    }
+
+    if (
+        price === null ||
+        price === undefined ||
+        !Number.isFinite(Number(price))
+    ) {
+        throw new Error('יש להזין מחיר תקין לנסיעה')
+    }
+
+    const changes = {
+        description: description || null,
+        calculated_price: Number(price),
+    }
+
+    if (tripDate) {
+        changes.created_at = new Date(tripDate).toISOString()
+    }
+
+    const { data, error } = await supabase
+        .from('trips')
+        .update(changes)
+        .eq('id', tripId)
+        .select(
+            'id, user_id, origin, destination, description, calculated_price, created_at'
+        )
+        .maybeSingle()
+
+    if (error) {
+        throw error
+    }
+
+    if (!data) {
+        throw new Error('אין הרשאה לעדכן את הנסיעה או שהיא לא נמצאה')
+    }
+
+    return data
+}

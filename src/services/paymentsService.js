@@ -57,3 +57,47 @@ export async function getDriverPayments(driverIds) {
 
     return data
 }
+
+export async function updatePayment(paymentId, {
+    paymentDate,
+    amount,
+    description,
+}) {
+    if (!paymentId) {
+        throw new Error('לא נמצא התשלום לעדכון')
+    }
+
+    if (
+        amount === null ||
+        amount === undefined ||
+        !Number.isFinite(Number(amount))
+    ) {
+        throw new Error('יש להזין סכום תקין לתשלום')
+    }
+
+    const changes = {
+        description: description || null,
+        amount: Number(amount),
+    }
+
+    if (paymentDate) {
+        changes.created_at = new Date(paymentDate).toISOString()
+    }
+
+    const { data, error } = await supabase
+        .from('driver_payments')
+        .update(changes)
+        .eq('id', paymentId)
+        .select('id, driver_id, description, amount, created_at')
+        .maybeSingle()
+
+    if (error) {
+        throw error
+    }
+
+    if (!data) {
+        throw new Error('אין הרשאה לעדכן את התשלום או שהוא לא נמצא')
+    }
+
+    return data
+}

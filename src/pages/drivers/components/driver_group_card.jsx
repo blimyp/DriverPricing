@@ -28,6 +28,8 @@ function DriverGroupCard({
     payments,
     onAddTrip,
     onAddPayment,
+    onEditTrip,
+    onEditPayment,
     balance,
     onUpdateStartingBalance,
 }) {
@@ -164,12 +166,14 @@ function DriverGroupCard({
                                         key={`trip-${item.id}`}
                                         trip={item}
                                         compact
+                                        onEdit={() => onEditTrip(item)}
                                     />
                                 ) : (
                                     <PaymentItem
                                         key={`payment-${item.id}`}
                                         payment={item}
                                         compact
+                                        onEdit={() => onEditPayment(item)}
                                     />
                                 )
                             )}
