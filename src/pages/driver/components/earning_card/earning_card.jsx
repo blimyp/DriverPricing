@@ -52,25 +52,29 @@ function EarningCard({ trip, index }) {
     return (
         <article
             className="earning-card"
-            key={trip.id}
-            style={{ '--trip-index': index }}
+            style={{ '--trip-index': Math.min(index, 12) }}
         >
             <div className="earning-card__icon">
                 <MapPin strokeWidth={2} aria-hidden="true" />
             </div>
 
-            <strong className="earning-card__label">
-                {getTripDescription(trip)}
-            </strong>
+            <div className="earning-card__body">
+                <strong className="earning-card__label">
+                    {getTripDescription(trip)}
+                </strong>
 
-            <span className="earning-card__date">
-                <CalendarDays size={13} strokeWidth={2} aria-hidden="true" />
-                {formatDate(trip.created_at)}
-            </span>
+                <span className="earning-card__date">
+                    <CalendarDays size={12} strokeWidth={2} aria-hidden="true" />
+                    {formatDate(trip.created_at)}
+                </span>
+            </div>
 
-            <span className="earning-card__amount">
-                {formatPrice(trip.driverEarning)}
-            </span>
+            <div className="earning-card__amount">
+                <span className="earning-card__value">
+                    {formatPrice(trip.driverEarning)}
+                </span>
+                <span className="earning-card__tag">רווח מנסיעה</span>
+            </div>
         </article>
     )
 }

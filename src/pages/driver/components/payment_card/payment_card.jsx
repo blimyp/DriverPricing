@@ -44,24 +44,29 @@ function PaymentCard({ payment, index }) {
     return (
         <article
             className="payment-card"
-            style={{ '--trip-index': index }}
+            style={{ '--trip-index': Math.min(index, 12) }}
         >
             <div className="payment-card__icon">
                 <HandCoins strokeWidth={2} aria-hidden="true" />
             </div>
 
-            <strong className="payment-card__label">
-                {payment.description || 'תשלום התקבל'}
-            </strong>
+            <div className="payment-card__body">
+                <strong className="payment-card__label">
+                    {payment.description || 'תשלום התקבל'}
+                </strong>
 
-            <span className="payment-card__date">
-                <CalendarDays size={13} strokeWidth={2} aria-hidden="true" />
-                {formatDate(payment.created_at)}
-            </span>
+                <span className="payment-card__date">
+                    <CalendarDays size={12} strokeWidth={2} aria-hidden="true" />
+                    {formatDate(payment.created_at)}
+                </span>
+            </div>
 
-            <span className="payment-card__amount">
-                {formatAmount(payment.amount)}
-            </span>
+            <div className="payment-card__amount">
+                <span className="payment-card__value">
+                    {formatAmount(payment.amount)}
+                </span>
+                <span className="payment-card__tag">שולם לך</span>
+            </div>
         </article>
     )
 }

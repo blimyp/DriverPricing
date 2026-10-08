@@ -6,10 +6,11 @@ import {
 } from 'react'
 import {
     CarFront,
+    HandCoins,
     LogOut,
+    PiggyBank,
     RefreshCw,
-    Sparkles,
-    Truck,
+    TrendingUp,
     Wallet,
 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
@@ -23,6 +24,26 @@ import {
 } from '../../utils/driverBalance'
 import './DriverPage.css'
 
+const FILTERS = [
+    { value: 'all', label: 'הכל' },
+    { value: 'trip', label: 'נסיעות' },
+    { value: 'payment', label: 'תשלומים' },
+]
+
+function getGreeting() {
+    const hour = new Date().getHours()
+
+    if (hour < 12) {
+        return 'בוקר טוב'
+    }
+
+    if (hour < 18) {
+        return 'צהריים טובים'
+    }
+
+    return 'ערב טוב'
+}
+
 function DriverPage() {
     const { user } = useAuth()
 
@@ -31,6 +52,7 @@ function DriverPage() {
     const [loading, setLoading] = useState(true)
     const [refreshing, setRefreshing] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
+    const [filter, setFilter] = useState('all')
 
     const driverPercentage = getDriverPercentage(user)
 
@@ -152,6 +174,48 @@ function DriverPage() {
         [earnings, payments]
     )
 
+    const filterCounts = {
+        all: ledgerItems.length,
+        trip: earnings.length,
+        payment: payments.length,
+    }
+
+    const monthGroups = useMemo(() => {
+        const monthFormatter = new Intl.DateTimeFormat('he-IL', {
+            month: 'long',
+            year: 'numeric',
+        })
+
+        const groups = []
+
+        ledgerItems
+            .filter((item) => filter === 'all' || item.kind === filter)
+            .forEach((item, index) => {
+                const date = new Date(item.created_at)
+                const isValid = !Number.isNaN(date.getTime())
+                const key = isValid
+                    ? `${date.getFullYear()}-${date.getMonth()}`
+                    : 'unknown'
+
+                let group = groups[groups.length - 1]
+
+                if (!group || group.key !== key) {
+                    group = {
+                        key,
+                        label: isValid
+                            ? monthFormatter.format(date)
+                            : 'ללא תאריך',
+                        items: [],
+                    }
+                    groups.push(group)
+                }
+
+                group.items.push({ item, index })
+            })
+
+        return groups
+    }, [ledgerItems, filter])
+
     const handleLogout = async () => {
         await signOut()
     }
@@ -174,6 +238,8 @@ function DriverPage() {
     if (loading) {
         return (
             <main className="driver-page" dir="rtl">
+                <div className="driver-page__band" aria-hidden="true" />
+
                 <div className="driver-page__loading">
                     <span className="driver-page__spinner" />
 
@@ -190,75 +256,106 @@ function DriverPage() {
 
     return (
         <main className="driver-page" dir="rtl">
+            <div className="driver-page__band" aria-hidden="true" />
+
             <div className="driver-page__container">
                 <header className="driver-page__topbar">
-                    <div className="driver-page__title">
-                        <span className="driver-page__title-icon">
-                            <Truck size={20} strokeWidth={2} aria-hidden="true" />
-                        </span>
-
-                        <h1>הנסיעות והתשלומים שלי</h1>
-                    </div>
-
                     <div className="driver-page__user">
                         <div className="driver-page__user-avatar">
                             {driverInitial}
                         </div>
 
-                        <span className="driver-page__user-name">
-                            {driverName}
+                        <div className="driver-page__greeting">
+                            <span>{getGreeting()},</span>
+                            <strong>{driverName}</strong>
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        className="driver-page__logout"
+                        onClick={handleLogout}
+                    >
+                        <LogOut size={16} strokeWidth={2} aria-hidden="true" />
+                        <span>התנתקות</span>
+                    </button>
+                </header>
+
+                <section className="driver-page__hero">
+                    <div className="driver-page__hero-head">
+                        <span className="driver-page__hero-label">
+                            <span className="driver-page__hero-icon">
+                                <Wallet strokeWidth={2} aria-hidden="true" />
+                            </span>
+                            יתרה לתשלום
                         </span>
 
                         <button
                             type="button"
-                            className="driver-page__logout"
-                            onClick={handleLogout}
-                            aria-label="התנתקות"
+                            className="driver-page__refresh"
+                            onClick={() => fetchLedger({ isRefresh: true })}
+                            disabled={refreshing}
+                            aria-label="רענון"
+                            title="רענון"
                         >
-                            <LogOut size={17} strokeWidth={2} aria-hidden="true" />
+                            <RefreshCw
+                                size={16}
+                                className={
+                                    refreshing
+                                        ? 'driver-page__refresh-icon spinning'
+                                        : 'driver-page__refresh-icon'
+                                }
+                                aria-hidden="true"
+                            />
                         </button>
                     </div>
-                </header>
-
-                <section className="driver-page__hero">
-                    <span className="driver-page__hero-icon">
-                        <Wallet strokeWidth={2} aria-hidden="true" />
-                    </span>
-
-                    <span className="driver-page__hero-label">
-                        <Sparkles size={14} aria-hidden="true" />
-                        יתרה לתשלום
-                    </span>
 
                     <strong className="driver-page__hero-total">
                         {formatCurrency(balance)}
                     </strong>
 
-                    <p className="driver-page__hero-sub">
+                    <div className="driver-page__stats">
+                        <div className="driver-page__stat driver-page__stat--earned">
+                            <span className="driver-page__stat-icon">
+                                <TrendingUp aria-hidden="true" />
+                            </span>
+
+                            <div className="driver-page__stat-text">
+                                <span className="driver-page__stat-label">הרווחת</span>
+                                <strong className="driver-page__stat-value">
+                                    {formatCurrency(totalEarnings)}
+                                </strong>
+                            </div>
+                        </div>
+
+                        <div className="driver-page__stat driver-page__stat--paid">
+                            <span className="driver-page__stat-icon">
+                                <HandCoins aria-hidden="true" />
+                            </span>
+
+                            <div className="driver-page__stat-text">
+                                <span className="driver-page__stat-label">שולם לך</span>
+                                <strong className="driver-page__stat-value">
+                                    {formatCurrency(totalPaid)}
+                                </strong>
+                            </div>
+                        </div>
+
                         {startingBalance !== 0 && (
-                            <>יתרת פתיחה {formatCurrency(startingBalance)} · </>
+                            <div className="driver-page__stat driver-page__stat--start">
+                                <span className="driver-page__stat-icon">
+                                    <PiggyBank aria-hidden="true" />
+                                </span>
+
+                                <div className="driver-page__stat-text">
+                                    <span className="driver-page__stat-label">יתרת פתיחה</span>
+                                    <strong className="driver-page__stat-value">
+                                        {formatCurrency(startingBalance)}
+                                    </strong>
+                                </div>
+                            </div>
                         )}
-                        הרווחת {formatCurrency(totalEarnings)} · שולם לך {formatCurrency(totalPaid)}
-                    </p>
-
-                    <button
-                        type="button"
-                        className="driver-page__refresh"
-                        onClick={() => fetchLedger({ isRefresh: true })}
-                        disabled={refreshing}
-                    >
-                        <RefreshCw
-                            size={16}
-                            className={
-                                refreshing
-                                    ? 'driver-page__refresh-icon spinning'
-                                    : 'driver-page__refresh-icon'
-                            }
-                            aria-hidden="true"
-                        />
-
-                        {refreshing ? 'מרענן...' : 'רענון'}
-                    </button>
+                    </div>
                 </section>
 
                 {errorMessage && (
@@ -301,23 +398,71 @@ function DriverPage() {
 
                 {!errorMessage && ledgerItems.length > 0 && (
                     <section className="driver-page__list">
-                        <div className="driver-page__grid">
-                            {ledgerItems.map((item, index) =>
-                                item.kind === 'payment' ? (
-                                    <PaymentCard
-                                        key={`payment-${item.id}`}
-                                        payment={item}
-                                        index={index}
-                                    />
-                                ) : (
-                                    <EarningCard
-                                        key={`trip-${item.id}`}
-                                        trip={item}
-                                        index={index}
-                                    />
-                                )
-                            )}
+                        <div className="driver-page__list-head">
+                            <h2>היסטוריית פעולות</h2>
+
+                            <div
+                                className="driver-page__filters"
+                                role="tablist"
+                                aria-label="סינון פעולות"
+                            >
+                                {FILTERS.map((option) => (
+                                    <button
+                                        key={option.value}
+                                        type="button"
+                                        role="tab"
+                                        aria-selected={filter === option.value}
+                                        className={
+                                            filter === option.value
+                                                ? 'driver-page__filter active'
+                                                : 'driver-page__filter'
+                                        }
+                                        onClick={() => setFilter(option.value)}
+                                    >
+                                        {option.label}
+
+                                        <span className="driver-page__filter-count">
+                                            {filterCounts[option.value]}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
                         </div>
+
+                        {monthGroups.length === 0 ? (
+                            <p className="driver-page__no-results">
+                                אין פעולות מסוג זה
+                            </p>
+                        ) : (
+                            monthGroups.map((group) => (
+                                <div
+                                    key={group.key}
+                                    className="driver-page__month"
+                                >
+                                    <h3 className="driver-page__month-title">
+                                        {group.label}
+                                    </h3>
+
+                                    <div className="driver-page__grid">
+                                        {group.items.map(({ item, index }) =>
+                                            item.kind === 'payment' ? (
+                                                <PaymentCard
+                                                    key={`payment-${item.id}`}
+                                                    payment={item}
+                                                    index={index}
+                                                />
+                                            ) : (
+                                                <EarningCard
+                                                    key={`trip-${item.id}`}
+                                                    trip={item}
+                                                    index={index}
+                                                />
+                                            )
+                                        )}
+                                    </div>
+                                </div>
+                            ))
+                        )}
                     </section>
                 )}
             </div>

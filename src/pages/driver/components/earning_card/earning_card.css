@@ -4,25 +4,24 @@
     position: relative;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border: 1px solid #ececec;
-    border-radius: 100px;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid #e8efed;
+    border-radius: 18px;
     background: #ffffff;
     color: var(--text-dark);
-    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.04);
-    animation: earning-card-enter 0.5s ease both;
-    animation-delay: calc(var(--trip-index) * 60ms);
+    animation: earning-card-enter 0.45s ease both;
+    animation-delay: calc(var(--trip-index) * 50ms);
     transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease,
-        border-color 0.15s ease;
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        border-color 0.18s ease;
 }
 
 .earning-card:hover {
     transform: translateY(-2px);
-    border-color: #d8d8d8;
-    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.06);
+    border-color: #cfe7df;
+    box-shadow: 0 12px 26px rgba(7, 140, 121, 0.09);
 }
 
 .earning-card__icon {
@@ -30,25 +29,30 @@
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
     color: var(--primary-dark);
     background: var(--primary-light);
 }
 
 .earning-card__icon svg {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
+}
+
+.earning-card__body {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .earning-card__label {
-    min-width: 0;
-    flex: 1;
-
     overflow: hidden;
     color: var(--text-dark);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -56,24 +60,33 @@
 
 .earning-card__date {
     display: inline-flex;
-    flex-shrink: 0;
     align-items: center;
     gap: 5px;
     color: var(--text);
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
     white-space: nowrap;
 }
 
 .earning-card__amount {
+    display: flex;
     flex-shrink: 0;
-    padding: 5px 12px;
-    border-radius: 100px;
-    background: var(--primary-light);
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+}
+
+.earning-card__value {
     color: var(--primary-dark);
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 800;
     white-space: nowrap;
+}
+
+.earning-card__tag {
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 600;
 }
 
 @keyframes earning-card-enter {
@@ -90,14 +103,18 @@
 
 @media (max-width: 480px) {
     .earning-card {
-        flex-wrap: wrap;
-        border-radius: 18px;
-        padding: 12px 16px;
+        gap: 12px;
+        padding: 12px 14px;
     }
 
-    .earning-card__date {
-        order: 3;
-        margin-right: auto;
+    .earning-card__icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+    }
+
+    .earning-card__tag {
+        display: none;
     }
 }
 
