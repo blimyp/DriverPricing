@@ -1,73 +1,70 @@
 import { useState } from "react"
+import { Link } from "react-router-dom"
 import { useAuth } from "../../../../contexts/AuthContext"
 import { saveTrip } from "../../../../services/tripsService"
+import { calculateTripPrice } from "../../../../utils/pricingEngine"
+
+const formatMoney = (value) =>
+    `₪${Number(value || 0).toLocaleString('he-IL', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    })}`
 
 function PriceResult({
     styles,
-    form
+    form,
+    vehicle,
+    settings,
+    fleetSize,
 }) {
     const { user } = useAuth()
 
     const [saveLoading, setSaveLoading] = useState(false)
     const [saveMessage, setSaveMessage] = useState('')
     const [saveError, setSaveError] = useState('')
+    const [showDetails, setShowDetails] = useState(false)
 
-    const getVehicleKmCnt = () => {
-        switch (form.vehicleType) {
-            case 'bus':
-                return user?.bus_km_per_liter
+    // בהקפצה – זמן הנסיעה מהמפה. ברכב צמוד – השעות שהוזנו
+    const driverHours =
+        form.tripType === 'dedicated'
+            ? form.plannedDuration
+            : form.routeDuration
 
-            case 'minibus':
-                return user?.minibus_km_per_liter
+    let result = null
+    let calculationError = ''
 
-            case 'van':
-                return user?.van_km_per_liter
-
-            default:
-                return 0
-        }
+    try {
+        result = calculateTripPrice({
+            vehicle,
+            settings,
+            fleetSize,
+            trip: {
+                distanceKm: form.distanceKm,
+                driverHours,
+                tolls: form.tolls,
+                tripType: form.tripType,
+                driverPaymentType: form.driverPaymentType,
+            },
+        })
+    } catch (error) {
+        calculationError = error.message
     }
 
-    if (getVehicleKmCnt() == 0) {
+    if (!vehicle || !settings || calculationError) {
         return (
             <section className={styles.priceResult}>
                 <p className={styles.saveError}>
-                    לא נמצא מחיר עבור סוג הרכב שנבחר
+                    {calculationError || 'חסרים נתונים לחישוב המחיר'}
                 </p>
             </section>
         )
     }
 
-    const distance = Number(form.distanceKm)
-
-    const fuelPrice =
-        (distance / Number(getVehicleKmCnt())) *
-        user.fuel_price_per_liter;
-
-    let driverPrice = 0
-    let totalPrice = 0
-
-    if (form.driverPaymentType === 'hourly') {
-        driverPrice =
-            Number(form.routeDuration) *
-            Number(user.hourly_driver_price)
-
-        totalPrice = driverPrice + fuelPrice
-    } else {
-        const driverShare = Number(user.driver_percentage) / 100
-
-        totalPrice = fuelPrice / (1 - driverShare)
-        driverPrice = totalPrice * driverShare
-    }
+    const { regular, cash, costs } = result
 
     async function handleSaveTrip() {
         if (!user) {
             setSaveError('יש להתחבר כדי לשמור את הנסיעה')
-            return
-        }
-
-        if (!Number.isFinite(totalPrice)) {
-            setSaveError('יש לחשב את מחיר הנסיעה לפני השמירה')
             return
         }
 
@@ -82,10 +79,9 @@ function PriceResult({
                 destination: form.destination,
                 stops: form.stops,
                 distance: form.distanceKm,
-                duration: form.routeDuration,
-                calculatedPrice: totalPrice,
-                tripType: form.vehicleType,
-                driverPaymentType: form.driverPaymentType,
+                duration: driverHours,
+                calculatedPrice: Number(regular.net.toFixed(2)),
+                tripType: vehicle.vehicle_type,
             })
 
             setSaveMessage('הנסיעה נשמרה בהצלחה')
@@ -101,36 +97,109 @@ function PriceResult({
         }
     }
 
+    const costRows = [
+        { label: `עלות קבועה (₪${result.fixed.perKm.toFixed(2)} לק״מ)`, value: costs.fixed },
+        { label: 'דלק', value: costs.fuel },
+        { label: 'בלאי ותחזוקה', value: costs.maintenance },
+        ...(form.driverPaymentType === 'hourly'
+            ? [{ label: 'נהג (לפי שעות)', value: costs.driver }]
+            : []),
+        ...(costs.tolls ? [{ label: 'אגרות וחניונים', value: costs.tolls }] : []),
+        ...(result.dedicatedSurchargePercent
+            ? [{ label: `תוספת רכב צמוד (${result.dedicatedSurchargePercent}%)`, value: costs.adjusted - costs.base }]
+            : []),
+    ]
+
+    const routes = [
+        { key: 'regular', title: 'מחיר רגיל (אשראי)', data: regular },
+        { key: 'cash', title: 'מחיר מוזל (מקדמה + מזומן)', data: cash },
+    ]
+
     return (
         <section className={styles.priceResult}>
-            <div className={styles.resultDecoration}>
-                <span
-                    className={`
-                        ${styles.resultRing}
-                        ${styles.resultRingOne}
-                    `}
-                />
 
-                <span
-                    className={`
-                        ${styles.resultRing}
-                        ${styles.resultRingTwo}
-                    `}
-                />
+            <div className={`${styles.resultContent} ${styles.priceRoutes}`}>
+                {routes.map((route) => (
+                    <div className={styles.priceRouteCard} key={route.key}>
+                        <span className={styles.resultLabel}>
+                            {route.title}
+                        </span>
+
+                        <p className={styles.resultVatNote}>
+                            לא כולל מע״מ
+                        </p>
+
+                        <strong className={styles.resultPrice}>
+                            {formatMoney(route.data.net)}
+                        </strong>
+
+                        <p className={styles.resultDescription}>
+                            מחיר כולל מע״מ: {formatMoney(route.data.gross)}
+                        </p>
+
+                        <p
+                            className={`${styles.resultProfit} ${
+                                route.data.profit >= 0
+                                    ? styles.profitPositive
+                                    : styles.profitNegative
+                            }`}
+                        >
+                            רווח {formatMoney(route.data.profit)} ({route.data.profitPercent.toFixed(1)}%)
+                        </p>
+                    </div>
+                ))}
             </div>
 
-            <div className={styles.resultContent}>
-                <p className={styles.resultTitle}>
-                    מחיר דלק לנסיעה זו: {fuelPrice.toFixed(2)}
+            {result.isFloorApplied && (
+                <p className={`${styles.resultDescription} ${styles.resultContent}`}>
+                    המחיר הועלה למחיר המינימום של סוג הרכב ({formatMoney(result.minTripPrice)} לפני מע״מ)
                 </p>
+            )}
 
-                <p className={styles.resultTitle}>
-                    מחיר נהג לנסיעה זו: {driverPrice.toFixed(2)}
-                </p>
+            <div className={`${styles.resultContent} ${styles.profitPanel}`}>
+                <button
+                    type="button"
+                    className={styles.profitToggle}
+                    onClick={() => setShowDetails((current) => !current)}
+                >
+                    {showDetails ? 'הסתרת פירוט פנימי' : 'פירוט פנימי – עלויות ורווח'}
+                </button>
 
-                <strong className={styles.resultPrice}>
-                    ₪{totalPrice.toFixed(2)}
-                </strong>
+                {showDetails && (
+                    <p className={styles.settingsHint}>
+                        כל העלויות בפירוט מחושבות לפי הנתונים שהגדרת בעמוד{' '}
+                        <Link to="/prices" className={styles.settingsLink}>
+                            ההגדרות
+                        </Link>
+                        , ושינוי שם יתעדכן כאן בתמחור הבא.
+                    </p>
+                )}
+
+                {showDetails && (
+                    <p className={styles.detailsDistance}>
+                        מרחק לחישוב: {result.totalKm.toFixed(1)} ק״מ (כולל {result.deadheadKm} מנהלתי)
+                    </p>
+                )}
+
+                {showDetails && (
+                    <table className={styles.profitTable}>
+                        <tbody>
+                            {costRows.map((row) => (
+                                <tr key={row.label}>
+                                    <td>{row.label}</td>
+                                    <td>{formatMoney(row.value)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+
+                        <tfoot>
+                            <tr>
+                                <td>סה״כ הוצאות</td>
+                                <td>{formatMoney(costs.adjusted)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                )}
             </div>
 
             <div className={styles.saveTripArea}>

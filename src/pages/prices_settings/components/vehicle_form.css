@@ -1,0 +1,18 @@
+.vehicle-form-popup {
+    width: min(640px, 92vw);
+    max-height: 88vh;
+    overflow-y: auto;
+}
+
+.vehicle-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 16px;
+}
+
+@media (max-width: 560px) {
+    .vehicle-form-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}

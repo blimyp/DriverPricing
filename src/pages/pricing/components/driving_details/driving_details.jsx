@@ -1,10 +1,12 @@
-import { CarFront, Clock3, Percent } from "lucide-react"
+import { CarFront, Clock3, Percent, Route, Ticket } from "lucide-react"
+import { getVehicleDisplayName } from "../../../../utils/vehicles"
+import { TRIP_TYPE_LABELS } from "../../../../utils/pricingEngine"
 
-function VehicleTypeField({ styles, value, onChange }) {
+function VehicleField({ styles, vehicles, value, onChange }) {
     return (
         <div className={styles.formField}>
-            <label className={styles.formLabel} htmlFor="vehicleType">
-                סוג רכב
+            <label className={styles.formLabel} htmlFor="vehicleId">
+                רכב
             </label>
 
             <div className={styles.inputWrapper}>
@@ -16,15 +18,84 @@ function VehicleTypeField({ styles, value, onChange }) {
 
                 <select
                     className={`${styles.formControl} ${styles.formSelect}`}
-                    id="vehicleType"
-                    name="vehicleType"
+                    id="vehicleId"
+                    name="vehicleId"
                     value={value}
                     onChange={onChange}
                 >
-                    <option value="van">טנדר</option>
-                    <option value="minibus">מיניבוס</option>
-                    <option value="bus">אוטובוס</option>
+                    <option value="">בחירת רכב</option>
+
+                    {vehicles.map((vehicle) => (
+                        <option key={vehicle.id} value={vehicle.id}>
+                            {getVehicleDisplayName(vehicle)}
+                        </option>
+                    ))}
                 </select>
+            </div>
+        </div>
+    )
+}
+
+function TripTypeField({ styles, value, onChange }) {
+    return (
+        <div className={styles.formField}>
+            <label className={styles.formLabel} htmlFor="tripType">
+                סוג שירות
+            </label>
+
+            <div className={styles.inputWrapper}>
+                <Route
+                    className={styles.inputIcon}
+                    strokeWidth={1.9}
+                    aria-hidden="true"
+                />
+
+                <select
+                    className={`${styles.formControl} ${styles.formSelect}`}
+                    id="tripType"
+                    name="tripType"
+                    value={value}
+                    onChange={onChange}
+                >
+                    {Object.entries(TRIP_TYPE_LABELS).map(([type, label]) => (
+                        <option key={type} value={type}>
+                            {label}
+                        </option>
+                    ))}
+                </select>
+            </div>
+        </div>
+    )
+}
+
+function TollsField({ styles, value, onChange }) {
+    return (
+        <div className={styles.formField}>
+            <label className={styles.formLabel} htmlFor="tolls">
+                אגרות וחניונים (כביש 6, מנהרות וכו׳)
+            </label>
+
+            <div className={styles.inputWrapper}>
+                <Ticket
+                    className={styles.inputIcon}
+                    strokeWidth={1.9}
+                    aria-hidden="true"
+                />
+
+                <input
+                    className={styles.formControl}
+                    id="tolls"
+                    name="tolls"
+                    type="number"
+                    min="0"
+                    step="1"
+                    inputMode="decimal"
+                    placeholder="0"
+                    value={value}
+                    onChange={onChange}
+                />
+
+                <span className={styles.inputSuffix}>₪</span>
             </div>
         </div>
     )
@@ -34,7 +105,7 @@ function PlannedDurationField({ styles, value, onChange }) {
     return (
         <div className={styles.formField}>
             <label className={styles.formLabel} htmlFor="plannedDuration">
-                שעות נסיעה מתוכננות
+                כמה שעות הרכב צמוד (משוער)
             </label>
 
             <div className={styles.inputWrapper}>
@@ -118,4 +189,10 @@ function PaymentTypeField({ styles, value, onChange }) {
     )
 }
 
-export { VehicleTypeField, PlannedDurationField, PaymentTypeField }
+export {
+    VehicleField,
+    TripTypeField,
+    TollsField,
+    PlannedDurationField,
+    PaymentTypeField,
+}

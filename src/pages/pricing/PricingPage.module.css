@@ -229,7 +229,7 @@
 
 .settingsHint {
     margin: -6px 0 0;
-    color: rgba(239, 255, 251, 0.75);
+    color: white;
     font-size: 12px;
     line-height: 1.6;
 }
@@ -560,33 +560,6 @@
     animation: resultEnter 0.7s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
 }
 
-.resultDecoration {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-}
-
-.resultRing {
-    position: absolute;
-    top: 50%;
-    right: 50%;
-    border-radius: 50%;
-}
-
-.resultRingOne {
-    width: 260px;
-    height: 260px;
-    border: 1px dashed rgba(var(--green-rgb), 0.14);
-    animation: resultRingSpin 16s linear infinite;
-}
-
-.resultRingTwo {
-    width: 180px;
-    height: 180px;
-    border: 1px solid rgba(var(--green-rgb), 0.11);
-    animation: resultRingSpinReverse 11s linear infinite;
-}
-
 .resultContent {
     position: relative;
     z-index: 2;
@@ -595,7 +568,7 @@
 .resultLabel {
     display: block;
     margin-bottom: 4px;
-    color: var(--primary);
+    color: white;
     font-size: 11px;
     font-weight: 900;
 }
@@ -620,9 +593,110 @@
 
 .resultDescription {
     margin: 11px 0 0;
-    color: rgba(239, 255, 251, 0.62);
+    color: white;
     font-size: 12px;
     line-height: 1.6;
+}
+
+.priceRoutes {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+}
+
+.priceRouteCard {
+    padding: 18px 12px;
+    border: 1px solid rgba(var(--green-rgb), 0.22);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.priceRouteCard .resultPrice {
+    font-size: clamp(32px, 5vw, 46px);
+}
+
+.profitPanel {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.profitToggle {
+    padding: 8px 16px;
+    border: 1px solid rgba(var(--green-rgb), 0.35);
+    border-radius: 999px;
+    color: #ffffff;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.detailsDistance {
+    margin: 0;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.profitTable {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #ffffff;
+    color: #1f2a28;
+    font-size: 13px;
+    text-align: right;
+}
+
+.profitTable td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #e6ece9;
+}
+
+.profitTable tfoot td {
+    border-bottom: none;
+    border-top: 2px solid #1f2a28;
+    background: #f3f6f5;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.profitTable td:last-child {
+    text-align: left;
+    white-space: nowrap;
+    font-weight: 800;
+}
+
+.profitTable small {
+    color: rgba(239, 255, 251, 0.62);
+    font-weight: 600;
+}
+
+.resultVatNote {
+    margin: 8px 0 2px;
+    color: white;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.resultProfit {
+    margin: 6px 0 0;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.profitPositive {
+    color: #78f2c9;
+}
+
+.profitNegative {
+    color: #ff8a8a;
 }
 
 /* =========================
@@ -819,26 +893,6 @@
     }
 }
 
-@keyframes resultRingSpin {
-    from {
-        transform: translate(50%, -50%) rotate(0);
-    }
-
-    to {
-        transform: translate(50%, -50%) rotate(360deg);
-    }
-}
-
-@keyframes resultRingSpinReverse {
-    from {
-        transform: translate(50%, -50%) rotate(0);
-    }
-
-    to {
-        transform: translate(50%, -50%) rotate(-360deg);
-    }
-}
-
 /* =========================
    Responsive
 ========================= */
@@ -949,7 +1003,6 @@
     .chatInputArea,
     .inlineError,
     .priceResult,
-    .resultRing,
     .typingCursor,
     .typingDot {
         animation: none !important;

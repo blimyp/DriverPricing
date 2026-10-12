@@ -1,21 +1,54 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
-import {
-    updateProfileSetting,
-    updateVehiclePrice,
-} from '../../services/profileService'
+import { updateProfileSetting } from '../../services/profileService'
+import { VEHICLE_TYPE_LABELS } from '../../utils/vehicles'
+import VehiclesSection from './components/vehicles_section'
 import './PricesSettingsPage.css'
+
+const SETTINGS_GROUPS = [
+    {
+        title: 'לפי סוג רכב',
+        fields: Object.entries(VEHICLE_TYPE_LABELS).flatMap(([type, label]) => [
+            { key: `${type}_km_per_liter`, label: `צריכת דלק – ${label}`, suffix: 'ק״מ לליטר', step: '0.1' },
+            { key: `${type}_min_trip_price`, label: `מחיר מינימום לנסיעה – ${label} (ללא מע״מ)`, suffix: '₪', step: '10' },
+        ]),
+    },
+    {
+        title: 'עלויות תפעול',
+        fields: [
+            { key: 'fuel_price_per_liter', label: 'מחיר לליטר דלק (ללא מע״מ)', suffix: '₪', step: '0.1' },
+            { key: 'hourly_driver_price', label: 'עלות שעת נהג למעסיק', suffix: '₪', step: '1' },
+            { key: 'driver_percentage', label: 'אחוז לנהג', suffix: '%', step: '1', max: 100 },
+            { key: 'company_overhead_monthly', label: 'תקורת משרד חודשית (משרד, מוקד, תוכנה)', suffix: '₪', step: '100' },
+            { key: 'deadhead_km', label: 'ק״מ מנהלתי לכל נסיעה (הגעה וחזרה לחניון)', suffix: 'ק״מ', step: '1' },
+        ],
+    },
+    {
+        title: 'פחת ובלאי לפי גיל רכב',
+        fields: [
+            { key: 'depreciation_rate_new', label: 'פחת שנתי – רכב בן 1–3 שנים', suffix: '%', step: '0.5', max: 100 },
+            { key: 'depreciation_rate_mid', label: 'פחת שנתי – רכב בן 4–6 שנים', suffix: '%', step: '0.5', max: 100 },
+            { key: 'depreciation_rate_old', label: 'פחת שנתי – רכב בן 7 ומעלה', suffix: '%', step: '0.5', max: 100 },
+            { key: 'maintenance_per_km_new', label: 'בלאי לק״מ – רכב בן 1–3 שנים', suffix: '₪', step: '0.05' },
+            { key: 'maintenance_per_km_mid', label: 'בלאי לק״מ – רכב בן 4–6 שנים', suffix: '₪', step: '0.05' },
+            { key: 'maintenance_per_km_old', label: 'בלאי לק״מ – רכב בן 7 ומעלה', suffix: '₪', step: '0.05' },
+        ],
+    },
+    {
+        title: 'רווח, מקדמים ותשלום',
+        fields: [
+            { key: 'target_margin_percent', label: 'אחוז רווח יעד', suffix: '%', step: '1', max: 99 },
+            { key: 'dedicated_surcharge_percent', label: 'תוספת לרכב צמוד', suffix: '%', step: '1' },
+            { key: 'cash_discount_percent', label: 'הנחה במסלול מזומן / מקדמה', suffix: '%', step: '0.5', max: 100 },
+            { key: 'vat_percent', label: 'מע״מ', suffix: '%', step: '1', max: 100 },
+        ],
+    },
+]
 
 function PricesSettingsPage() {
     const { user } = useAuth()
 
-    const [prices, setPrices] = useState([])
-
     const [generalSettings, setGeneralSettings] = useState([])
-
-    const [editingVehicle, setEditingVehicle] = useState(null)
-    const [editedVehicleValue, setEditedVehicleValue] = useState('')
-    const [savingVehicle, setSavingVehicle] = useState(null)
 
     const [editingSetting, setEditingSetting] = useState(null)
     const [editedSettingValue, setEditedSettingValue] = useState('')
@@ -24,97 +57,16 @@ function PricesSettingsPage() {
     useEffect(() => {
         if (!user) return
 
-        setPrices([
-            {
-                vehicle_type: 'bus',
-                km_cnt_in_liter: user.bus_km_per_liter,
-            },
-            {
-                vehicle_type: 'minibus',
-                km_cnt_in_liter: user.minibus_km_per_liter,
-            },
-            {
-                vehicle_type: 'van',
-                km_cnt_in_liter: user.van_km_per_liter,
-            },
-        ])
-
-        setGeneralSettings([
-            {
-                key: 'fuel_price_per_liter',
-                label: 'מחיר לליטר דלק',
-                value: user.fuel_price_per_liter,
-                suffix: '₪',
-                step: '0.1',
-            },
-            {
-                key: 'hourly_driver_price',
-                label: 'מחיר לנהג לשעה',
-                value: user.hourly_driver_price,
-                suffix: '₪',
-                step: '1',
-            },
-            {
-                key: 'driver_percentage',
-                label: 'אחוז לנהג',
-                value: user.driver_percentage,
-                suffix: '%',
-                step: '1',
-            },
-        ])
+        setGeneralSettings(
+            SETTINGS_GROUPS.flatMap((group) =>
+                group.fields.map((field) => ({
+                    ...field,
+                    group: group.title,
+                    value: user[field.key],
+                }))
+            )
+        )
     }, [user])
-
-    const handleEditVehicle = (price) => {
-        setEditingVehicle(price.vehicle_type)
-        setEditedVehicleValue(price.km_cnt_in_liter ?? '')
-    }
-
-    const handleCancelVehicle = () => {
-        setEditingVehicle(null)
-        setEditedVehicleValue('')
-    }
-
-    const handleSaveVehicle = async (price) => {
-        const value = Number(editedVehicleValue)
-
-        if (!value || value <= 0) {
-            alert('יש להזין כמות ק״מ תקינה')
-            return
-        }
-
-        try {
-            setSavingVehicle(price.vehicle_type)
-
-            const updatedProfile = await updateVehiclePrice(
-                user.id,
-                price.vehicle_type,
-                value
-            )
-
-            if (!updatedProfile) {
-                throw new Error('לא נמצאה רשומה לעדכון')
-            }
-
-            setPrices((currentPrices) =>
-                currentPrices.map((item) =>
-                    item.vehicle_type === price.vehicle_type
-                        ? {
-                            ...item,
-                            km_cnt_in_liter: value,
-                        }
-                        : item
-                )
-            )
-
-            setEditingVehicle(null)
-            setEditedVehicleValue('')
-        } catch (err) {
-            console.error('Error updating vehicle price:', err)
-            alert('לא הצלחנו לשמור את השינוי')
-        } finally {
-            setSavingVehicle(null)
-        }
-    }
 
     const handleEditSetting = (setting) => {
         setEditingSetting(setting.key)
@@ -137,11 +89,8 @@ function PricesSettingsPage() {
             return
         }
 
-        if (
-            setting.key === 'driver_percentage' &&
-            value > 100
-        ) {
-            alert('אחוזים חייבים להיות בין 0 ל־100')
+        if (setting.max !== undefined && value > setting.max) {
+            alert(`הערך חייב להיות בין 0 ל־${setting.max}`)
             return
         }
 
@@ -195,8 +144,11 @@ function PricesSettingsPage() {
         <div className="prices_settings_page">
             <div className="prices-settings-container">
 
-                <div className="prices-section">
-                    <h2>הגדרות כלליות</h2>
+                <VehiclesSection userId={user.id} />
+
+                {SETTINGS_GROUPS.map((group) => (
+                <div className="prices-section" key={group.title}>
+                    <h2>{group.title}</h2>
 
                     <div className="prices-table-wrapper">
                         <table className="prices-table">
@@ -208,7 +160,9 @@ function PricesSettingsPage() {
                             </thead>
 
                             <tbody>
-                                {generalSettings.map((setting) => {
+                                {generalSettings
+                                    .filter((setting) => setting.group === group.title)
+                                    .map((setting) => {
                                     const isEditing =
                                         editingSetting === setting.key
 
@@ -229,12 +183,7 @@ function PricesSettingsPage() {
                                                         <input
                                                             type="number"
                                                             min="0"
-                                                            max={
-                                                                setting.key ===
-                                                                    'driver_percentage'
-                                                                    ? '100'
-                                                                    : undefined
-                                                            }
+                                                            max={setting.max}
                                                             step={setting.step}
                                                             value={
                                                                 editedSettingValue
@@ -304,140 +253,11 @@ function PricesSettingsPage() {
                         </table>
                     </div>
                 </div>
-
-                <div className="prices-section">
-                    <h2>צריכת דלק לפי סוג רכב</h2>
-
-                    {prices.length === 0 ? (
-                        <div className="prices-empty">
-                            לא נמצאו נתוני מחירים
-                        </div>
-                    ) : (
-                        <div className="prices-table-wrapper">
-                            <table className="prices-table">
-                                <thead>
-                                    <tr>
-                                        <th>סוג רכב</th>
-                                        <th>כמות ק״מ לליטר</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    {prices.map((price) => {
-                                        const isEditing =
-                                            editingVehicle ===
-                                            price.vehicle_type
-
-                                        const isSaving =
-                                            savingVehicle ===
-                                            price.vehicle_type
-
-                                        return (
-                                            <tr key={price.vehicle_type}>
-                                                <td>
-                                                    <span className="vehicle-type">
-                                                        {getVehicleLabel(
-                                                            price.vehicle_type
-                                                        )}
-                                                    </span>
-                                                </td>
-
-                                                <td>
-                                                    {isEditing ? (
-                                                        <div className="price-edit-wrapper">
-                                                            <input
-                                                                type="number"
-                                                                min="0.1"
-                                                                step="0.1"
-                                                                value={
-                                                                    editedVehicleValue
-                                                                }
-                                                                onChange={(e) =>
-                                                                    setEditedVehicleValue(
-                                                                        e.target
-                                                                            .value
-                                                                    )
-                                                                }
-                                                                className="price-edit-input"
-                                                                autoFocus
-                                                            />
-
-                                                            <button
-                                                                type="button"
-                                                                className="price-save-button"
-                                                                onClick={() =>
-                                                                    handleSaveVehicle(
-                                                                        price
-                                                                    )
-                                                                }
-                                                                disabled={
-                                                                    isSaving
-                                                                }
-                                                            >
-                                                                {isSaving
-                                                                    ? 'שומר...'
-                                                                    : 'שמירה'}
-                                                            </button>
-
-                                                            <button
-                                                                type="button"
-                                                                className="price-cancel-button"
-                                                                onClick={
-                                                                    handleCancelVehicle
-                                                                }
-                                                                disabled={
-                                                                    isSaving
-                                                                }
-                                                            >
-                                                                ביטול
-                                                            </button>
-                                                        </div>
-                                                    ) : (
-                                                        <div className="price-value-wrapper">
-                                                            <span>
-                                                                {
-                                                                    price.km_cnt_in_liter
-                                                                }
-                                                            </span>
-
-                                                            <button
-                                                                type="button"
-                                                                className="price-edit-button"
-                                                                onClick={() =>
-                                                                    handleEditVehicle(
-                                                                        price
-                                                                    )
-                                                                }
-                                                                aria-label="עריכת כמות ק״מ לליטר"
-                                                                title="עריכה"
-                                                            >
-                                                                ✎
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                </td>
-                                            </tr>
-                                        )
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
+                ))}
 
             </div>
         </div>
     )
-}
-
-const getVehicleLabel = (vehicleType) => {
-    const labels = {
-        bus: 'אוטובוס',
-        minibus: 'מיניבוס',
-        van: 'מונית',
-    }
-
-    return labels[vehicleType] || vehicleType
 }
 
 export default PricesSettingsPage

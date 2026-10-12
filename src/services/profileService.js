@@ -104,22 +104,8 @@ export async function getUserProfile(userId) {
 
     const { data, error } = await supabase
         .from('profiles')
-        .select(`
-            id,
-            email,
-            full_name,
-            role,
-            avatar_url,
-            created_at,
-            updated_at,
-            bus_km_per_liter,
-            minibus_km_per_liter,
-            van_km_per_liter,
-            hourly_driver_price,
-            driver_percentage,
-            fuel_price_per_liter,
-            starting_balance
-        `)
+        // כל השדות, כדי ששדה הגדרה חסר במסד לא יפיל את ההתחברות
+        .select('*')
         .eq('id', userId)
         .single()
 
@@ -128,12 +114,6 @@ export async function getUserProfile(userId) {
     }
 
     return data
-}
-
-const vehicleFields = {
-    bus: 'bus_km_per_liter',
-    minibus: 'minibus_km_per_liter',
-    van: 'van_km_per_liter',
 }
 
 export const updateProfileSetting = async (
@@ -164,22 +144,4 @@ export const updateProfileSetting = async (
     }
 
     return data
-}
-
-export const updateVehiclePrice = async (
-    userId,
-    vehicleType,
-    value
-) => {
-    const fieldName = vehicleFields[vehicleType]
-
-    if (!fieldName) {
-        throw new Error('סוג רכב לא תקין')
-    }
-
-    return updateProfileSetting(
-        userId,
-        fieldName,
-        value
-    )
 }

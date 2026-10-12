@@ -8,22 +8,23 @@ import BackgroundSection from '../../components/background_section/background_se
 import DrivingRoute from './components/driving_route/driving_route'
 import {
     PlannedDurationField,
-    VehicleTypeField,
+    VehicleField,
+    TripTypeField,
+    TollsField,
     PaymentTypeField,
 } from './components/driving_details/driving_details'
 import PriceResult from './components/price_result/price_result'
-import ChatMessage from './components/chat/ChatMessage'
+import ChatMessageGroup from './components/chat/ChatMessageGroup'
 import UserAnswerBubble from './components/chat/UserAnswerBubble'
 import TypingIndicator from './components/chat/TypingIndicator'
 import { getRoute } from '../../services/openRouteService'
+import { getVehicles } from '../../services/vehiclesService'
+import { getUserProfile } from '../../services/profileService'
+import { useAuth } from '../../contexts/AuthContext'
+import { getVehicleDisplayName } from '../../utils/vehicles'
+import { TRIP_TYPE_LABELS } from '../../utils/pricingEngine'
 
-const TURNS = ['route', 'duration', 'vehicle', 'payment', 'result']
-
-const VEHICLE_LABELS = {
-    van: 'טנדר',
-    minibus: 'מיניבוס',
-    bus: 'אוטובוס',
-}
+const TURNS = ['route', 'vehicle', 'details', 'payment', 'result']
 
 const initialForm = {
     origin: '',
@@ -33,7 +34,9 @@ const initialForm = {
     distanceKm: '',
     routeDuration: '',
     plannedDuration: '',
-    vehicleType: 'van',
+    vehicleId: '',
+    tripType: 'dropoff',
+    tolls: '',
 
     driverPaymentType: 'hourly',
 }
@@ -46,7 +49,41 @@ function PricingPage() {
     const [errorMessage, setErrorMessage] = useState('')
     const [isLoadingRoute, setIsLoadingRoute] = useState(false)
 
+    const { user } = useAuth()
+    const [vehicles, setVehicles] = useState([])
+    const [settings, setSettings] = useState(null)
+
     const transcriptEndRef = useRef(null)
+
+    const selectedVehicle = vehicles.find(
+        (vehicle) => vehicle.id === form.vehicleId
+    )
+
+    // טוענים הגדרות ורכבים עדכניים, כדי ששינוי בעמוד ההגדרות ייכנס מיד לחישוב
+    useEffect(() => {
+        if (!user?.id) return
+
+        let isMounted = true
+
+        Promise.all([getUserProfile(user.id), getVehicles(user.id)])
+            .then(([profile, vehiclesList]) => {
+                if (!isMounted) return
+
+                setSettings(profile)
+                setVehicles(vehiclesList)
+            })
+            .catch((error) => {
+                console.error('Error loading pricing data:', error)
+
+                if (isMounted) {
+                    setSettings(user)
+                }
+            })
+
+        return () => {
+            isMounted = false
+        }
+    }, [user])
 
     useEffect(() => {
         setIsActiveTextRevealed(seenTurnIndexes.has(activeTurnIndex))
@@ -114,19 +151,27 @@ function PricingPage() {
         return ''
     }
 
-    function validateDurationTurn() {
-        const plannedDuration = Number(form.plannedDuration)
-
-        if (!Number.isFinite(plannedDuration) || plannedDuration <= 0) {
-            return 'יש להזין שעות נסיעה מתוכננות'
+    function validateVehicleTurn() {
+        if (!selectedVehicle) {
+            return 'יש לבחור רכב'
         }
 
         return ''
     }
 
-    function validateVehicleTurn() {
-        if (!form.vehicleType) {
-            return 'יש לבחור סוג רכב'
+    function validateDetailsTurn() {
+        if (form.tripType === 'dedicated') {
+            const plannedDuration = Number(form.plannedDuration)
+
+            if (!Number.isFinite(plannedDuration) || plannedDuration <= 0) {
+                return 'יש להזין כמה שעות הרכב צמוד'
+            }
+        }
+
+        const tolls = Number(form.tolls || 0)
+
+        if (!Number.isFinite(tolls) || tolls < 0) {
+            return 'יש להזין סכום אגרות תקין'
         }
 
         return ''
@@ -137,11 +182,11 @@ function PricingPage() {
             case 'route':
                 return validateRouteTurn()
 
-            case 'duration':
-                return validateDurationTurn()
-
             case 'vehicle':
                 return validateVehicleTurn()
+
+            case 'details':
+                return validateDetailsTurn()
 
             default:
                 return ''
@@ -174,7 +219,7 @@ function PricingPage() {
                     ...currentForm,
                     distanceKm: result.distanceKm.toFixed(1),
                     routeDuration,
-                    plannedDuration: currentForm.plannedDuration || routeDuration,
+                    plannedDuration: routeDuration,
                 }))
             } catch (error) {
                 console.error(error)
@@ -214,11 +259,14 @@ function PricingPage() {
             case 'route':
                 return 'בוא נתמחר את הנסיעה שלך! מה המסלול שאתה מתכנן?'
 
-            case 'duration':
-                return `מרחק המסלול הוא ${form.distanceKm} ק״מ, וזמן הנסיעה המשוער הוא ${form.routeDuration} שעות. יש לך הערכת זמן נסיעה שונה? אפשר לעדכן כאן:`
-
             case 'vehicle':
-                return 'מעולה! באיזה סוג רכב אתה נוסע בנסיעה הזו?'
+                return [
+                    `מרחק המסלול הוא ${form.distanceKm} ק״מ, וזמן הנסיעה המשוער הוא ${form.routeDuration} שעות.`,
+                    'באיזה רכב מהצי תתבצע הנסיעה?',
+                ]
+
+            case 'details':
+                return `האם זו הקפצה או רכב צמוד? ויש אגרות או חניונים בדרך? (נוסיף אוטומטית ${settings?.deadhead_km ?? 20} ק״מ מנהלתיים מהחניון וחזרה)`
 
             case 'payment':
                 return 'איך תרצה לשלם לנהג בנסיעה הזו — לפי אחוזים ממחיר הנסיעה או לפי מחיר שעתי?'
@@ -240,11 +288,20 @@ function PricingPage() {
                 return `${form.origin} ← ${form.destination}${stopsSuffix}`
             }
 
-            case 'duration':
-                return `${form.plannedDuration} שעות`
-
             case 'vehicle':
-                return VEHICLE_LABELS[form.vehicleType] || form.vehicleType
+                return selectedVehicle
+                    ? getVehicleDisplayName(selectedVehicle)
+                    : ''
+
+            case 'details': {
+                const tolls = Number(form.tolls || 0)
+                const tollsSuffix = tolls ? ` · אגרות ₪${tolls}` : ''
+
+                const hoursSuffix =
+                    form.tripType === 'dedicated' ? ` ${form.plannedDuration} שעות` : ''
+
+                return `${TRIP_TYPE_LABELS[form.tripType]}${hoursSuffix}${tollsSuffix}`
+            }
 
             case 'payment':
                 return form.driverPaymentType === 'percentage'
@@ -311,12 +368,29 @@ function PricingPage() {
                     </>
                 )
 
-            case 'duration':
+            case 'vehicle':
+                if (!settings) {
+                    return <TypingIndicator styles={styles} />
+                }
+
+                if (vehicles.length === 0) {
+                    return (
+                        <p className={styles.settingsHint}>
+                            עדיין לא הוגדרו רכבים. יש להוסיף רכב בעמוד{' '}
+                            <Link to="/prices" className={styles.settingsLink}>
+                                ההגדרות
+                            </Link>
+                            {' '}כדי לתמחר נסיעה.
+                        </p>
+                    )
+                }
+
                 return (
                     <>
-                        <PlannedDurationField
+                        <VehicleField
                             styles={styles}
-                            value={form.plannedDuration}
+                            vehicles={vehicles}
+                            value={form.vehicleId}
                             onChange={handleChange}
                         />
 
@@ -325,12 +399,26 @@ function PricingPage() {
                     </>
                 )
 
-            case 'vehicle':
+            case 'details':
                 return (
                     <>
-                        <VehicleTypeField
+                        <TripTypeField
                             styles={styles}
-                            value={form.vehicleType}
+                            value={form.tripType}
+                            onChange={handleChange}
+                        />
+
+                        {form.tripType === 'dedicated' && (
+                            <PlannedDurationField
+                                styles={styles}
+                                value={form.plannedDuration}
+                                onChange={handleChange}
+                            />
+                        )}
+
+                        <TollsField
+                            styles={styles}
+                            value={form.tolls}
                             onChange={handleChange}
                         />
 
@@ -363,7 +451,15 @@ function PricingPage() {
                 )
 
             case 'result':
-                return <PriceResult styles={styles} form={form} />
+                return (
+                    <PriceResult
+                        styles={styles}
+                        form={form}
+                        vehicle={selectedVehicle}
+                        settings={settings}
+                        fleetSize={vehicles.length}
+                    />
+                )
 
             default:
                 return null
@@ -401,9 +497,9 @@ function PricingPage() {
 
                         return (
                             <div className={styles.chatTurn} key={turnKey}>
-                                <ChatMessage
+                                <ChatMessageGroup
                                     styles={styles}
-                                    text={getAssistantText(turnKey)}
+                                    texts={[].concat(getAssistantText(turnKey))}
                                     alreadySeen={!isActive || isActiveTextRevealed}
                                     onDone={() => markTurnSeen(index)}
                                 />

@@ -7,8 +7,64 @@
 
 .prices-settings-container {
     width: 100%;
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
+}
+
+.prices-section {
+    margin-bottom: 32px;
+}
+
+.prices-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.prices-add-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 38px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #ffffff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(7, 140, 121, 0.22);
+}
+
+.prices-add-button:hover {
+    transform: translateY(-1px);
+}
+
+.vehicles-table th,
+.vehicles-table td {
+    white-space: nowrap;
+}
+
+.vehicle-age {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.vehicle-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.vehicle-delete-button {
+    color: var(--red);
+}
+
+.vehicle-delete-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* Table */
