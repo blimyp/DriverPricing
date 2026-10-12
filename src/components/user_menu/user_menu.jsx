@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ChevronDown } from 'lucide-react'
+import {
+    Car,
+    ChevronDown,
+    LogOut,
+    MessageSquare,
+    Users,
+    Wallet,
+} from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { signOut } from '../../services/authService'
 import './user_menu.css'
@@ -41,19 +48,9 @@ function UserMenu() {
         }
     }
 
-    const handleCustomerRequests = () => {
+    const goTo = (path) => {
         setIsOpen(false)
-        navigate('/inbox')
-    }
-
-    const handleSettings = () => {
-        setIsOpen(false)
-        navigate('/prices')
-    }
-
-    const handleDrivers = () => {
-        setIsOpen(false)
-        navigate('/drivers')
+        navigate(path)
     }
 
     if (!user) {
@@ -103,26 +100,38 @@ function UserMenu() {
                     <button
                         type="button"
                         className="user-menu-item"
-                        onClick={handleSettings}
+                        onClick={() => goTo('/trips')}
                     >
-                        הגדרות
+                        <Car className="user-menu-item-icon" aria-hidden="true" />
+                        <span>הנסיעות שלי</span>
                     </button>
 
                     <button
                         type="button"
                         className="user-menu-item"
-                        onClick={handleCustomerRequests}
+                        onClick={() => goTo('/account')}
                     >
-                        פניות למנהל המערכת
+                        <Wallet className="user-menu-item-icon" aria-hidden="true" />
+                        <span>הארנק שלי</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        className="user-menu-item"
+                        onClick={() => goTo('/inbox')}
+                    >
+                        <MessageSquare className="user-menu-item-icon" aria-hidden="true" />
+                        <span>{isAdmin ? 'פניות לקוח' : 'פניות למנהל המערכת'}</span>
                     </button>
 
                     {isAdmin && (
                         <button
                             type="button"
                             className="user-menu-item"
-                            onClick={handleDrivers}
+                            onClick={() => goTo('/drivers')}
                         >
-                            ניהול נהגים
+                            <Users className="user-menu-item-icon" aria-hidden="true" />
+                            <span>ניהול נהגים</span>
                         </button>
                     )}
 
@@ -133,7 +142,8 @@ function UserMenu() {
                         className="user-menu-item user-menu-logout"
                         onClick={handleLogout}
                     >
-                        התנתקות
+                        <LogOut className="user-menu-item-icon" aria-hidden="true" />
+                        <span>התנתקות</span>
                     </button>
                 </div>
             )}

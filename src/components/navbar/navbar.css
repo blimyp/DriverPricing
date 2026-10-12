@@ -486,6 +486,22 @@
        Footer
     ===================== */
 
+    .mobile-user-navigation {
+        margin-top: 18px;
+        padding-top: 18px;
+
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .mobile-navigation-title {
+        padding: 0 16px 4px;
+
+        font-size: 13px;
+        font-weight: 600;
+
+        color: #94a3b8;
+    }
+
     .mobile-menu-footer {
         margin-top: auto;
 

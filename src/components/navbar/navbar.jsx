@@ -7,7 +7,7 @@ import UserMenu from '../user_menu/user_menu'
 import './navbar.css'
 
 function Navbar() {
-    const { user } = useAuth()
+    const { user, isAdmin } = useAuth()
     const navigate = useNavigate()
 
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -23,10 +23,17 @@ function Navbar() {
 
     const navigationLinks = [
         { to: '/home', label: 'דף הבית' },
+        { to: '/about', label: 'אודות' },
         { to: '/pricing', label: 'תמחור נסיעה' },
+        { to: '/prices', label: 'הגדרות תמחור' },
+    ]
+
+    // אותם פריטים כמו בתפריט הפרופיל, כדי שיהיו זמינים גם בטלפון
+    const userLinks = [
         { to: '/trips', label: 'הנסיעות שלי' },
         { to: '/account', label: 'הארנק שלי' },
-        { to: '/about', label: 'אודות' },
+        { to: '/inbox', label: isAdmin ? 'פניות לקוח' : 'פניות למנהל המערכת' },
+        ...(isAdmin ? [{ to: '/drivers', label: 'ניהול נהגים' }] : []),
     ]
 
     return (
@@ -161,6 +168,29 @@ function Navbar() {
                         </NavLink>
                     ))}
                 </nav>
+
+                {user && (
+                    <nav className="mobile-navigation mobile-user-navigation">
+                        <span className="mobile-navigation-title">
+                            החשבון שלי
+                        </span>
+
+                        {userLinks.map((link) => (
+                            <NavLink
+                                key={link.to}
+                                to={link.to}
+                                onClick={closeMenu}
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? 'mobile-nav-link active'
+                                        : 'mobile-nav-link'
+                                }
+                            >
+                                {link.label}
+                            </NavLink>
+                        ))}
+                    </nav>
+                )}
 
                 <div className="mobile-menu-footer">
                     {user ? (
