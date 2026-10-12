@@ -2,6 +2,7 @@ import {
     createContext,
     useContext,
     useEffect,
+    useRef,
     useState,
 } from 'react'
 
@@ -18,9 +19,11 @@ export function AuthProvider({ children }) {
     const [user, setUser] = useState(null)
     const [loading, setLoading] = useState(true)
     const [errorMessage, setErrorMessage] = useState('')
+    const loadedUserIdRef = useRef(null)
 
     const loadUserProfile = async (userId) => {
         const profile = await getUserProfile(userId)
+        loadedUserIdRef.current = profile ? userId : null
         setUser(profile)
 
         return profile
@@ -73,6 +76,7 @@ export function AuthProvider({ children }) {
                 if (!isMounted) return
 
                 if (event === 'SIGNED_OUT') {
+                    loadedUserIdRef.current = null
                     setUser(null)
                     setLoading(false)
                     return
@@ -82,6 +86,8 @@ export function AuthProvider({ children }) {
                     event === 'SIGNED_IN' &&
                     session?.user
                 ) {
+                    if (loadedUserIdRef.current === session.user.id) return
+
                     setLoading(true)
 
                     setTimeout(async () => {
