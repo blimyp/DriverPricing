@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Pencil, Plus, Trash2 } from 'lucide-react'
+import { Bus, Pencil, Plus, Trash2 } from 'lucide-react'
 
 import Popup from '../../../components/popup/popup'
 import {
@@ -92,9 +92,17 @@ function VehiclesSection({ userId }) {
     }
 
     return (
-        <div className="prices-section">
+        <section className="prices-section">
             <div className="prices-section-header">
-                <h2>הרכבים שלי</h2>
+                <div className="prices-section-title">
+                    <span className="prices-section-icon">
+                        <Bus size={18} />
+                    </span>
+                    <div>
+                        <h2>הרכבים שלי</h2>
+                        <p>מהם מחושבת העלות הקבועה של כל נסיעה</p>
+                    </div>
+                </div>
 
                 <button
                     type="button"
@@ -115,85 +123,75 @@ function VehiclesSection({ userId }) {
                     עדיין לא הוספת רכבים. לחצי על "הוספת רכב" כדי להתחיל
                 </div>
             ) : (
-                <div className="prices-table-wrapper">
-                    <table className="prices-table vehicles-table">
-                        <thead>
-                            <tr>
-                                <th>רכב</th>
-                                <th>סוג</th>
-                                <th>שנת ייצור</th>
-                                <th>מחיר רכישה</th>
-                                <th>ק״מ שנתי</th>
-                                <th aria-label="פעולות" />
-                            </tr>
-                        </thead>
+                <div className="vehicles-list">
+                    {vehicles.map((vehicle) => {
+                        const typeLabel =
+                            VEHICLE_TYPE_LABELS[vehicle.vehicle_type] ||
+                            vehicle.vehicle_type
 
-                        <tbody>
-                            {vehicles.map((vehicle) => (
-                                <tr key={vehicle.id}>
-                                    <td>
-                                        <span className="vehicle-type">
-                                            {vehicle.name || '—'}
+                        return (
+                            <div className="vehicle-card" key={vehicle.id}>
+                                <div className="vehicle-card-main">
+                                    <span className="vehicle-card-name">
+                                        {vehicle.name || typeLabel}
+                                    </span>
+
+                                    <div className="vehicle-card-tags">
+                                        <span className="vehicle-tag">
+                                            {typeLabel}
                                         </span>
-                                    </td>
-                                    <td>
-                                        {VEHICLE_TYPE_LABELS[
-                                            vehicle.vehicle_type
-                                        ] || vehicle.vehicle_type}
-                                    </td>
-                                    <td>
-                                        {vehicle.manufacture_year}
-                                        <span className="vehicle-age">
-                                            {' '}
-                                            (בן{' '}
+                                        <span className="vehicle-tag">
+                                            {vehicle.manufacture_year}
+                                            {' · בן '}
                                             {getVehicleAge(
                                                 vehicle.manufacture_year
                                             )}
-                                            )
                                         </span>
-                                    </td>
-                                    <td>
-                                        {formatNumber(vehicle.purchase_price)} ₪
-                                    </td>
-                                    <td>
-                                        {formatNumber(
-                                            vehicle.annual_km_estimate
-                                        )}
-                                    </td>
-                                    <td>
-                                        <div className="vehicle-actions">
-                                            <button
-                                                type="button"
-                                                className="price-edit-button"
-                                                onClick={() =>
-                                                    setFormVehicle(vehicle)
-                                                }
-                                                aria-label="עריכת רכב"
-                                                title="עריכה"
-                                            >
-                                                <Pencil size={16} />
-                                            </button>
+                                    </div>
+                                </div>
 
-                                            <button
-                                                type="button"
-                                                className="price-edit-button vehicle-delete-button"
-                                                onClick={() =>
-                                                    handleDelete(vehicle)
-                                                }
-                                                disabled={
-                                                    deletingId === vehicle.id
-                                                }
-                                                aria-label="מחיקת רכב"
-                                                title="מחיקה"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                                <div className="vehicle-card-stats">
+                                    <div>
+                                        <small>מחיר רכישה</small>
+                                        <span>
+                                            {formatNumber(vehicle.purchase_price)} ₪
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <small>ק״מ שנתי</small>
+                                        <span>
+                                            {formatNumber(
+                                                vehicle.annual_km_estimate
+                                            )}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="vehicle-actions">
+                                    <button
+                                        type="button"
+                                        className="setting-icon-button"
+                                        onClick={() => setFormVehicle(vehicle)}
+                                        aria-label="עריכת רכב"
+                                        title="עריכה"
+                                    >
+                                        <Pencil size={15} />
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="setting-icon-button danger"
+                                        onClick={() => handleDelete(vehicle)}
+                                        disabled={deletingId === vehicle.id}
+                                        aria-label="מחיקת רכב"
+                                        title="מחיקה"
+                                    >
+                                        <Trash2 size={15} />
+                                    </button>
+                                </div>
+                            </div>
+                        )
+                    })}
                 </div>
             )}
 
@@ -206,7 +204,7 @@ function VehiclesSection({ userId }) {
                     />
                 )}
             </Popup>
-        </div>
+        </section>
     )
 }
 
