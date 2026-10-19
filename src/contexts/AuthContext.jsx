@@ -22,7 +22,14 @@ export function AuthProvider({ children }) {
     const loadedUserIdRef = useRef(null)
 
     const loadUserProfile = async (userId) => {
-        const profile = await getUserProfile(userId)
+        const loadedProfile = await getUserProfile(userId)
+
+        // A deleted driver can no longer enter as a driver
+        const profile =
+            loadedProfile?.deleted_at && loadedProfile.role === 'driver'
+                ? { ...loadedProfile, role: null }
+                : loadedProfile
+
         loadedUserIdRef.current = profile ? userId : null
         setUser(profile)
 

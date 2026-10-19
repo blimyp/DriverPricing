@@ -10,14 +10,17 @@ import {
 import {
     addDriverByEmail,
     getAllDrivers,
+    removeDriver,
     updateDriverStartingBalance,
 } from '../../services/driversService'
 import {
+    deleteDriverTrip,
     getDriverTrips,
     saveDriverTrip,
     updateDriverTrip,
 } from '../../services/tripsService'
 import {
+    deletePayment,
     getDriverPayments,
     savePayment,
     updatePayment,
@@ -25,6 +28,7 @@ import {
 import { calculateDriverBalance } from '../../utils/driverBalance'
 
 import './DriversPage.css'
+import ConfirmDeleteForm from './components/confirm_delete_form'
 import DriverForm from './components/driver_form'
 import DriverGroupCard from './components/driver_group_card'
 import DriverItem from './components/driver_item'
@@ -34,6 +38,29 @@ import DriverTripItem from './components/driver_trip_item'
 import PaymentForm from './components/payment_form'
 import PaymentItem from './components/payment_item'
 import Popup from '../../components/popup/popup'
+
+function formatCurrency(value) {
+    return new Intl.NumberFormat('he-IL', {
+        style: 'currency',
+        currency: 'ILS',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+    }).format(Number(value) || 0)
+}
+
+function formatDate(value) {
+    const date = new Date(value)
+
+    if (!value || Number.isNaN(date.getTime())) {
+        return 'לא צוין'
+    }
+
+    return new Intl.DateTimeFormat('he-IL', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    }).format(date)
+}
 
 function DriversPage() {
     const [drivers, setDrivers] = useState([])
@@ -59,6 +86,9 @@ function DriversPage() {
 
     const [editingTrip, setEditingTrip] = useState(null)
     const [editingPayment, setEditingPayment] = useState(null)
+
+    // { type: 'trip' | 'payment' | 'driver', item }
+    const [deleteTarget, setDeleteTarget] = useState(null)
 
     const [viewMode, setViewMode] = useState('category')
     const [selectedDriverId, setSelectedDriverId] =
@@ -315,6 +345,123 @@ function DriversPage() {
         closePaymentPopup()
     }
 
+    const handleDeleteTrip = async (trip) => {
+        await deleteDriverTrip(trip.id)
+
+        setTrips((current) =>
+            current.filter((item) => item.id !== trip.id)
+        )
+
+        setDeleteTarget(null)
+    }
+
+    const handleDeletePayment = async (payment) => {
+        await deletePayment(payment.id)
+
+        setPayments((current) =>
+            current.filter((item) => item.id !== payment.id)
+        )
+
+        setDeleteTarget(null)
+    }
+
+    const handleDeleteDriver = async (driver) => {
+        await removeDriver(driver)
+
+        setDrivers((current) =>
+            current.filter((item) => item.id !== driver.id)
+        )
+        setTrips((current) =>
+            current.filter((item) => item.user_id !== driver.id)
+        )
+        setPayments((current) =>
+            current.filter((item) => item.driver_id !== driver.id)
+        )
+
+        setDeleteTarget(null)
+    }
+
+    const getDeletePopupProps = () => {
+        if (!deleteTarget) {
+            return null
+        }
+
+        const { type, item } = deleteTarget
+
+        if (type === 'trip') {
+            return {
+                title: 'מחיקת נסיעה',
+                itemLabel: 'הנסיעה',
+                details: [
+                    { label: 'נהג', value: item.driverName },
+                    { label: 'תאריך', value: formatDate(item.created_at) },
+                    {
+                        label: 'מחיר',
+                        value: formatCurrency(item.calculated_price),
+                    },
+                    {
+                        label: 'תיאור',
+                        value:
+                            item.description ||
+                            `נסיעה מ${item.origin || 'לא ידוע'} ל${item.destination || 'לא ידוע'}`,
+                    },
+                ],
+                onConfirm: () => handleDeleteTrip(item),
+            }
+        }
+
+        if (type === 'payment') {
+            return {
+                title: 'מחיקת תשלום',
+                itemLabel: 'התשלום',
+                details: [
+                    { label: 'נהג', value: item.driverName },
+                    { label: 'תאריך', value: formatDate(item.created_at) },
+                    { label: 'סכום', value: formatCurrency(item.amount) },
+                    ...(item.description
+                        ? [{ label: 'הערה', value: item.description }]
+                        : []),
+                ],
+                onConfirm: () => handleDeletePayment(item),
+            }
+        }
+
+        const group = driverGroups.find(
+            ({ driver }) => driver.id === item.id
+        )
+
+        return {
+            title: 'מחיקת נהג',
+            itemLabel: `הנהג ${item.full_name || item.email}`,
+            details: [
+                { label: 'שם', value: item.full_name || 'לא צוין' },
+                { label: 'מייל', value: item.email },
+                ...(item.pending
+                    ? []
+                    : [
+                        {
+                            label: 'נסיעות',
+                            value: group?.trips.length ?? 0,
+                        },
+                        {
+                            label: 'תשלומים',
+                            value: group?.payments.length ?? 0,
+                        },
+                    ]),
+                {
+                    label: 'יתרה לתשלום',
+                    value: formatCurrency(group?.balance),
+                },
+            ],
+            note: item.pending
+                ? 'ההזמנה תבוטל, והמשתמש לא יוגדר כנהג כשיתחבר.'
+                : 'הנהג וכל הנסיעות והתשלומים שלו יסומנו כמחוקים, והנהג לא יוכל להיכנס יותר כנהג.',
+            onConfirm: () => handleDeleteDriver(item),
+        }
+    }
+
+    const deletePopupProps = getDeletePopupProps()
+
     const handleAddDriver = async ({ email, startingBalance }) => {
         const newDriver = await addDriverByEmail(email, startingBalance)
 
@@ -502,6 +649,24 @@ function DriversPage() {
                                         }
                                         onEditTrip={openEditTripPopup}
                                         onEditPayment={openEditPaymentPopup}
+                                        onDeleteTrip={(trip) =>
+                                            setDeleteTarget({
+                                                type: 'trip',
+                                                item: trip,
+                                            })
+                                        }
+                                        onDeletePayment={(payment) =>
+                                            setDeleteTarget({
+                                                type: 'payment',
+                                                item: payment,
+                                            })
+                                        }
+                                        onDeleteDriver={() =>
+                                            setDeleteTarget({
+                                                type: 'driver',
+                                                item: driver,
+                                            })
+                                        }
                                         onUpdateStartingBalance={(value) =>
                                             handleUpdateStartingBalance(
                                                 driver,
@@ -551,6 +716,12 @@ function DriversPage() {
                                     driver={driver}
                                     balance={balance}
                                     balanceLoading={balancesLoading}
+                                    onDelete={() =>
+                                        setDeleteTarget({
+                                            type: 'driver',
+                                            item: driver,
+                                        })
+                                    }
                                     onUpdateStartingBalance={(value) =>
                                         handleUpdateStartingBalance(
                                             driver,
@@ -607,6 +778,12 @@ function DriversPage() {
                                     onEdit={() =>
                                         openEditTripPopup(trip)
                                     }
+                                    onDelete={() =>
+                                        setDeleteTarget({
+                                            type: 'trip',
+                                            item: trip,
+                                        })
+                                    }
                                 />
                             ))}
                         </div>
@@ -656,6 +833,12 @@ function DriversPage() {
                                     payment={payment}
                                     onEdit={() =>
                                         openEditPaymentPopup(payment)
+                                    }
+                                    onDelete={() =>
+                                        setDeleteTarget({
+                                            type: 'payment',
+                                            item: payment,
+                                        })
                                     }
                                 />
                             ))}
@@ -713,6 +896,19 @@ function DriversPage() {
                     }
                     onCancel={closePaymentPopup}
                 />
+            </Popup>
+
+            <Popup
+                isOpen={Boolean(deletePopupProps)}
+                onClose={() => setDeleteTarget(null)}
+                titleId="confirm-delete-title"
+            >
+                {deletePopupProps && (
+                    <ConfirmDeleteForm
+                        {...deletePopupProps}
+                        onCancel={() => setDeleteTarget(null)}
+                    />
+                )}
             </Popup>
         </div>
     )

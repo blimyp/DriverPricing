@@ -279,3 +279,56 @@
         height: 40px;
     }
 }
+.confirm-delete-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    margin: 0 0 14px;
+    padding: 14px 16px;
+
+    border-radius: 12px;
+
+    background: #f7faf9;
+}
+
+.confirm-delete-detail {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+
+    font-size: 13.5px;
+}
+
+.confirm-delete-detail dt {
+    color: var(--text);
+}
+
+.confirm-delete-detail dd {
+    margin: 0;
+
+    color: var(--text-dark);
+
+    font-weight: 600;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.confirm-delete-note {
+    margin: 0 0 4px;
+
+    color: var(--text);
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.drivers-form-submit.confirm-delete-submit {
+    background: var(--red);
+
+    box-shadow: 0 6px 16px rgba(143, 52, 52, 0.22);
+}
+
+.drivers-form-submit.confirm-delete-submit:hover:not(:disabled) {
+    box-shadow: 0 8px 20px rgba(143, 52, 52, 0.3);
+}

@@ -25,6 +25,7 @@ export async function saveUserProfile(user) {
             .from('driver_invites')
             .select('email, starting_balance')
             .eq('email', cleanEmail)
+            .is('deleted_at', null)
             .maybeSingle()
 
         if (inviteFetchError) {

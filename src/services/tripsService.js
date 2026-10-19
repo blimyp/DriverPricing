@@ -95,6 +95,7 @@ export async function getDriverTrips(driverIds) {
             'id, user_id, origin, destination, description, calculated_price, created_at'
         )
         .in('user_id', driverIds)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
 
     if (error) {
@@ -147,4 +148,26 @@ export async function updateDriverTrip(tripId, {
     }
 
     return data
+}
+
+// The trip is only marked as deleted, so it can be restored if needed
+export async function deleteDriverTrip(tripId) {
+    if (!tripId) {
+        throw new Error('לא נמצאה הנסיעה למחיקה')
+    }
+
+    const { data, error } = await supabase
+        .from('trips')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', tripId)
+        .select('id')
+        .maybeSingle()
+
+    if (error) {
+        throw error
+    }
+
+    if (!data) {
+        throw new Error('אין הרשאה למחוק את הנסיעה או שהיא לא נמצאה')
+    }
 }

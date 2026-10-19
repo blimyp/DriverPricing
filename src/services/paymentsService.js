@@ -49,6 +49,7 @@ export async function getDriverPayments(driverIds) {
         .from('driver_payments')
         .select('id, driver_id, description, amount, created_at')
         .in('driver_id', driverIds)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
 
     if (error) {
@@ -100,4 +101,26 @@ export async function updatePayment(paymentId, {
     }
 
     return data
+}
+
+// The payment is only marked as deleted, so it can be restored if needed
+export async function deletePayment(paymentId) {
+    if (!paymentId) {
+        throw new Error('לא נמצא התשלום למחיקה')
+    }
+
+    const { data, error } = await supabase
+        .from('driver_payments')
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', paymentId)
+        .select('id')
+        .maybeSingle()
+
+    if (error) {
+        throw error
+    }
+
+    if (!data) {
+        throw new Error('אין הרשאה למחוק את התשלום או שהוא לא נמצא')
+    }
 }

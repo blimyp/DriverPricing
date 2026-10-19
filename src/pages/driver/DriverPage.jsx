@@ -97,11 +97,13 @@ function DriverPage() {
                                 `
                         )
                         .eq('user_id', user.id)
+                        .is('deleted_at', null)
                         .order('created_at', { ascending: false }),
                     supabase
                         .from('driver_payments')
                         .select('id, description, amount, created_at')
                         .eq('driver_id', user.id)
+                        .is('deleted_at', null)
                         .order('created_at', { ascending: false }),
                 ])
 

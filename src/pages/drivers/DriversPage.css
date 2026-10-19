@@ -292,7 +292,7 @@
     border-radius: 50%;
     cursor: pointer;
 
-    background: transparent;
+    background: #f3f4f6;
     color: #111827;
 
     transition:
@@ -301,7 +301,7 @@
 }
 
 .driver-edit-button:hover {
-    background: #f3f4f6;
+    background: #e5e7eb;
 }
 
 .driver-edit-button::after,
@@ -451,4 +451,13 @@
     .drivers-section-header {
         gap: 10px;
     }
+}
+
+.driver-delete-button {
+    background: #fdf2f2;
+    color: var(--red);
+}
+
+.driver-delete-button:hover {
+    background: #f8dede;
 }

@@ -1,4 +1,4 @@
-import { Mail } from 'lucide-react'
+import { Mail, Trash2 } from 'lucide-react'
 
 import StartingBalanceEditor from './starting_balance_editor'
 
@@ -24,6 +24,7 @@ function DriverItem({
     balance,
     balanceLoading,
     onUpdateStartingBalance,
+    onDelete,
 }) {
     const displayName =
         driver.full_name || driver.email || 'נהג'
@@ -43,6 +44,16 @@ function DriverItem({
                             initialValue={driver.starting_balance}
                             onSave={onUpdateStartingBalance}
                         />
+
+                        <button
+                            type="button"
+                            className="driver-edit-button driver-delete-button"
+                            onClick={onDelete}
+                            aria-label="מחיקת נהג"
+                            data-tooltip="מחיקת נהג"
+                        >
+                            <Trash2 size={14} strokeWidth={2} />
+                        </button>
                     </div>
 
                     <p>

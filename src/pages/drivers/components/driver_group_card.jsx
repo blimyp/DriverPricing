@@ -1,5 +1,12 @@
 import { useState } from 'react'
-import { ChevronDown, Clock, ListOrdered, Mail, Plus } from 'lucide-react'
+import {
+    ChevronDown,
+    Clock,
+    ListOrdered,
+    Mail,
+    Plus,
+    Trash2,
+} from 'lucide-react'
 
 import Collapsible from '../../../components/collapsible/collapsible'
 import DriverTripItem from './driver_trip_item'
@@ -30,6 +37,9 @@ function DriverGroupCard({
     onAddPayment,
     onEditTrip,
     onEditPayment,
+    onDeleteTrip,
+    onDeletePayment,
+    onDeleteDriver,
     balance,
     onUpdateStartingBalance,
 }) {
@@ -68,6 +78,16 @@ function DriverGroupCard({
                                 initialValue={driver.starting_balance}
                                 onSave={onUpdateStartingBalance}
                             />
+
+                            <button
+                                type="button"
+                                className="driver-edit-button driver-delete-button"
+                                onClick={onDeleteDriver}
+                                aria-label="מחיקת נהג"
+                                data-tooltip="מחיקת נהג"
+                            >
+                                <Trash2 size={14} strokeWidth={2} />
+                            </button>
                         </div>
 
                         <p>
@@ -167,6 +187,7 @@ function DriverGroupCard({
                                         trip={item}
                                         compact
                                         onEdit={() => onEditTrip(item)}
+                                        onDelete={() => onDeleteTrip(item)}
                                     />
                                 ) : (
                                     <PaymentItem
@@ -174,6 +195,7 @@ function DriverGroupCard({
                                         payment={item}
                                         compact
                                         onEdit={() => onEditPayment(item)}
+                                        onDelete={() => onDeletePayment(item)}
                                     />
                                 )
                             )}
