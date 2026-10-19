@@ -196,7 +196,7 @@
 
 .preview-top h2 {
     margin: 5px 0 0;
-    color: var(--home-dark);
+    color: var(--text-dark);
     font-size: 24px;
 }
 
@@ -342,7 +342,7 @@
 }
 
 .preview-result strong {
-    color: var(--home-dark);
+    color: var(--text-dark);
     font-size: 14px;
 }
 
