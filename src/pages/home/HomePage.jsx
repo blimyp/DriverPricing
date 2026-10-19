@@ -135,27 +135,6 @@ function HomePage() {
                     </div>
                 </BackgroundSection>
             </Reveal>
-
-            <footer className="home-footer">
-                <Reveal direction="right">
-                    <Link to="/home" className="footer-logo">
-                        <img src="/logo.png" alt="" />
-                        <span>Travel Price</span>
-                    </Link>
-                </Reveal>
-
-                <Reveal direction="up" delay={100}>
-                    <p>מערכת תמחור נסיעות — סדר, יעילות ושליטה.</p>
-                </Reveal>
-
-                <Reveal direction="left" delay={200}>
-                    <div className="footer-links">
-                        <a href="#benefits">יתרונות</a>
-                        <a href="#process">תהליך העבודה</a>
-                        <Link to="/pricing">תמחור נסיעה</Link>
-                    </div>
-                </Reveal>
-            </footer>
         </main >
     )
 }

@@ -1,0 +1,72 @@
+.accessibility-page {
+    width: 100%;
+    padding: 55px 20px 40px;
+    box-sizing: border-box;
+    color: var(--text-dark);
+}
+
+.accessibility-page__container {
+    width: min(820px, 100%);
+    margin: 0 auto;
+}
+
+.accessibility-header {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.accessibility-header h1 {
+    margin: 0;
+    color: var(--primary-dark);
+    font-size: clamp(34px, 5vw, 48px);
+    font-weight: 900;
+}
+
+.accessibility-header p {
+    margin: 10px 0 0;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.accessibility-page section {
+    margin-bottom: 32px;
+}
+
+.accessibility-page h2 {
+    margin: 0 0 10px;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.accessibility-page p,
+.accessibility-page li {
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.accessibility-page p {
+    margin: 0 0 10px;
+}
+
+.accessibility-page ul {
+    margin: 0;
+    padding-right: 22px;
+}
+
+.accessibility-contact {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 8px 18px;
+    margin: 14px 0;
+    padding: 18px 22px;
+    border-radius: 14px;
+    background: var(--primary-light);
+}
+
+.accessibility-contact dt {
+    font-weight: 700;
+}
+
+.accessibility-contact dd {
+    margin: 0;
+}

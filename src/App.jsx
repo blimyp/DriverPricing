@@ -4,6 +4,7 @@ import { useAuth } from './contexts/AuthContext'
 import LoginPage from './pages/LoginPage'
 import DriverLoginPage from './pages/DriverLoginPage'
 import Navbar from './components/navbar/navbar'
+import Footer from './components/footer/footer'
 
 import './App.css'
 import AboutPage from './pages/AboutPage'
@@ -16,6 +17,7 @@ import PricesSettingsPage from './pages/prices_settings/PricesSettingsPage'
 import InboxPage from './pages/inbox/InboxPage'
 import DriverPage from './pages/driver/DriverPage'
 import DriversPage from './pages/drivers/DriversPage'
+import AccessibilityStatementPage from './pages/accessibility/AccessibilityStatementPage'
 
 const SITE_TITLE = 'ממשק תמחור נסיעה'
 
@@ -32,6 +34,7 @@ const PAGE_TITLES = {
   '/prices': 'הגדרות תמחור',
   '/inbox': 'פניות',
   '/drivers': 'ניהול נהגים',
+  '/accessibility': 'הצהרת נגישות',
 }
 
 function App() {
@@ -169,6 +172,12 @@ function App() {
         }
       />
 
+      {/* פתוח לכולם, גם בלי התחברות */}
+      <Route
+        path="/accessibility"
+        element={<AccessibilityStatementPage />}
+      />
+
       <Route
         path="*"
         element={
@@ -188,6 +197,7 @@ function App() {
     <div className={'home_wrapper'}>
       {!hideNavbar && <Navbar />}
       {appRoutes}
+      <Footer />
     </div>
   )
 }
