@@ -528,6 +528,13 @@ function PricingPage() {
 
                 {isLoadingRoute && <TypingIndicator styles={styles} />}
 
+                {/* מקריא לקורא מסך כל הודעה חדשה בשיחה */}
+                <div className="visually-hidden" aria-live="polite">
+                    {isLoadingRoute
+                        ? 'מחשב את המסלול...'
+                        : [].concat(getAssistantText(TURNS[activeTurnIndex])).join(' ')}
+                </div>
+
                 <div ref={transcriptEndRef} />
             </div>
         </main>

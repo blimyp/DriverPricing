@@ -139,6 +139,7 @@ function InboxPage() {
             <Popup
                 isOpen={isAddPopupOpen}
                 onClose={() => setIsAddPopupOpen(false)}
+                titleId="inbox-form-title"
             >
                 <InboxForm
                     onSubmit={handleCreateInbox}

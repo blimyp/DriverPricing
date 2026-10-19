@@ -98,7 +98,7 @@ function DriverTripForm({
             dir="rtl"
         >
             <div className="drivers-form-header">
-                <h2>
+                <h2 id="driver-trip-form-title">
                     {isEdit ? 'עריכת נסיעה' : 'הוספת נסיעה'}
                 </h2>
 

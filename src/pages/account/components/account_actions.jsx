@@ -261,6 +261,7 @@ function AccountActions({
                     }
                 }}
                 closeOnOverlayClick={!isSaving}
+                titleId="transaction-form-title"
             >
                 <div
                     className={`transactionPopup ${isIncome
@@ -271,7 +272,7 @@ function AccountActions({
                 >
                     <div className="transactionPopupHeader">
                         <div>
-                            <h2>
+                            <h2 id="transaction-form-title">
                                 {isIncome ? 'הוספת הכנסה' : 'הוספת הוצאה'}
                             </h2>
 

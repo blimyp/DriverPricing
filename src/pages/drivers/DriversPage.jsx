@@ -669,6 +669,7 @@ function DriversPage() {
             <Popup
                 isOpen={isAddPopupOpen}
                 onClose={() => setIsAddPopupOpen(false)}
+                titleId="driver-form-title"
             >
                 <DriverForm
                     onSubmit={handleAddDriver}
@@ -679,6 +680,7 @@ function DriversPage() {
             <Popup
                 isOpen={isAddTripPopupOpen}
                 onClose={closeTripPopup}
+                titleId="driver-trip-form-title"
             >
                 <DriverTripForm
                     key={editingTrip?.id || 'new-trip'}
@@ -696,6 +698,7 @@ function DriversPage() {
             <Popup
                 isOpen={isAddPaymentPopupOpen}
                 onClose={closePaymentPopup}
+                titleId="payment-form-title"
             >
                 <PaymentForm
                     key={editingPayment?.id || 'new-payment'}

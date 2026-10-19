@@ -56,7 +56,7 @@ function InboxForm({
             dir="rtl"
         >
             <div className="inbox-form-header">
-                <h2>
+                <h2 id="inbox-form-title">
                     פתיחת פנייה חדשה
                 </h2>
 
@@ -92,7 +92,6 @@ function InboxForm({
                         }
                         placeholder="נושא הפנייה"
                         disabled={sending}
-                        autoFocus
                     />
                 </div>
 

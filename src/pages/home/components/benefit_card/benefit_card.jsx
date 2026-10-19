@@ -55,7 +55,7 @@ function BenefitCard({
             <div className="benefit-card-icon">
                 <img
                     src={icon}
-                    alt="icon"
+                    alt=""
                     className="benefit-card-icon-image"
                 />
             </div>

@@ -150,11 +150,13 @@ function PaymentTypeField({ styles, value, onChange }) {
         <div className={styles.paymentSwitchWrapper}>
             <span className={styles.formLabel}>תשלום לנהג</span>
 
-            <div
+            <button
+                type="button"
                 className={styles.paymentSwitchArea}
                 onClick={handlePaymentTypeChange}
+                aria-label={`תשלום לנהג: ${isPercentage ? 'אחוזים' : 'מחיר שעתי'}. לחיצה להחלפה`}
             >
-                <div
+                <span
                     className={`${styles.paymentSwitchLabel} ${isPercentage ? styles.paymentSwitchLabelActive : ''
                         }`}
                 >
@@ -165,9 +167,9 @@ function PaymentTypeField({ styles, value, onChange }) {
                     />
 
                     <span>אחוזים</span>
-                </div>
+                </span>
 
-                <div
+                <span
                     className={`${styles.paymentSwitchLabel} ${!isPercentage ? styles.paymentSwitchLabelActive : ''
                         }`}
                 >
@@ -178,13 +180,13 @@ function PaymentTypeField({ styles, value, onChange }) {
                     />
 
                     <span>מחיר שעתי</span>
-                </div>
+                </span>
 
-                <div
+                <span
                     className={`${styles.paymentSwitchThumb} ${isPercentage ? styles.paymentSwitchThumbRight : ''
                         }`}
                 />
-            </div>
+            </button>
         </div>
     )
 }

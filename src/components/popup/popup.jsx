@@ -1,48 +1,53 @@
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 
 import './popup.css'
 
-function Popup({
-    isOpen,
+const FIELD_SELECTOR =
+    'input:not([disabled]), select:not([disabled]), textarea:not([disabled])'
+
+function Popup({ isOpen, ...props }) {
+    if (!isOpen) {
+        return null
+    }
+
+    return <PopupDialog {...props} />
+}
+
+function PopupDialog({
     onClose,
+    titleId,
     children,
     closeOnOverlayClick = true,
 }) {
+    const dialogRef = useRef(null)
+
+    // The browser traps focus inside a modal dialog and returns it
+    // to the opening button when the dialog closes
+    useLayoutEffect(() => {
+        const dialog = dialogRef.current
+
+        dialog.showModal()
+        dialog.querySelector(FIELD_SELECTOR)?.focus()
+
+        return () => dialog.close()
+    }, [])
+
     useEffect(() => {
-        if (!isOpen) {
-            return
-        }
-
-        function handleKeyDown(event) {
-            if (event.key === 'Escape') {
-                onClose()
-            }
-        }
-
-        const previousOverflow =
-            document.body.style.overflow
+        const previousOverflow = document.body.style.overflow
 
         document.body.style.overflow = 'hidden'
-        document.addEventListener(
-            'keydown',
-            handleKeyDown
-        )
 
         return () => {
-            document.body.style.overflow =
-                previousOverflow
-
-            document.removeEventListener(
-                'keydown',
-                handleKeyDown
-            )
+            document.body.style.overflow = previousOverflow
         }
-    }, [isOpen, onClose])
+    }, [])
 
-    if (!isOpen) {
-        return null
+    // Let the parent decide whether Escape closes the popup
+    function handleCancel(event) {
+        event.preventDefault()
+        onClose()
     }
 
     function handleOverlayClick(event) {
@@ -55,16 +60,14 @@ function Popup({
     }
 
     return createPortal(
-        <div
+        <dialog
+            ref={dialogRef}
             className="popupOverlay"
+            aria-labelledby={titleId}
+            onCancel={handleCancel}
             onMouseDown={handleOverlayClick}
-            role="presentation"
         >
-            <div
-                className="popupContainer"
-                role="dialog"
-                aria-modal="true"
-            >
+            <div className="popupContainer">
                 <button
                     className="popupCloseButton"
                     type="button"
@@ -80,7 +83,7 @@ function Popup({
 
                 {children}
             </div>
-        </div>,
+        </dialog>,
         document.body
     )
 }

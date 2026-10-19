@@ -213,6 +213,7 @@ function InboxItem({ inbox, refreshInboxes }) {
                                 event.stopPropagation()
                             }
                             placeholder="כתיבת תגובה..."
+                            aria-label="כתיבת תגובה"
                             disabled={sending}
                         />
 

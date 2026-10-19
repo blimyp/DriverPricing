@@ -59,7 +59,7 @@ function DriverForm({ onSubmit, onCancel }) {
             dir="rtl"
         >
             <div className="drivers-form-header">
-                <h2>
+                <h2 id="driver-form-title">
                     הוספת נהג
                 </h2>
 
@@ -95,7 +95,6 @@ function DriverForm({ onSubmit, onCancel }) {
                         }
                         placeholder="driver@example.com"
                         disabled={sending}
-                        autoFocus
                     />
                 </div>
 

@@ -98,7 +98,7 @@ function PaymentForm({
             dir="rtl"
         >
             <div className="drivers-form-header">
-                <h2>
+                <h2 id="payment-form-title">
                     {isEdit ? 'עריכת תשלום' : 'הוספת תשלום'}
                 </h2>
 

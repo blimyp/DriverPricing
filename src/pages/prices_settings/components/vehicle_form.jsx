@@ -131,7 +131,7 @@ function VehicleForm({ vehicle = null, onSubmit, onCancel }) {
             dir="rtl"
         >
             <div className="drivers-form-header">
-                <h2>{isEdit ? 'עריכת רכב' : 'הוספת רכב'}</h2>
+                <h2 id="vehicle-form-title">{isEdit ? 'עריכת רכב' : 'הוספת רכב'}</h2>
 
                 <p>
                     הנתונים משמשים לחישוב העלות הקבועה והמשתנה של

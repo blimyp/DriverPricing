@@ -195,7 +195,11 @@ function VehiclesSection({ userId }) {
                 </div>
             )}
 
-            <Popup isOpen={formVehicle !== null} onClose={closeForm}>
+            <Popup
+                isOpen={formVehicle !== null}
+                onClose={closeForm}
+                titleId="vehicle-form-title"
+            >
                 {formVehicle !== null && (
                     <VehicleForm
                         vehicle={formVehicle === 'new' ? null : formVehicle}

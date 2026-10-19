@@ -219,6 +219,7 @@ function PricesSettingsPage() {
                                 onKeyDown={(e) => handleKeyDown(e, setting)}
                                 disabled={isSaving}
                                 autoFocus
+                                aria-label={setting.label}
                             />
                             <span>{setting.suffix}</span>
                         </div>

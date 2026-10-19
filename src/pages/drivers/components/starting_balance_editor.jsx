@@ -152,6 +152,7 @@ function StartingBalanceEditor({ initialValue, onSave }) {
                             onKeyDown={handleKeyDown}
                             disabled={saving}
                             autoFocus
+                            aria-label="יתרת פתיחה"
                         />
 
                         <button

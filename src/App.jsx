@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 import LoginPage from './pages/LoginPage'
@@ -16,9 +17,31 @@ import InboxPage from './pages/inbox/InboxPage'
 import DriverPage from './pages/driver/DriverPage'
 import DriversPage from './pages/drivers/DriversPage'
 
+const SITE_TITLE = 'ממשק תמחור נסיעה'
+
+// שם הלשונית בדפדפן לכל עמוד, כדי שקורא מסך יודיע לאן הגענו
+const PAGE_TITLES = {
+  '/login': 'התחברות',
+  '/driver-login': 'כניסת נהגים',
+  '/home': 'דף הבית',
+  '/driver': 'אזור הנהג',
+  '/pricing': 'תמחור נסיעה',
+  '/trips': 'הנסיעות שלי',
+  '/account': 'הארנק שלי',
+  '/about': 'אודות',
+  '/prices': 'הגדרות תמחור',
+  '/inbox': 'פניות',
+  '/drivers': 'ניהול נהגים',
+}
+
 function App() {
   const { user, loading, isAdmin } = useAuth()
   const location = useLocation()
+
+  useEffect(() => {
+    const pageTitle = PAGE_TITLES[location.pathname]
+    document.title = pageTitle ? `${pageTitle} | ${SITE_TITLE}` : SITE_TITLE
+  }, [location.pathname])
 
   if (loading) {
     return (

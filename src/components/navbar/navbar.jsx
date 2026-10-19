@@ -57,7 +57,7 @@ function Navbar() {
                     <NavLink to="/" className="navbar-logo">
                         <img
                             src="/logo.png"
-                            alt="לוגו"
+                            alt=""
                             className="navbar-logo-image"
                         />
 
