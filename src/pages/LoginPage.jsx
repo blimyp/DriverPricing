@@ -1,10 +1,15 @@
 import { useState } from 'react'
-import { signInWithGoogle } from '../services/authService'
+import {
+    signInWithGoogle,
+    getRedirectErrorMessage,
+} from '../services/authService'
 import './LoginPage.css'
 
 function LoginPage({ errorMessage: externalErrorMessage }) {
     const [loading, setLoading] = useState(false)
-    const [errorMessage, setErrorMessage] = useState('')
+    const [errorMessage, setErrorMessage] = useState(
+        getRedirectErrorMessage
+    )
 
     const displayError = externalErrorMessage || errorMessage
 
