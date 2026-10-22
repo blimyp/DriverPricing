@@ -7,6 +7,7 @@ import styles from './PricingPage.module.css'
 import BackgroundSection from '../../components/background_section/background_section'
 import DrivingRoute from './components/driving_route/driving_route'
 import {
+    RoundTripField,
     PlannedDurationField,
     VehicleField,
     TripTypeField,
@@ -24,12 +25,13 @@ import { useAuth } from '../../contexts/AuthContext'
 import { getVehicleDisplayName } from '../../utils/vehicles'
 import { TRIP_TYPE_LABELS } from '../../utils/pricingEngine'
 
-const TURNS = ['route', 'vehicle', 'details', 'payment', 'result']
+const TURNS = ['direction', 'route','vehicle', 'details', 'payment', 'result']
 
 const initialForm = {
     origin: '',
     destination: '',
     stops: [],
+    isRoundTrip: false,
 
     distanceKm: '',
     routeDuration: '',
@@ -112,7 +114,24 @@ function PricingPage() {
     }
 
     function updateOrigin(value) {
-        updateFormField('origin', value)
+        setForm((currentForm) => ({
+            ...currentForm,
+            origin: value,
+            // בהלוך חזור היעד תמיד זהה למוצא
+            destination: currentForm.isRoundTrip ? value : currentForm.destination,
+        }))
+
+        setErrorMessage('')
+    }
+
+    function updateRoundTrip(isRoundTrip) {
+        setForm((currentForm) => ({
+            ...currentForm,
+            isRoundTrip,
+            destination: isRoundTrip ? currentForm.origin : '',
+        }))
+
+        setErrorMessage('')
     }
 
     function updateDestination(value) {
@@ -146,6 +165,11 @@ function PricingPage() {
 
         if (!form.destination.trim()) {
             return 'יש להזין יעד'
+        }
+
+        // בלי תחנה בדרך, מסלול הלוך חזור יוצא באורך אפס
+        if (form.isRoundTrip && !form.stops.some((stop) => stop.trim())) {
+            return 'בנסיעה הלוך חזור יש להוסיף לפחות תחנה אחת במסלול'
         }
 
         return ''
@@ -256,8 +280,13 @@ function PricingPage() {
 
     function getAssistantText(turnKey) {
         switch (turnKey) {
+            case 'direction':
+                return 'בוא נתמחר את הנסיעה שלך! האם זו נסיעה הלוך או הלוך חזור?'
+
             case 'route':
-                return 'בוא נתמחר את הנסיעה שלך! מה המסלול שאתה מתכנן?'
+                return form.isRoundTrip
+                    ? 'מה המסלול שאתה מתכנן? היעד יהיה זהה לנקודת המוצא.'
+                    : 'מה המסלול שאתה מתכנן?'
 
             case 'vehicle':
                 return [
@@ -281,6 +310,9 @@ function PricingPage() {
 
     function getAnswerSummary(turnKey) {
         switch (turnKey) {
+            case 'direction':
+                return form.isRoundTrip ? 'הלוך חזור' : 'הלוך'
+
             case 'route': {
                 const stopsCount = form.stops.filter((stop) => stop.trim()).length
                 const stopsSuffix = stopsCount ? ` (+${stopsCount} תחנות)` : ''
@@ -347,6 +379,19 @@ function PricingPage() {
 
     function renderTurnInput(turnKey) {
         switch (turnKey) {
+            case 'direction':
+                return (
+                    <>
+                        <RoundTripField
+                            styles={styles}
+                            value={form.isRoundTrip}
+                            onChange={updateRoundTrip}
+                        />
+
+                        {renderAdvanceButton('הבא')}
+                    </>
+                )
+
             case 'route':
                 return (
                     <>
@@ -354,6 +399,7 @@ function PricingPage() {
                             origin={form.origin}
                             destination={form.destination}
                             stops={form.stops}
+                            isRoundTrip={form.isRoundTrip}
                             onOriginChange={updateOrigin}
                             onDestinationChange={updateDestination}
                             onStopsChange={updateStops}

@@ -1,4 +1,4 @@
-import { CarFront, Clock3, Percent, Route, Ticket } from "lucide-react"
+import { ArrowLeft, CarFront, Clock3, Percent, Repeat, Route, Ticket } from "lucide-react"
 import { getVehicleDisplayName } from "../../../../utils/vehicles"
 import { TRIP_TYPE_LABELS } from "../../../../utils/pricingEngine"
 
@@ -191,7 +191,54 @@ function PaymentTypeField({ styles, value, onChange }) {
     )
 }
 
+function RoundTripField({ styles, value, onChange }) {
+    return (
+        <div className={styles.paymentSwitchWrapper}>
+            <span className={styles.formLabel}>כיוון הנסיעה</span>
+
+            <button
+                type="button"
+                className={styles.paymentSwitchArea}
+                onClick={() => onChange(!value)}
+                aria-label={`כיוון הנסיעה: ${value ? 'הלוך חזור' : 'הלוך'}. לחיצה להחלפה`}
+            >
+                <span
+                    className={`${styles.paymentSwitchLabel} ${!value ? styles.paymentSwitchLabelActive : ''
+                        }`}
+                >
+                    <ArrowLeft
+                        className={styles.paymentSwitchIcon}
+                        strokeWidth={1.9}
+                        aria-hidden="true"
+                    />
+
+                    <span>הלוך</span>
+                </span>
+
+                <span
+                    className={`${styles.paymentSwitchLabel} ${value ? styles.paymentSwitchLabelActive : ''
+                        }`}
+                >
+                    <Repeat
+                        className={styles.paymentSwitchIcon}
+                        strokeWidth={1.9}
+                        aria-hidden="true"
+                    />
+
+                    <span>הלוך חזור</span>
+                </span>
+
+                <span
+                    className={`${styles.paymentSwitchThumb} ${!value ? styles.paymentSwitchThumbRight : ''
+                        }`}
+                />
+            </button>
+        </div>
+    )
+}
+
 export {
+    RoundTripField,
     VehicleField,
     TripTypeField,
     TollsField,

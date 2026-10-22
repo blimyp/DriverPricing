@@ -11,6 +11,7 @@ function DrivingRoute({
     origin,
     destination,
     stops,
+    isRoundTrip,
     onOriginChange,
     onDestinationChange,
     onStopsChange,
@@ -106,6 +107,21 @@ function DrivingRoute({
                     </div>
                 ))}
 
+                <button
+                    className="addStopButton"
+                    type="button"
+                    onClick={addStop}
+                >
+                    <span className="addStopIcon">
+                        <Plus
+                            strokeWidth={2.2}
+                            aria-hidden="true"
+                        />
+                    </span>
+
+                    <span>הוספת תחנה למסלול</span>
+                </button>
+
                 <div className="formField">
                     <label
                         className="formLabel"
@@ -121,13 +137,15 @@ function DrivingRoute({
                             aria-hidden="true"
                         />
 
+                        {/* בהלוך חזור היעד זהה למוצא ואינו ניתן לעריכה */}
                         <input
-                            className="formControl"
+                            className={`formControl ${isRoundTrip ? 'formControlReadOnly' : ''}`}
                             id="destination"
                             name="destination"
                             type="text"
-                            placeholder="לדוגמה: תל אביב"
+                            placeholder={isRoundTrip ? 'זהה לנקודת המוצא' : 'לדוגמה: תל אביב'}
                             value={destination}
+                            readOnly={isRoundTrip}
                             onChange={(event) =>
                                 onDestinationChange(event.target.value)
                             }
@@ -135,21 +153,6 @@ function DrivingRoute({
                     </div>
                 </div>
             </div>
-
-            <button
-                className="addStopButton"
-                type="button"
-                onClick={addStop}
-            >
-                <span className="addStopIcon">
-                    <Plus
-                        strokeWidth={2.2}
-                        aria-hidden="true"
-                    />
-                </span>
-
-                <span>הוספת תחנה למסלול</span>
-            </button>
         </div>
     )
 }
