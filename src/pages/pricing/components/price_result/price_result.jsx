@@ -3,6 +3,10 @@ import { Link } from "react-router-dom"
 import { useAuth } from "../../../../contexts/AuthContext"
 import { saveTrip } from "../../../../services/tripsService"
 import { calculateTripPrice } from "../../../../utils/pricingEngine"
+import { getDriverCostLabel } from "../../../../utils/driverCost"
+
+const formatHours = (hours) =>
+    `${Number(hours.toFixed(2)).toLocaleString('he-IL')} ש׳`
 
 const formatMoney = (value) =>
     `₪${Number(value || 0).toLocaleString('he-IL', {
@@ -41,6 +45,7 @@ function PriceResult({
             trip: {
                 distanceKm: form.distanceKm,
                 driverHours,
+                startTime: form.startTime,
                 tolls: form.tolls,
                 tripType: form.tripType,
                 driverPaymentType: form.driverPaymentType,
@@ -101,9 +106,10 @@ function PriceResult({
         { label: `עלות קבועה (₪${result.fixed.perKm.toFixed(2)} לק״מ)`, value: costs.fixed },
         { label: 'דלק', value: costs.fuel },
         { label: 'בלאי ותחזוקה', value: costs.maintenance },
-        ...(form.driverPaymentType === 'hourly'
-            ? [{ label: 'נהג (לפי שעות)', value: costs.driver }]
-            : []),
+        ...(result.driverCostDetails?.breakdown || []).map((group) => ({
+            label: `נהג – ${formatHours(group.hours)} ${getDriverCostLabel(group)}`,
+            value: group.cost,
+        })),
         ...(costs.tolls ? [{ label: 'אגרות וחניונים', value: costs.tolls }] : []),
         ...(result.dedicatedSurchargePercent
             ? [{ label: `תוספת רכב צמוד (${result.dedicatedSurchargePercent}%)`, value: costs.adjusted - costs.base }]
@@ -178,6 +184,14 @@ function PriceResult({
                 {showDetails && (
                     <p className={styles.detailsDistance}>
                         מרחק לחישוב: {result.totalKm.toFixed(1)} ק״מ (כולל {result.deadheadKm} מנהלתי)
+                    </p>
+                )}
+
+                {showDetails && result.driverCostDetails && (
+                    <p className={styles.detailsDistance}>
+                        עלות מעסיק לשעה רגילה: {formatMoney(result.driverCostDetails.hourlyCost)}
+                        {result.driverCostDetails.isNightShift &&
+                            ` · משמרת לילה (יום עבודה של ${result.driverCostDetails.regularLimit} שעות)`}
                     </p>
                 )}
 

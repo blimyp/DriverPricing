@@ -1,4 +1,4 @@
-import { ArrowLeft, CarFront, Clock3, Percent, Repeat, Route, Ticket } from "lucide-react"
+import { ArrowLeft, CalendarClock, CarFront, Clock3, Percent, Repeat, Route, Ticket } from "lucide-react"
 import { getVehicleDisplayName } from "../../../../utils/vehicles"
 import { TRIP_TYPE_LABELS } from "../../../../utils/pricingEngine"
 
@@ -96,6 +96,33 @@ function TollsField({ styles, value, onChange }) {
                 />
 
                 <span className={styles.inputSuffix}>₪</span>
+            </div>
+        </div>
+    )
+}
+
+function StartTimeField({ styles, value, onChange }) {
+    return (
+        <div className={styles.formField}>
+            <label className={styles.formLabel} htmlFor="startTime">
+                מועד הנסיעה
+            </label>
+
+            <div className={styles.inputWrapper}>
+                <CalendarClock
+                    className={styles.inputIcon}
+                    strokeWidth={1.9}
+                    aria-hidden="true"
+                />
+
+                <input
+                    className={styles.formControl}
+                    id="startTime"
+                    name="startTime"
+                    type="datetime-local"
+                    value={value}
+                    onChange={onChange}
+                />
             </div>
         </div>
     )
@@ -243,5 +270,6 @@ export {
     TripTypeField,
     TollsField,
     PlannedDurationField,
+    StartTimeField,
     PaymentTypeField,
 }

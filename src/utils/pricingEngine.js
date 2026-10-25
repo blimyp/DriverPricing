@@ -1,4 +1,5 @@
 import { getVehicleAgeGroup } from './vehicles'
+import { calculateDriverCost } from './driverCost'
 
 // מנוע תמחור נסיעה – כל הסכומים ללא מע״מ, חוץ מהמחירים הסופיים ללקוח
 
@@ -53,6 +54,7 @@ export function calculateFixedCostPerKm({ vehicle, settings, fleetSize }) {
  * trip: {
  *   distanceKm      – מרחק המסלול
  *   driverHours     – שעות נהג (נסיעה + הכנה + המתנה)
+ *   startTime       – מועד תחילת הנסיעה, לחישוב לילה, שבת וחג
  *   tolls           – אגרות וחניונים
  *   tripType        – 'dropoff' | 'dedicated'
  *   driverPaymentType – 'hourly' | 'percentage'
@@ -97,9 +99,14 @@ export function calculateTripPrice({ vehicle, settings, fleetSize, trip }) {
     }
 
     // בתשלום שעתי – עלות הנהג חלק מהעלות. באחוזים – נגזרת מהמחיר עצמו
-    const hourlyDriverCost = isPercentageDriver
-        ? 0
-        : toNumber(trip.driverHours) * toNumber(settings.hourly_driver_price)
+    const driverCostDetails = isPercentageDriver
+        ? null
+        : calculateDriverCost({
+            startTime: trip.startTime,
+            hours: trip.driverHours,
+            settings,
+        })
+    const hourlyDriverCost = driverCostDetails?.total ?? 0
 
     const baseCost =
         fixedCost + fuelCost + maintenanceCost + hourlyDriverCost + tolls
@@ -140,6 +147,7 @@ export function calculateTripPrice({ vehicle, settings, fleetSize, trip }) {
         multiplier,
         dedicatedSurchargePercent,
         fixed,
+        driverCostDetails,
         costs: {
             fixed: fixedCost,
             fuel: fuelCost,

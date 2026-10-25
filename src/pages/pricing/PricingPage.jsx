@@ -9,6 +9,7 @@ import DrivingRoute from './components/driving_route/driving_route'
 import {
     RoundTripField,
     PlannedDurationField,
+    StartTimeField,
     VehicleField,
     TripTypeField,
     TollsField,
@@ -38,6 +39,7 @@ const initialForm = {
     plannedDuration: '',
     vehicleId: '',
     tripType: 'dropoff',
+    startTime: '',
     tolls: '',
 
     driverPaymentType: 'hourly',
@@ -184,6 +186,11 @@ function PricingPage() {
     }
 
     function validateDetailsTurn() {
+        // לפי המועד מחושבות תוספות לילה, שבת וחג
+        if (!form.startTime) {
+            return 'יש לבחור את מועד הנסיעה'
+        }
+
         if (form.tripType === 'dedicated') {
             const plannedDuration = Number(form.plannedDuration)
 
@@ -295,7 +302,7 @@ function PricingPage() {
                 ]
 
             case 'details':
-                return `האם זו הקפצה או רכב צמוד? ויש אגרות או חניונים בדרך? (נוסיף אוטומטית ${settings?.deadhead_km ?? 20} ק״מ מנהלתיים מהחניון וחזרה)`
+                return `מתי הנסיעה, והאם זו הקפצה או רכב צמוד? ויש אגרות או חניונים בדרך? (נוסיף אוטומטית ${settings?.deadhead_km ?? 20} ק״מ מנהלתיים מהחניון וחזרה)`
 
             case 'payment':
                 return 'איך תרצה לשלם לנהג בנסיעה הזו — לפי אחוזים ממחיר הנסיעה או לפי מחיר שעתי?'
@@ -332,7 +339,15 @@ function PricingPage() {
                 const hoursSuffix =
                     form.tripType === 'dedicated' ? ` ${form.plannedDuration} שעות` : ''
 
-                return `${TRIP_TYPE_LABELS[form.tripType]}${hoursSuffix}${tollsSuffix}`
+                const startTime = new Date(form.startTime).toLocaleString('he-IL', {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                })
+
+                return `${startTime} · ${TRIP_TYPE_LABELS[form.tripType]}${hoursSuffix}${tollsSuffix}`
             }
 
             case 'payment':
@@ -448,6 +463,12 @@ function PricingPage() {
             case 'details':
                 return (
                     <>
+                        <StartTimeField
+                            styles={styles}
+                            value={form.startTime}
+                            onChange={handleChange}
+                        />
+
                         <TripTypeField
                             styles={styles}
                             value={form.tripType}
@@ -483,7 +504,7 @@ function PricingPage() {
                         />
 
                         <p className={styles.settingsHint}>
-                            אפשר לערוך את מחיר השעה ואת אחוז התשלום לנהג בעמוד{' '}
+                            אפשר לערוך את השכר לשעה ואת אחוז התשלום לנהג בעמוד{' '}
                             <Link to="/prices" className={styles.settingsLink}>
                                 ההגדרות
                             </Link>

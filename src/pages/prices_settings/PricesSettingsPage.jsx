@@ -3,6 +3,7 @@ import {
     BusFront,
     Check,
     Gauge,
+    HandCoins,
     Pencil,
     Percent,
     Wrench,
@@ -11,6 +12,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext'
 import { updateProfileSetting } from '../../services/profileService'
 import { VEHICLE_TYPE_LABELS } from '../../utils/vehicles'
+import { DRIVER_COST_DEFAULTS } from '../../utils/driverCost'
 import VehiclesSection from './components/vehicles_section'
 import './PricesSettingsPage.css'
 
@@ -37,10 +39,35 @@ const SETTINGS_GROUPS = [
             {
                 fields: [
                     { key: 'fuel_price_per_liter', label: 'מחיר לליטר דלק', hint: 'ללא מע״מ', suffix: '₪', step: '0.1' },
-                    { key: 'hourly_driver_price', label: 'עלות שעת נהג', hint: 'למעסיק', suffix: '₪', step: '1' },
                     { key: 'driver_percentage', label: 'אחוז לנהג', suffix: '%', step: '1', max: 100 },
                     { key: 'company_overhead_monthly', label: 'תקורת משרד חודשית', hint: 'משרד, מוקד, תוכנה', suffix: '₪', step: '100' },
                     { key: 'deadhead_km', label: 'ק״מ מנהלתי לנסיעה', hint: 'הגעה וחזרה לחניון', suffix: 'ק״מ', step: '1' },
+                ],
+            },
+        ],
+    },
+    {
+        id: 'driver_cost',
+        title: 'עלות נהג',
+        description: 'שכר, עלויות נלוות ותוספות לשעות נוספות, לילה, שבת וחג',
+        icon: HandCoins,
+        blocks: [
+            {
+                title: 'עלות שעה',
+                fields: [
+                    { key: 'driver_gross_hourly', label: 'שכר ברוטו לשעה', hint: 'מה שהנהג מקבל לפני ניכויים', suffix: '₪', step: '1' },
+                    { key: 'driver_cost_factor', label: 'מקדם עלויות נלוות', hint: 'פנסיה, ביטוח לאומי, חופשה, הבראה ומחלה', suffix: '×', step: '0.01' },
+                    { key: 'employer_national_insurance_percent', label: 'ביטוח לאומי (חלק מעסיק)', hint: 'מתווסף לתוספת של שעות נוספות, שבת וחג', suffix: '%', step: '0.1', max: 100 },
+                ],
+            },
+            {
+                title: 'תוספות',
+                fields: [
+                    { key: 'regular_shift_hours', label: 'יום עבודה רגיל', suffix: 'שעות', step: '0.5' },
+                    { key: 'night_shift_hours', label: 'משמרת לילה', hint: 'שעתיים לפחות בין 22:00 ל־06:00', suffix: 'שעות', step: '0.5' },
+                    { key: 'overtime_rate_first', label: 'שעות נוספות', hint: 'השעתיים הראשונות', suffix: '%', step: '5' },
+                    { key: 'overtime_rate_after', label: 'שעות נוספות', hint: 'מהשעה השלישית', suffix: '%', step: '5' },
+                    { key: 'rest_day_rate', label: 'שבת וחג', hint: 'בשעות נוספות מתווספת גם תוספת השעות הנוספות', suffix: '%', step: '5' },
                 ],
             },
         ],
@@ -103,8 +130,10 @@ function PricesSettingsPage() {
     const [savingSetting, setSavingSetting] = useState(null)
     const [savedSetting, setSavedSetting] = useState(null)
 
+    // שדה שעוד לא נשמר מציג את ברירת המחדל שבה משתמש החישוב
     const getValue = (key) =>
-        key in savedValues ? savedValues[key] : user?.[key]
+        (key in savedValues ? savedValues[key] : user?.[key]) ??
+        DRIVER_COST_DEFAULTS[key]
 
     const handleEditSetting = (setting) => {
         setEditingSetting(setting.key)
