@@ -1,4 +1,4 @@
-import { CalendarDays, Pencil, HandCoins, Trash2, User } from 'lucide-react'
+import { Pencil, HandCoins, Trash2, User } from 'lucide-react'
 
 import './driver_trip_item.css'
 
@@ -69,14 +69,13 @@ function PaymentItem({ payment, compact = false, onEdit, onDelete }) {
             </div>
 
             <div className="driver-trip-item-meta">
-                <span className="driver-trip-item-date">
-                    <CalendarDays size={13} strokeWidth={2} />
-                    {formatDate(payment.created_at)}
-                </span>
-
                 <span className="driver-trip-item-price">
                     <HandCoins size={13} strokeWidth={2} />
                     {formatAmount(payment.amount)}
+                </span>
+
+                <span className="driver-trip-item-date">
+                    {formatDate(payment.created_at)}
                 </span>
 
                 {onEdit && (

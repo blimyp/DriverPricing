@@ -25,7 +25,12 @@ import {
     savePayment,
     updatePayment,
 } from '../../services/paymentsService'
-import { calculateDriverBalance } from '../../utils/driverBalance'
+import { getUserProfile } from '../../services/profileService'
+import { useAuth } from '../../contexts/AuthContext'
+import {
+    calculateDriverBalance,
+    getVatPercent,
+} from '../../utils/driverBalance'
 
 import './DriversPage.css'
 import ConfirmDeleteForm from './components/confirm_delete_form'
@@ -63,6 +68,9 @@ function formatDate(value) {
 }
 
 function DriversPage() {
+    const { user } = useAuth()
+    const [vatPercent, setVatPercent] = useState(getVatPercent(user))
+
     const [drivers, setDrivers] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
@@ -124,6 +132,17 @@ function DriversPage() {
     useEffect(() => {
         initialize()
     }, [])
+
+    // אחוז המע״מ נלקח מעמוד ההגדרות
+    useEffect(() => {
+        if (!user?.id) return
+
+        getUserProfile(user.id)
+            .then((profile) => setVatPercent(getVatPercent(profile)))
+            .catch((error) =>
+                console.error('Error loading VAT settings:', error)
+            )
+    }, [user])
 
     const initialize = async () => {
         const driversData = await loadDrivers()
@@ -637,6 +656,7 @@ function DriversPage() {
                                         trips={driverTrips}
                                         payments={driverPayments}
                                         balance={balance}
+                                        vatPercent={vatPercent}
                                         onAddTrip={() =>
                                             openAddTripPopup(
                                                 driver.id
@@ -775,6 +795,7 @@ function DriversPage() {
                                 <DriverTripItem
                                     key={trip.id}
                                     trip={trip}
+                                    vatPercent={vatPercent}
                                     onEdit={() =>
                                         openEditTripPopup(trip)
                                     }
@@ -871,6 +892,7 @@ function DriversPage() {
                     initialDriverId={selectedDriverId}
                     lockDriver={Boolean(selectedDriverId)}
                     trip={editingTrip}
+                    vatPercent={vatPercent}
                     onSubmit={
                         editingTrip ? handleEditTrip : handleAddTrip
                     }

@@ -1,8 +1,10 @@
-import { CalendarDays, Pencil, Trash2, User, Wallet } from 'lucide-react'
+import { Pencil, Trash2, User, Wallet } from 'lucide-react'
+
+import { getPriceWithVat } from '../../../utils/driverBalance'
 
 import './driver_trip_item.css'
 
-function DriverTripItem({ trip, compact = false, onEdit, onDelete }) {
+function DriverTripItem({ trip, vatPercent, compact = false, onEdit, onDelete }) {
     function formatPrice(value) {
         const numericValue = Number(value)
 
@@ -74,14 +76,19 @@ function DriverTripItem({ trip, compact = false, onEdit, onDelete }) {
             </div>
 
             <div className="driver-trip-item-meta">
-                <span className="driver-trip-item-date">
-                    <CalendarDays size={13} strokeWidth={2} />
-                    {formatDate(trip.created_at)}
+                <span className="driver-trip-item-price driver-trip-item-price-stacked">
+                    <span className="driver-trip-item-price-main">
+                        <Wallet size={13} strokeWidth={2} />
+                        {formatPrice(trip.calculated_price)}
+                    </span>
+
+                    <span className="driver-trip-item-price-vat">
+                        כולל מע״מ: {formatPrice(getPriceWithVat(trip.calculated_price, vatPercent))}
+                    </span>
                 </span>
 
-                <span className="driver-trip-item-price">
-                    <Wallet size={13} strokeWidth={2} />
-                    {formatPrice(trip.calculated_price)}
+                <span className="driver-trip-item-date">
+                    {formatDate(trip.created_at)}
                 </span>
 
                 {onEdit && (

@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+import { getPriceWithVat } from '../../../utils/driverBalance'
+
 import './drivers_form.css'
 
 function getTodayDate() {
@@ -21,6 +23,7 @@ function DriverTripForm({
     initialDriverId,
     lockDriver,
     trip = null,
+    vatPercent,
     onSubmit,
     onCancel,
 }) {
@@ -169,7 +172,7 @@ function DriverTripForm({
 
                 <div className="drivers-form-field">
                     <label htmlFor="trip-price">
-                        מחיר הנסיעה
+                        מחיר הנסיעה (לפני מע״מ)
                     </label>
 
                     <div className="drivers-form-price-wrapper">
@@ -191,6 +194,15 @@ function DriverTripForm({
 
                         <span>₪</span>
                     </div>
+
+                    {Number(price) > 0 && (
+                        <p className="drivers-form-price-vat">
+                            מחיר כולל מע״מ ({vatPercent}%): ₪
+                            {getPriceWithVat(price, vatPercent).toLocaleString('he-IL', {
+                                maximumFractionDigits: 2,
+                            })}
+                        </p>
+                    )}
                 </div>
 
                 <div className="drivers-form-field">

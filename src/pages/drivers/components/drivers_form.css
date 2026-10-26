@@ -152,6 +152,15 @@
     pointer-events: none;
 }
 
+.drivers-form-price-vat {
+    margin: 2px 0 0;
+
+    color: var(--text);
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
 .drivers-form-actions {
     display: flex;
     align-items: center;

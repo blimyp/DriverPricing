@@ -1,4 +1,18 @@
 export const DEFAULT_DRIVER_PERCENTAGE = 30
+export const DEFAULT_VAT_PERCENT = 18
+
+export function getVatPercent(settings) {
+    const vatPercent = Number(settings?.vat_percent)
+
+    return Number.isFinite(vatPercent) && vatPercent >= 0
+        ? vatPercent
+        : DEFAULT_VAT_PERCENT
+}
+
+// מחיר הנסיעה נשמר לפני מע״מ
+export function getPriceWithVat(price, vatPercent) {
+    return (Number(price) || 0) * (1 + vatPercent / 100)
+}
 
 export function getDriverPercentage(driver) {
     return Number(driver?.driver_percentage) > 0

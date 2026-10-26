@@ -41,6 +41,7 @@ function DriverGroupCard({
     onDeletePayment,
     onDeleteDriver,
     balance,
+    vatPercent,
     onUpdateStartingBalance,
 }) {
     const displayName =
@@ -185,6 +186,7 @@ function DriverGroupCard({
                                     <DriverTripItem
                                         key={`trip-${item.id}`}
                                         trip={item}
+                                        vatPercent={vatPercent}
                                         compact
                                         onEdit={() => onEditTrip(item)}
                                         onDelete={() => onDeleteTrip(item)}
