@@ -110,6 +110,10 @@ function PriceResult({
             label: `נהג – ${formatHours(group.hours)} ${getDriverCostLabel(group)}`,
             value: group.cost,
         })),
+        // באחוזים – חלק הנהג נגזר מהמחיר הרגיל
+        ...(result.driverPercentage
+            ? [{ label: `נהג (${result.driverPercentage}% מהמחיר הרגיל)`, value: regular.driverCost }]
+            : []),
         ...(costs.tolls ? [{ label: 'אגרות וחניונים', value: costs.tolls }] : []),
         ...(result.dedicatedSurchargePercent
             ? [{ label: `תוספת רכב צמוד (${result.dedicatedSurchargePercent}%)`, value: costs.adjusted - costs.base }]
@@ -209,7 +213,7 @@ function PriceResult({
                         <tfoot>
                             <tr>
                                 <td>סה״כ הוצאות</td>
-                                <td>{formatMoney(costs.adjusted)}</td>
+                                <td>{formatMoney(regular.totalCost)}</td>
                             </tr>
                         </tfoot>
                     </table>

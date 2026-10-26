@@ -6,6 +6,14 @@
     display: inline-flex;
 }
 
+/* The hover lift on the card traps the popover's z-index inside it,
+   so the card itself is raised above the next cards while it's open */
+.driver-item:has(.starting-balance-editor-popover),
+.driver-group-card:has(.starting-balance-editor-popover) {
+    position: relative;
+    z-index: 20;
+}
+
 .driver-edit-button.open {
     background: #e5e7eb;
 }

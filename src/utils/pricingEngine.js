@@ -90,9 +90,10 @@ export function calculateTripPrice({ vehicle, settings, fleetSize, trip }) {
 
     const margin = toNumber(settings.target_margin_percent) / 100
     const isPercentageDriver = trip.driverPaymentType === 'percentage'
-    const driverShare = isPercentageDriver
-        ? toNumber(settings.driver_percentage) / 100
+    const driverPercentage = isPercentageDriver
+        ? toNumber(settings.driver_percentage)
         : 0
+    const driverShare = driverPercentage / 100
 
     if (margin + driverShare >= 1) {
         throw new Error('אחוז הרווח ואחוז הנהג יחד חייבים להיות פחות מ־100%')
@@ -147,6 +148,7 @@ export function calculateTripPrice({ vehicle, settings, fleetSize, trip }) {
         multiplier,
         dedicatedSurchargePercent,
         fixed,
+        driverPercentage,
         driverCostDetails,
         costs: {
             fixed: fixedCost,
