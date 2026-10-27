@@ -120,10 +120,16 @@ function PriceResult({
             : []),
     ]
 
-    const routes = [
-        { key: 'regular', title: 'מחיר רגיל (אשראי)', data: regular },
-        { key: 'cash', title: 'מחיר מוזל (מקדמה + מזומן)', data: cash },
-    ]
+    const hasCashDiscount = Number(settings.cash_discount_percent) > 0
+
+    const routes = hasCashDiscount
+        ? [
+            { key: 'regular', title: 'מחיר רגיל (אשראי)', data: regular },
+            { key: 'cash', title: 'מחיר מוזל (מקדמה + מזומן)', data: cash },
+        ]
+        : [
+            { key: 'regular', title: 'מחיר הנסיעה', data: regular },
+        ]
 
     return (
         <section className={styles.priceResult}>
