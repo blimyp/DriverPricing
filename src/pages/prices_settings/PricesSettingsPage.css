@@ -53,6 +53,44 @@
     gap: 12px;
 }
 
+.prices-section.collapsed .prices-section-header {
+    margin-bottom: 0;
+}
+
+.prices-section-toggle {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    text-align: right;
+    cursor: pointer;
+}
+
+.prices-section-chevron-button {
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: 4px;
+    border: none;
+    background: none;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.prices-section-chevron {
+    transition: transform 0.2s ease;
+}
+
+.prices-section-chevron.open {
+    transform: rotate(180deg);
+}
+
+.prices-section-header:has(.prices-section-toggle:hover) .prices-section-chevron-button,
+.prices-section-chevron-button:hover {
+    color: var(--primary-dark);
+}
+
 .prices-section-icon {
     display: inline-flex;
     align-items: center;

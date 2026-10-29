@@ -13,11 +13,12 @@ import {
     getVehicleAge,
 } from '../../../utils/vehicles'
 import VehicleForm from './vehicle_form'
+import SectionHeader from './section_header'
 
 const formatNumber = (value) =>
     Number(value || 0).toLocaleString('he-IL')
 
-function VehiclesSection({ userId }) {
+function VehiclesSection({ userId, isOpen, onToggle }) {
     const [vehicles, setVehicles] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
@@ -92,29 +93,28 @@ function VehiclesSection({ userId }) {
     }
 
     return (
-        <section className="prices-section">
-            <div className="prices-section-header">
-                <div className="prices-section-title">
-                    <span className="prices-section-icon">
-                        <Bus size={18} />
-                    </span>
-                    <div>
-                        <h2>הרכבים שלי</h2>
-                        <p>מהם מחושבת העלות הקבועה של כל נסיעה</p>
-                    </div>
-                </div>
-
+        <section className={`prices-section${isOpen ? '' : ' collapsed'}`}>
+            <SectionHeader
+                icon={Bus}
+                title="הרכבים שלי"
+                description="מהם מחושבת העלות הקבועה של כל נסיעה"
+                isOpen={isOpen}
+                onToggle={onToggle}
+            >
                 <button
                     type="button"
                     className="prices-add-button"
-                    onClick={() => setFormVehicle('new')}
+                    onClick={() => {
+                        setFormVehicle('new')
+                        if (!isOpen) onToggle()
+                    }}
                 >
                     <Plus size={16} strokeWidth={2.4} aria-hidden="true" />
                     הוספת רכב
                 </button>
-            </div>
+            </SectionHeader>
 
-            {loading ? (
+            {!isOpen ? null : loading ? (
                 <div className="prices-empty">טוען רכבים...</div>
             ) : error ? (
                 <div className="prices-error">{error}</div>

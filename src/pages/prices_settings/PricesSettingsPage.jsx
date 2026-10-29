@@ -14,6 +14,7 @@ import { updateProfileSetting } from '../../services/profileService'
 import { VEHICLE_TYPE_LABELS } from '../../utils/vehicles'
 import { DRIVER_COST_DEFAULTS } from '../../utils/driverCost'
 import VehiclesSection from './components/vehicles_section'
+import SectionHeader from './components/section_header'
 import './PricesSettingsPage.css'
 
 const SETTINGS_GROUPS = [
@@ -129,6 +130,23 @@ function PricesSettingsPage() {
     const [editedSettingValue, setEditedSettingValue] = useState('')
     const [savingSetting, setSavingSetting] = useState(null)
     const [savedSetting, setSavedSetting] = useState(null)
+
+    // כל הקטגוריות סגורות בהתחלה, כדי שהעמוד לא יהיה ארוך מדי
+    const [openSections, setOpenSections] = useState(() => new Set())
+
+    const toggleSection = (id) => {
+        setOpenSections((current) => {
+            const next = new Set(current)
+
+            if (next.has(id)) {
+                next.delete(id)
+            } else {
+                next.add(id)
+            }
+
+            return next
+        })
+    }
 
     // שדה שעוד לא נשמר מציג את ברירת המחדל שבה משתמש החישוב
     const getValue = (key) =>
@@ -309,25 +327,29 @@ function PricesSettingsPage() {
                     <p>הנתונים כאן משמשים לחישוב המחיר של כל נסיעה. לחצי על ערך כדי לשנות אותו.</p>
                 </header>
 
-                <VehiclesSection userId={user.id} />
+                <VehiclesSection
+                    userId={user.id}
+                    isOpen={openSections.has('vehicles')}
+                    onToggle={() => toggleSection('vehicles')}
+                />
 
                 {SETTINGS_GROUPS.map((group) => {
-                    const Icon = group.icon
+                    const isOpen = openSections.has(group.id)
 
                     return (
-                        <section className="prices-section" key={group.id}>
-                            <div className="prices-section-header">
-                                <div className="prices-section-title">
-                                    <span className="prices-section-icon">
-                                        <Icon size={18} />
-                                    </span>
-                                    <div>
-                                        <h2>{group.title}</h2>
-                                        <p>{group.description}</p>
-                                    </div>
-                                </div>
-                            </div>
+                        <section
+                            className={`prices-section${isOpen ? '' : ' collapsed'}`}
+                            key={group.id}
+                        >
+                            <SectionHeader
+                                icon={group.icon}
+                                title={group.title}
+                                description={group.description}
+                                isOpen={isOpen}
+                                onToggle={() => toggleSection(group.id)}
+                            />
 
+                            {isOpen && (
                             <div className={`settings-blocks blocks-${group.blocks.length}`}>
                                 {group.blocks.map((block, index) => (
                                     <div className="settings-block" key={block.title || index}>
@@ -338,6 +360,7 @@ function PricesSettingsPage() {
                                     </div>
                                 ))}
                             </div>
+                            )}
                         </section>
                     )
                 })}
