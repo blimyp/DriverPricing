@@ -15,6 +15,7 @@ import {
     TollsField,
     PaymentTypeField,
 } from './components/driving_details/driving_details'
+import { toStartTimeValue } from '../../utils/startTime'
 import PriceResult from './components/price_result/price_result'
 import ChatMessageGroup from './components/chat/ChatMessageGroup'
 import UserAnswerBubble from './components/chat/UserAnswerBubble'
@@ -46,7 +47,10 @@ const initialForm = {
 }
 
 function PricingPage() {
-    const [form, setForm] = useState(initialForm)
+    const [form, setForm] = useState(() => ({
+        ...initialForm,
+        startTime: toStartTimeValue(new Date()),
+    }))
     const [activeTurnIndex, setActiveTurnIndex] = useState(0)
     const [seenTurnIndexes, setSeenTurnIndexes] = useState(() => new Set())
     const [isActiveTextRevealed, setIsActiveTextRevealed] = useState(false)
