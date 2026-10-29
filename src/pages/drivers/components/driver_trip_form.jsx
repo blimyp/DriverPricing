@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ArrowRightLeft } from 'lucide-react'
 
 import { getPriceWithVat } from '../../../utils/driverBalance'
 
@@ -46,6 +47,27 @@ function DriverTripForm({
         useState(false)
 
     const [error, setError] = useState('')
+
+    // המחיר שהיה לפני הורדת המע״מ, כדי שלחיצה נוספת תחזיר אותו
+    const [priceBeforeVatRemoval, setPriceBeforeVatRemoval] = useState(null)
+
+    // המחיר שהוזן כולל מע״מ - מחשבים ממנו את המחיר לפני מע״מ
+    const handleToggleVat = () => {
+        if (priceBeforeVatRemoval !== null) {
+            setPrice(priceBeforeVatRemoval)
+            setPriceBeforeVatRemoval(null)
+            return
+        }
+
+        const priceWithoutVat = Number(price) / (1 + vatPercent / 100)
+
+        setPriceBeforeVatRemoval(price)
+        setPrice(String(Math.round(priceWithoutVat * 100) / 100))
+    }
+
+    const vatToggleLabel = priceBeforeVatRemoval !== null
+        ? 'החזר למחיר הקודם'
+        : 'חשב מחיר ללא מע״מ'
 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -184,15 +206,25 @@ function DriverTripForm({
                             inputMode="decimal"
                             placeholder="0.00"
                             value={price}
-                            onChange={(event) =>
-                                setPrice(
-                                    event.target.value
-                                )
-                            }
+                            onChange={(event) => {
+                                setPrice(event.target.value)
+                                setPriceBeforeVatRemoval(null)
+                            }}
                             disabled={sending}
                         />
 
                         <span>₪</span>
+
+                        <button
+                            type="button"
+                            className="drivers-form-price-convert"
+                            data-tooltip={vatToggleLabel}
+                            aria-label={vatToggleLabel}
+                            onClick={handleToggleVat}
+                            disabled={sending || !(Number(price) > 0)}
+                        >
+                            <ArrowRightLeft size={15} />
+                        </button>
                     </div>
 
                     {Number(price) > 0 && (
