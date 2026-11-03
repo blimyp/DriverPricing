@@ -434,9 +434,29 @@
     font-size: 13px;
 }
 
+/* Pushes the search (and the count after it) to the end of the header row */
+.drivers-section-header-extra {
+    margin-inline-start: auto;
+}
+
+/* On narrow screens the search moves to its own full-width row
+   below the title and the count. */
 @media (max-width: 768px) {
+    .drivers-section-header,
+    .drivers-by-driver-header {
+        flex-wrap: wrap;
+    }
+
+    .drivers-section-header-extra {
+        order: 1;
+        flex-basis: 100%;
+        margin-inline-start: 0;
+    }
+
     .drivers-search input {
-        width: 100px;
+        width: 100%;
+        min-width: 0;
+        flex: 1;
     }
 }
 

@@ -57,13 +57,16 @@ function DriversSection({
                     </div>
                 </div>
 
-                <div className="drivers-section-header-end">
-                    {headerExtra && (
-                        <div onClick={(event) => event.stopPropagation()}>
-                            {headerExtra}
-                        </div>
-                    )}
+                {headerExtra && (
+                    <div
+                        className="drivers-section-header-extra"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        {headerExtra}
+                    </div>
+                )}
 
+                <div className="drivers-section-header-end">
                     <span className="drivers-count">
                         {countLabel}
                     </span>

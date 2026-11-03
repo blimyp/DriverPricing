@@ -652,13 +652,13 @@ function DriversPage() {
                                 </div>
                             </div>
 
-                            <div className="drivers-section-header-end">
+                            <div className="drivers-section-header-extra">
                                 {driverSearchInput}
-
-                                <span className="drivers-count">
-                                    סך נהגים {drivers.length}
-                                </span>
                             </div>
+
+                            <span className="drivers-count">
+                                סך נהגים {drivers.length}
+                            </span>
                         </div>
 
                         {loading || tripsLoading || paymentsLoading ? (
