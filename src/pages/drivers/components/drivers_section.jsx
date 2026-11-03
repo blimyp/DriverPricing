@@ -11,9 +11,14 @@ function DriversSection({
     addLabel,
     onAdd,
     addDisabled = false,
+    headerExtra,
+    forceOpen = false,
     children,
 }) {
-    const [isOpen, setIsOpen] = useState(false)
+    const [isManuallyOpen, setIsOpen] = useState(false)
+
+    // בזמן חיפוש האזור פתוח, כדי שהתוצאות יוצגו
+    const isOpen = isManuallyOpen || forceOpen
 
     return (
         <section
@@ -25,7 +30,7 @@ function DriversSection({
         >
             <div
                 className="drivers-section-header"
-                onClick={() => setIsOpen((current) => !current)}
+                onClick={() => setIsOpen(!isOpen)}
             >
                 <div>
                     <div className="drivers-section-title-row">
@@ -53,6 +58,12 @@ function DriversSection({
                 </div>
 
                 <div className="drivers-section-header-end">
+                    {headerExtra && (
+                        <div onClick={(event) => event.stopPropagation()}>
+                            {headerExtra}
+                        </div>
+                    )}
+
                     <span className="drivers-count">
                         {countLabel}
                     </span>

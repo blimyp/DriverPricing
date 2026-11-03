@@ -4,6 +4,7 @@ import {
     HandCoins,
     LayoutGrid,
     Rows3,
+    Search,
     Users,
 } from 'lucide-react'
 
@@ -126,6 +127,39 @@ function DriversPage() {
             ),
         }
     })
+
+    const [driverSearch, setDriverSearch] = useState('')
+    const searchText = driverSearch.trim().toLowerCase()
+
+    const filteredDriverGroups = searchText
+        ? driverGroups.filter(({ driver }) =>
+            (driver.full_name || driver.email || '')
+                .toLowerCase()
+                .includes(searchText)
+        )
+        : driverGroups
+
+    const driverSearchInput = (
+        <div className="drivers-search">
+            <Search size={15} strokeWidth={2.2} />
+
+            <input
+                type="search"
+                value={driverSearch}
+                onChange={(event) =>
+                    setDriverSearch(event.target.value)
+                }
+                placeholder="חיפוש נהג"
+                aria-label="חיפוש נהג"
+            />
+        </div>
+    )
+
+    const driversNoResults = (
+        <div className="drivers-empty">
+            <p>לא נמצאו נהגים התואמים לחיפוש</p>
+        </div>
+    )
 
     const balancesLoading = tripsLoading || paymentsLoading
 
@@ -618,9 +652,13 @@ function DriversPage() {
                                 </div>
                             </div>
 
-                            <span className="drivers-count">
-                                סך נהגים {drivers.length}
-                            </span>
+                            <div className="drivers-section-header-end">
+                                {driverSearchInput}
+
+                                <span className="drivers-count">
+                                    סך נהגים {drivers.length}
+                                </span>
+                            </div>
                         </div>
 
                         {loading || tripsLoading || paymentsLoading ? (
@@ -642,8 +680,10 @@ function DriversPage() {
                                     נהג לפי כתובת המייל שלו
                                 </p>
                             </div>
+                        ) : filteredDriverGroups.length === 0 ? (
+                            driversNoResults
                         ) : (
-                            driverGroups.map(
+                            filteredDriverGroups.map(
                                 ({
                                     driver,
                                     trips: driverTrips,
@@ -707,6 +747,8 @@ function DriversPage() {
                     countLabel={`סך נהגים ${drivers.length}`}
                     addLabel="הוספת נהג"
                     onAdd={() => setIsAddPopupOpen(true)}
+                    headerExtra={driverSearchInput}
+                    forceOpen={Boolean(searchText)}
                 >
 
                     {loading ? (
@@ -728,9 +770,11 @@ function DriversPage() {
                                 נהג לפי כתובת המייל שלו
                             </p>
                         </div>
+                    ) : filteredDriverGroups.length === 0 ? (
+                        driversNoResults
                     ) : (
                         <div className="drivers-list">
-                            {driverGroups.map(({ driver, balance }) => (
+                            {filteredDriverGroups.map(({ driver, balance }) => (
                                 <DriverItem
                                     key={driver.id}
                                     driver={driver}
