@@ -36,62 +36,6 @@
     z-index: 10;
 }
 
-/* שכבות אור פנימיות */
-
-.background-section::before {
-    content: "";
-
-    position: absolute;
-
-    width: 760px;
-    height: 420px;
-
-    top: -210px;
-    right: 5%;
-
-    z-index: 0;
-    pointer-events: none;
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(ellipse,
-            rgba(255, 255, 255, 0.15) 0%,
-            rgba(98, 255, 214, 0.09) 35%,
-            transparent 72%);
-
-    filter: blur(26px);
-
-    animation: backgroundGlowOne 11s ease-in-out infinite alternate;
-}
-
-.background-section::after {
-    content: "";
-
-    position: absolute;
-
-    width: 700px;
-    height: 470px;
-
-    bottom: -280px;
-    left: 8%;
-
-    z-index: 0;
-    pointer-events: none;
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(ellipse,
-            rgba(0, 57, 65, 0.3) 0%,
-            rgba(0, 76, 73, 0.14) 42%,
-            transparent 75%);
-
-    filter: blur(35px);
-
-    animation: backgroundGlowTwo 13s ease-in-out infinite alternate;
-}
-
 /* טבעות דקורטיביות בפינות */
 
 .background-ring {
@@ -415,24 +359,12 @@
     .background-moving-line {
         width: 520px;
     }
-
-    .background-section::before {
-        width: 480px;
-        height: 330px;
-    }
-
-    .background-section::after {
-        width: 460px;
-        height: 340px;
-    }
 }
 
 /* ביטול תנועה לפי הגדרות המשתמש */
 
 @media (prefers-reduced-motion: reduce) {
 
-    .background-section::before,
-    .background-section::after,
     .background-ring,
     .background-moving-line,
     .hero-preview-wrapper::before {
