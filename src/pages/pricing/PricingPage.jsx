@@ -8,7 +8,6 @@ import BackgroundSection from '../../components/background_section/background_se
 import DrivingRoute from './components/driving_route/driving_route'
 import {
     RoundTripField,
-    PlannedDurationField,
     StartTimeField,
     VehicleField,
     TripTypeField,
@@ -41,9 +40,22 @@ const initialForm = {
     vehicleId: '',
     tripType: 'dropoff',
     startTime: '',
+    endTime: '',
     tolls: '',
 
     driverPaymentType: 'hourly',
+}
+
+// ברכב צמוד – כמה שעות בין מועד ההתחלה למועד הסיום
+function getHoursBetween(startTime, endTime) {
+    const start = new Date(startTime)
+    const end = new Date(endTime)
+
+    if (!startTime || !endTime || Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+        return ''
+    }
+
+    return String(Number(((end - start) / 3600000).toFixed(2)))
 }
 
 function PricingPage() {
@@ -116,7 +128,21 @@ function PricingPage() {
 
     function handleChange(event) {
         const { name, value } = event.target
-        updateFormField(name, value)
+
+        setForm((currentForm) => {
+            const nextForm = { ...currentForm, [name]: value }
+
+            if (name === 'startTime' || name === 'endTime') {
+                nextForm.plannedDuration = getHoursBetween(
+                    nextForm.startTime,
+                    nextForm.endTime
+                )
+            }
+
+            return nextForm
+        })
+
+        setErrorMessage('')
     }
 
     function updateOrigin(value) {
@@ -196,10 +222,12 @@ function PricingPage() {
         }
 
         if (form.tripType === 'dedicated') {
-            const plannedDuration = Number(form.plannedDuration)
+            if (!form.endTime) {
+                return 'יש לבחור מועד סיום'
+            }
 
-            if (!Number.isFinite(plannedDuration) || plannedDuration <= 0) {
-                return 'יש להזין כמה שעות הרכב צמוד'
+            if (!(Number(form.plannedDuration) > 0)) {
+                return 'מועד הסיום חייב להיות אחרי מועד ההתחלה'
             }
         }
 
@@ -254,7 +282,6 @@ function PricingPage() {
                     ...currentForm,
                     distanceKm: result.distanceKm.toFixed(1),
                     routeDuration,
-                    plannedDuration: routeDuration,
                 }))
             } catch (error) {
                 console.error(error)
@@ -341,7 +368,15 @@ function PricingPage() {
                 const tollsSuffix = tolls ? ` · אגרות ₪${tolls}` : ''
 
                 const hoursSuffix =
-                    form.tripType === 'dedicated' ? ` ${form.plannedDuration} שעות` : ''
+                    form.tripType === 'dedicated'
+                        ? ` עד ${new Date(form.endTime).toLocaleString('he-IL', {
+                            weekday: 'short',
+                            day: 'numeric',
+                            month: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        })} (${form.plannedDuration} שעות)`
+                        : ''
 
                 const startTime = new Date(form.startTime).toLocaleString('he-IL', {
                     weekday: 'short',
@@ -467,22 +502,36 @@ function PricingPage() {
             case 'details':
                 return (
                     <>
-                        <StartTimeField
-                            styles={styles}
-                            value={form.startTime}
-                            onChange={handleChange}
-                        />
-
                         <TripTypeField
                             styles={styles}
                             value={form.tripType}
                             onChange={handleChange}
                         />
 
-                        {form.tripType === 'dedicated' && (
-                            <PlannedDurationField
+                        {form.tripType === 'dedicated' ? (
+                            <div className={styles.formRow}>
+                                <StartTimeField
+                                    styles={styles}
+                                    value={form.startTime}
+                                    onChange={handleChange}
+                                    label="מועד התחלה"
+                                    compact
+                                />
+
+                                <StartTimeField
+                                    styles={styles}
+                                    name="endTime"
+                                    value={form.endTime}
+                                    fallbackValue={form.startTime}
+                                    onChange={handleChange}
+                                    label="מועד סיום"
+                                    compact
+                                />
+                            </div>
+                        ) : (
+                            <StartTimeField
                                 styles={styles}
-                                value={form.plannedDuration}
+                                value={form.startTime}
                                 onChange={handleChange}
                             />
                         )}

@@ -3,6 +3,7 @@ import { createPortal } from "react-dom"
 import { CalendarClock, ChevronLeft, ChevronRight } from "lucide-react"
 
 import pickerStyles from "./start_time_picker.module.css"
+import TimeSelect from "./time_select"
 import { pad, toStartTimeValue } from "../../../../utils/startTime"
 
 const WEEK_DAYS = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳']
@@ -39,11 +40,12 @@ function getMonthDays(viewMonth) {
     return days
 }
 
-function StartTimePicker({ styles, value, onChange }) {
+function StartTimePicker({ styles, value, onChange, name = 'startTime', label = 'מועד הנסיעה', compact = false, fallbackValue = '' }) {
     const selectedDate = parseStartTime(value)
     const [isOpen, setIsOpen] = useState(false)
+    const fallbackDate = parseStartTime(fallbackValue)
     const [viewMonth, setViewMonth] = useState(() => {
-        const base = selectedDate || new Date()
+        const base = selectedDate || fallbackDate || new Date()
         return new Date(base.getFullYear(), base.getMonth(), 1)
     })
     const pickerRef = useRef(null)
@@ -110,12 +112,14 @@ function StartTimePicker({ styles, value, onChange }) {
     }, [isOpen])
 
     function emitChange(date) {
-        onChange({ target: { name: 'startTime', value: toStartTimeValue(date) } })
+        onChange({ target: { name, value: toStartTimeValue(date) } })
     }
 
     function handleToggle() {
-        if (!isOpen && selectedDate) {
-            setViewMonth(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1))
+        const openDate = selectedDate || fallbackDate
+
+        if (!isOpen && openDate) {
+            setViewMonth(new Date(openDate.getFullYear(), openDate.getMonth(), 1))
         }
 
         setIsOpen(!isOpen)
@@ -126,12 +130,12 @@ function StartTimePicker({ styles, value, onChange }) {
     }
 
     function selectDay(day) {
-        const base = selectedDate || today
+        const base = selectedDate || fallbackDate || today
         emitChange(new Date(day.getFullYear(), day.getMonth(), day.getDate(), base.getHours(), base.getMinutes()))
     }
 
     function selectTime(hours, minutes) {
-        const base = selectedDate || today
+        const base = selectedDate || fallbackDate || today
         emitChange(new Date(base.getFullYear(), base.getMonth(), base.getDate(), hours, minutes))
     }
 
@@ -141,16 +145,16 @@ function StartTimePicker({ styles, value, onChange }) {
         emitChange(now)
     }
 
-    const selectedHours = selectedDate?.getHours() ?? 0
-    const selectedMinutes = selectedDate?.getMinutes() ?? 0
+    const selectedHours = (selectedDate || fallbackDate)?.getHours() ?? 0
+    const selectedMinutes = (selectedDate || fallbackDate)?.getMinutes() ?? 0
     const minuteOptions = MINUTES.includes(selectedMinutes)
         ? MINUTES
         : [...MINUTES, selectedMinutes].sort((first, second) => first - second)
 
     return (
         <div className={styles.formField} ref={pickerRef}>
-            <label className={styles.formLabel} htmlFor="startTime">
-                מועד הנסיעה
+            <label className={styles.formLabel} htmlFor={name}>
+                {label}
             </label>
 
             <div className={styles.inputWrapper} ref={anchorRef}>
@@ -162,7 +166,7 @@ function StartTimePicker({ styles, value, onChange }) {
 
                 <button
                     type="button"
-                    id="startTime"
+                    id={name}
                     className={`${styles.formControl} ${pickerStyles.trigger}`}
                     onClick={handleToggle}
                     aria-expanded={isOpen}
@@ -170,13 +174,14 @@ function StartTimePicker({ styles, value, onChange }) {
                     {selectedDate ? (
                         <>
                             <span className={pickerStyles.triggerTime}>
-                                {pad(selectedDate.getDate())}/{pad(selectedDate.getMonth() + 1)}/{selectedDate.getFullYear()}
+                                {pad(selectedDate.getDate())}/{pad(selectedDate.getMonth() + 1)}
+                                {!compact && `/${selectedDate.getFullYear()}`}
                                 {'  '}
                                 {pad(selectedHours)}:{pad(selectedMinutes)}
                             </span>
                         </>
                     ) : (
-                        <span className={pickerStyles.triggerPlaceholder}>בחירת תאריך ושעה</span>
+                        <span className={pickerStyles.triggerPlaceholder}>{compact ? 'בחירה' : 'בחירת תאריך ושעה'}</span>
                     )}
                 </button>
             </div>
@@ -186,7 +191,7 @@ function StartTimePicker({ styles, value, onChange }) {
                     ref={panelRef}
                     className={pickerStyles.panel}
                     role="dialog"
-                    aria-label="בחירת מועד הנסיעה"
+                    aria-label={`בחירת ${label}`}
                     dir="rtl"
                 >
                     <div className={pickerStyles.header}>
@@ -251,29 +256,21 @@ function StartTimePicker({ styles, value, onChange }) {
                         <span className={pickerStyles.timeLabel}>שעה</span>
 
                         <div className={pickerStyles.timeSelects}>
-                            <select
-                                className={pickerStyles.timeSelect}
+                            <TimeSelect
                                 value={selectedMinutes}
-                                onChange={(event) => selectTime(selectedHours, Number(event.target.value))}
-                                aria-label="דקות"
-                            >
-                                {minuteOptions.map((minute) => (
-                                    <option key={minute} value={minute}>{pad(minute)}</option>
-                                ))}
-                            </select>
+                                options={minuteOptions}
+                                onChange={(minute) => selectTime(selectedHours, minute)}
+                                ariaLabel="דקות"
+                            />
 
                             <span className={pickerStyles.timeColon}>:</span>
 
-                            <select
-                                className={pickerStyles.timeSelect}
+                            <TimeSelect
                                 value={selectedHours}
-                                onChange={(event) => selectTime(Number(event.target.value), selectedMinutes)}
-                                aria-label="שעות"
-                            >
-                                {HOURS.map((hour) => (
-                                    <option key={hour} value={hour}>{pad(hour)}</option>
-                                ))}
-                            </select>
+                                options={HOURS}
+                                onChange={(hour) => selectTime(hour, selectedMinutes)}
+                                ariaLabel="שעות"
+                            />
                         </div>
                     </div>
 

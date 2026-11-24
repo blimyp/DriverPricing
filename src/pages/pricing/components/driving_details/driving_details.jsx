@@ -102,39 +102,6 @@ function TollsField({ styles, value, onChange }) {
     )
 }
 
-function PlannedDurationField({ styles, value, onChange }) {
-    return (
-        <div className={styles.formField}>
-            <label className={styles.formLabel} htmlFor="plannedDuration">
-                כמה שעות הרכב צמוד (משוער)
-            </label>
-
-            <div className={styles.inputWrapper}>
-                <Clock3
-                    className={styles.inputIcon}
-                    strokeWidth={1.9}
-                    aria-hidden="true"
-                />
-
-                <input
-                    className={styles.formControl}
-                    id="plannedDuration"
-                    name="plannedDuration"
-                    type="number"
-                    min="0.1"
-                    step="0.1"
-                    inputMode="decimal"
-                    placeholder="לדוגמה: 5"
-                    value={value}
-                    onChange={onChange}
-                />
-
-                <span className={styles.inputSuffix}>שעות</span>
-            </div>
-        </div>
-    )
-}
-
 function PaymentTypeField({ styles, value, onChange }) {
     const isPercentage = value === 'percentage'
 
@@ -243,7 +210,6 @@ export {
     VehicleField,
     TripTypeField,
     TollsField,
-    PlannedDurationField,
     StartTimeField,
     PaymentTypeField,
 }

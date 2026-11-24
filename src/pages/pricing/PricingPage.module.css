@@ -278,6 +278,38 @@
     gap: 9px;
 }
 
+/* שעת התחלה ושעת סיום באותה שורה */
+.formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.formRow .formControl {
+    padding: 0 46px 0 12px;
+}
+
+.formRow .inputIcon {
+    right: 14px;
+}
+
+@media (max-width: 480px) {
+    .formRow {
+        gap: 8px;
+    }
+
+    .formRow .formControl {
+        padding: 0 36px 0 8px;
+        font-size: 13px;
+    }
+
+    .formRow .inputIcon {
+        width: 17px;
+        height: 17px;
+        right: 11px;
+    }
+}
+
 .formLabel {
     padding-right: 5px;
     color: rgba(239, 255, 251, 0.92);
