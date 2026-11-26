@@ -197,14 +197,6 @@ function PriceResult({
                     </p>
                 )}
 
-                {showDetails && result.driverCostDetails && (
-                    <p className={styles.detailsDistance}>
-                        עלות מעסיק לשעה רגילה: {formatMoney(result.driverCostDetails.hourlyCost)}
-                        {result.driverCostDetails.isNightShift &&
-                            ` · משמרת לילה (יום עבודה של ${result.driverCostDetails.regularLimit} שעות)`}
-                    </p>
-                )}
-
                 {showDetails && (
                     <table className={styles.profitTable}>
                         <tbody>

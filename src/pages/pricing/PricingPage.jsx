@@ -22,6 +22,7 @@ import TypingIndicator from './components/chat/TypingIndicator'
 import { getRoute } from '../../services/openRouteService'
 import { getVehicles } from '../../services/vehiclesService'
 import { getUserProfile } from '../../services/profileService'
+import { getProfitTiers } from '../../services/profitTiersService'
 import { useAuth } from '../../contexts/AuthContext'
 import { getVehicleDisplayName } from '../../utils/vehicles'
 import { TRIP_TYPE_LABELS } from '../../utils/pricingEngine'
@@ -85,11 +86,15 @@ function PricingPage() {
 
         let isMounted = true
 
-        Promise.all([getUserProfile(user.id), getVehicles(user.id)])
-            .then(([profile, vehiclesList]) => {
+        Promise.all([
+            getUserProfile(user.id),
+            getVehicles(user.id),
+            getProfitTiers(user.id),
+        ])
+            .then(([profile, vehiclesList, profitTiers]) => {
                 if (!isMounted) return
 
-                setSettings(profile)
+                setSettings({ ...profile, profit_tiers: profitTiers })
                 setVehicles(vehiclesList)
             })
             .catch((error) => {

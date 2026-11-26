@@ -433,6 +433,65 @@
     gap: 4px;
 }
 
+/* Profit tiers */
+
+.profit-tiers-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-inline-end: 6px;
+}
+
+.profit-tiers-head .setting-icon-button {
+    width: 28px;
+    height: 28px;
+}
+
+.profit-tier-edit-row {
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+}
+
+.profit-tier-edit-row .setting-edit {
+    flex-wrap: wrap;
+}
+
+.profit-tier-factor input {
+    width: 48px;
+}
+
+.profit-tier-no-limit {
+    font-size: 13px;
+    color: var(--text);
+    padding-inline: 4px;
+}
+
+.profit-tiers-note {
+    margin: 4px 12px 8px;
+    font-size: 12px;
+    color: #9aa8a6;
+}
+
+.profit-tiers-error {
+    margin: 6px 12px;
+    font-size: 13px;
+    color: var(--red);
+}
+
+.profit-tiers-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 6px 6px;
+}
+
+.profit-tiers-actions-end {
+    display: flex;
+    gap: 6px;
+}
+
 /* Loading / error / empty */
 
 .prices-loading {

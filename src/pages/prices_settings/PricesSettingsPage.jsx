@@ -14,6 +14,7 @@ import { updateProfileSetting } from '../../services/profileService'
 import { VEHICLE_TYPE_LABELS } from '../../utils/vehicles'
 import { DRIVER_COST_DEFAULTS } from '../../utils/driverCost'
 import VehiclesSection from './components/vehicles_section'
+import ProfitTiersSection from './components/profit_tiers_section'
 import SectionHeader from './components/section_header'
 import './PricesSettingsPage.css'
 
@@ -99,13 +100,12 @@ const SETTINGS_GROUPS = [
     },
     {
         id: 'profit',
-        title: 'רווח, מקדמים ותשלום',
-        description: 'מה מוסיפים על העלות כדי להגיע למחיר',
+        title: 'תוספות ותשלום',
+        description: 'תוספת לרכב צמוד, הנחת מזומן ומע״מ',
         icon: Percent,
         blocks: [
             {
                 fields: [
-                    { key: 'target_margin_percent', label: 'אחוז רווח יעד', suffix: '%', step: '1', max: 99 },
                     { key: 'dedicated_surcharge_percent', label: 'תוספת לרכב צמוד', suffix: '%', step: '1' },
                     { key: 'cash_discount_percent', label: 'הנחת מזומן / מקדמה', suffix: '%', step: '0.5', max: 100 },
                     { key: 'vat_percent', label: 'מע״מ', suffix: '%', step: '1', max: 100 },
@@ -364,6 +364,12 @@ function PricesSettingsPage() {
                         </section>
                     )
                 })}
+
+                <ProfitTiersSection
+                    userId={user.id}
+                    isOpen={openSections.has('profit_tiers')}
+                    onToggle={() => toggleSection('profit_tiers')}
+                />
 
             </div>
         </div>

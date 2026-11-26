@@ -1,5 +1,6 @@
 import { getVehicleAgeGroup } from './vehicles'
 import { calculateDriverCost } from './driverCost'
+import { findProfitTier, getProfitTiersForType } from './profitTiers'
 
 // מנוע תמחור נסיעה – כל הסכומים ללא מע״מ, חוץ מהמחירים הסופיים ללקוח
 
@@ -88,15 +89,14 @@ export function calculateTripPrice({ vehicle, settings, fleetSize, trip }) {
             : 0
     const multiplier = 1 + dedicatedSurchargePercent / 100
 
-    const margin = toNumber(settings.target_margin_percent) / 100
     const isPercentageDriver = trip.driverPaymentType === 'percentage'
     const driverPercentage = isPercentageDriver
         ? toNumber(settings.driver_percentage)
         : 0
     const driverShare = driverPercentage / 100
 
-    if (margin + driverShare >= 1) {
-        throw new Error('אחוז הרווח ואחוז הנהג יחד חייבים להיות פחות מ־100%')
+    if (driverShare >= 1) {
+        throw new Error('אחוז הנהג חייב להיות פחות מ־100%')
     }
 
     // בתשלום שעתי – עלות הנהג חלק מהעלות. באחוזים – נגזרת מהמחיר עצמו
@@ -114,7 +114,21 @@ export function calculateTripPrice({ vehicle, settings, fleetSize, trip }) {
 
     const adjustedCost = baseCost * multiplier
 
-    const calculatedNet = adjustedCost / (1 - margin - driverShare)
+    // המדרגה נקבעת לפי העלות המלאה, אחרי תוספת הרכב הצמוד
+    const tiers = getProfitTiersForType(settings.profit_tiers, vehicle.vehicle_type)
+    const profitTier = findProfitTier(tiers, adjustedCost)
+
+    if (!profitTier) {
+        throw new Error('לא הוגדרו מדרגות רווח לסוג הרכב הזה בעמוד ההגדרות')
+    }
+
+    // המחיר לא יורד מהמחיר בסוף המדרגה הקודמת
+    const tierPrice = adjustedCost * profitTier.factor
+    const isTierFloorApplied = tierPrice < profitTier.floorPrice
+    const markedUpCost = Math.max(tierPrice, profitTier.floorPrice)
+
+    // בנהג באחוזים – חלק הנהג נוסף מעל המחיר שאחרי המקדם
+    const calculatedNet = markedUpCost / (1 - driverShare)
     const minTripPrice = toNumber(settings[`${vehicle.vehicle_type}_min_trip_price`])
     const isFloorApplied = calculatedNet < minTripPrice
     const priceNet = Math.max(calculatedNet, minTripPrice)
@@ -158,6 +172,10 @@ export function calculateTripPrice({ vehicle, settings, fleetSize, trip }) {
             tolls,
             base: baseCost,
             adjusted: adjustedCost,
+        },
+        profitTier: {
+            ...profitTier,
+            isFloorApplied: isTierFloorApplied,
         },
         minTripPrice,
         isFloorApplied,
